@@ -1,4 +1,4 @@
-function Invoke-AsBuiltReport.Microsoft.WindowsServer {
+function Invoke-AsBuiltReport.Microsoft.Windows {
     <#
     .SYNOPSIS
         PowerShell script to document the configuration of Microsoft Windows Server in Word/HTML/Text formats
@@ -200,7 +200,7 @@ function Invoke-AsBuiltReport.Microsoft.WindowsServer {
                         }
                         $LocalAdminsReport += $TempLocalAdminsReport
                     }
-                    LocalAdminsReport | Table -Name 'Local Administrators'
+                    $LocalAdminsReport | Table -Name 'Local Administrators'
                 }
             }
             #Host Firewall
@@ -370,29 +370,35 @@ function Invoke-AsBuiltReport.Microsoft.WindowsServer {
                         $HostInitiator = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-InitiatorPort }
                         Paragraph 'The following table details the hosts iSCI IQN'
                         $HostInitiator | Select-Object NodeAddress | Table -Name 'Host IQN'
-                        Section -Style Heading4 'iSCSI Target Server' {
-                            Paragraph 'The following table details iSCSI Target Server details'
-                            $HostIscsiTargetServer = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTargetPortal }
-                            $HostIscsiTargetServer | Select-Object TargetPortalAddress, TargetPortalPortNumber | Table -Name 'iSCSI Target Servers' -ColumnWidths 50, 50
-                        }
-                        Section -Style Heading4 'iSCIS Target Volumes' {
-                            Paragraph 'The following table details iSCSI target volumes'
-                            $HostIscsiTargetVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTarget }
-                            $HostIscsiTargetVolumeReport = @()
-                            ForEach ($HostIscsiTargetVolume in $HostIscsiTargetVolumes) {
-                                $TempHostIscsiTargetVolumeReport = [PSCustomObject]@{
-                                    'Node Address' = $HostIscsiTargetVolume.NodeAddress
-                                    'Node Connected' = $HostIscsiTargetVolume.IsConnected
-                                }
-                                $HostIscsiTargetVolumeReport += $TempHostIscsiTargetVolumeReport
-                            }
-                            $HostIscsiTargetVolumeReport | Table -Name 'iSCSI Target Volumes' -ColumnWidths 80, 20
-                        }
-                        Section -Style Heading4 'iSCSI Connections' {
-                            Paragraph 'The following table details iSCSI Connections'
-                            $HostIscsiConnections = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiConnection }
-                            $HostIscsiConnections | Select-Object ConnectionIdentifier, InitiatorAddress, TargetAddress | Table -Name 'iSCSI Connections'
-                        }
+						$HostIscsiTargetServer = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTargetPortal }
+						if($HostIscsiTargetServer){
+							Section -Style Heading4 'iSCSI Target Server' {
+								Paragraph 'The following table details iSCSI Target Server details'
+								$HostIscsiTargetServer | Select-Object TargetPortalAddress, TargetPortalPortNumber | Table -Name 'iSCSI Target Servers' -ColumnWidths 50, 50
+							}
+						}
+						$HostIscsiTargetVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTarget }
+						if($HostIscsiTargetVolumes){
+							Section -Style Heading4 'iSCIS Target Volumes' {
+								Paragraph 'The following table details iSCSI target volumes'
+								$HostIscsiTargetVolumeReport = @()
+								ForEach ($HostIscsiTargetVolume in $HostIscsiTargetVolumes) {
+									$TempHostIscsiTargetVolumeReport = [PSCustomObject]@{
+										'Node Address' = $HostIscsiTargetVolume.NodeAddress
+										'Node Connected' = $HostIscsiTargetVolume.IsConnected
+									}
+									$HostIscsiTargetVolumeReport += $TempHostIscsiTargetVolumeReport
+								}
+							$HostIscsiTargetVolumeReport | Table -Name 'iSCSI Target Volumes' -ColumnWidths 80, 20
+							}
+						}
+						$HostIscsiConnections = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiConnection }
+						if($HostIscsiConnections){
+							Section -Style Heading4 'iSCSI Connections' {
+								Paragraph 'The following table details iSCSI Connections'
+								$HostIscsiConnections | Select-Object ConnectionIdentifier, InitiatorAddress, TargetAddress | Table -Name 'iSCSI Connections'
+							}
+						}
                     }
                 }
                 #MPIO
@@ -627,7 +633,8 @@ function Invoke-AsBuiltReport.Microsoft.WindowsServer {
                         }
                     }
                 }
-            }        }
+            }
+        }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession
     }
