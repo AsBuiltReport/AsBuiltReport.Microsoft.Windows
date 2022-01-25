@@ -186,7 +186,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         }
                         $LocalGroupsReport += $TempLocalGroupsReport
                     }
-                    $LocalGroupsReport | Table -Name 'Local Group Summary'
+                    $LocalGroupsReport | Table -Name 'Local Group Summary' -ColumnWidths 40, 60
                 }
                 Section -Style Heading3 'Local Administrators' {
                     Paragraph 'The following table lists Local Administrators'
@@ -258,13 +258,17 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     $DnsClient = Invoke-Command -Session $TempPssSession { Get-DnsClientGlobalSetting }
                     $DnsClientReport = [PSCustomObject]@{
                         'DNS Suffix' = $DnsClient.SuffixSearchList -Join ","
+                        'Use Suffix Search List' = $DnsClient.UseSuffixSearchList
+                        'Use Devolution' = $DnsClient.UseDevolution
+                        'Devolution Level' = $DnsClient.DevolutionLevel
                     }
-                    $DnsClientReport | Table -Name "DNS Seach Domain"
+                    $DnsClientReport | Table -Name "DNS Seach Domain" -ColumnWidths 40, 20, 20, 20
                 }
                 Section -Style Heading3 'DNS Servers' {
                     Paragraph 'The following table details the DNS Server Addresses Configured'
                     $DnsServers = Invoke-Command -Session $TempPssSession { Get-DnsClientServerAddress -AddressFamily IPv4 | `
                     Where-Object { $_.ServerAddresses -notlike $null -and $_.InterfaceAlias -notlike "*isatap*" } }
+                    $DnsServerReport = @()
                     ForEach ($DnsServer in $DnsServers) {
                         $TempDnsServerReport = [PSCustomObject]@{
                             'Interface' = $DnsServer.InterfaceAlias
@@ -488,7 +492,9 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             }
                             $VmOsAdapterReport += $TempVmOsAdapterReport
                         }
-                        $VmOsAdapterReport | Table -Name 'VM Management OS Adapters'
+                        if ($NULL -ne $VmOsAdapterReport) {
+                            $VmOsAdapterReport | Table -Name 'VM Management OS Adapters' -List -ColumnWidths 50, 50
+                        }
                     }
                     Section -Style Heading3 "Hyper-V vSwitch Settings" {
                         Paragraph 'The following table details the Hyper-V vSwitches configured'
@@ -610,25 +616,27 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 }
                                 $VmAdapterVlanReport | Table -Name 'VM Network Adapter Vlans'
                             }
-                            Section -Style Heading4 'VM Hard Disks' {
-                                Paragraph 'The following table details the VM hard disks'
-                                $VmDiskReport = @()
-                                $VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
-                                foreach ($VmHardDisk in $VMHardDisks) {
-                                    $VmVhd = Get-VHD -CimSession $TempCimSession -Path $VmHardDisk.Path
-                                    $TempVmDiskReport = [PSCustomObject]@{
-                                        'Disk Path' = $VmVhd.Path
-                                        'Disk Format' = $VmVhd.VhdFormat
-                                        'Disk Type' = $VmVhd.VhdType
-                                        'Disk Used(GB)' = [Math]::Round($VmVhd.FileSize / 1gb)
-                                        'Disk Max(GB)' = [Math]::Round($VmVhd.Size / 1gb)
-                                        'Bus Type' = $VmHardDisk.ControllerType
-                                        'Bus No' = $VmHardDisk.ControllerNumber
-                                        'Bus Location' = $VmHardDisk.ControllerLocation
+                            $VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
+                            if ($VmHardDisks) {
+                                Section -Style Heading4 'VM Hard Disks' {
+                                    Paragraph 'The following table details the VM hard disks'
+                                    $VmDiskReport = @()
+                                    foreach ($VmHardDisk in $VMHardDisks) {
+                                        $VmVhd = Get-VHD -CimSession $TempCimSession -Path $VmHardDisk.Path
+                                        $TempVmDiskReport = [PSCustomObject]@{
+                                            'Disk Path' = $VmVhd.Path
+                                            'Disk Format' = $VmVhd.VhdFormat
+                                            'Disk Type' = $VmVhd.VhdType
+                                            'Disk Used(GB)' = [Math]::Round($VmVhd.FileSize / 1gb)
+                                            'Disk Max(GB)' = [Math]::Round($VmVhd.Size / 1gb)
+                                            'Bus Type' = $VmHardDisk.ControllerType
+                                            'Bus No' = $VmHardDisk.ControllerNumber
+                                            'Bus Location' = $VmHardDisk.ControllerLocation
+                                        }
+                                        $VmDiskReport += $TempVmDiskReport
                                     }
-                                    $VmDiskReport += $TempVmDiskReport
+                                    $VmDiskReport | Table 'VM Hard disks' -ColumnWidths 30, 10, 10, 10, 10, 10, 10, 10
                                 }
-                                $VmDiskReport | Table 'VM Hard disks' -ColumnWidths 30, 10, 10, 10, 10, 10, 10, 10
                             }
                         }
                     }
