@@ -186,6 +186,30 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
+            if ($InfoLevel.SMB -ge 1) {
+                try {
+                    $SMBInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*FileAndStorage-Services*" } }
+                    if ($SMBInstalledCheck.InstallState -eq "Installed") {
+                        $Global:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object {$_.Special -like 'False'} }
+                        if ($SMBShares) {
+                            Section -Style Heading2 "File Server Configuration Settings" {
+                                Paragraph 'The following table details the File Server Settings'
+                                Blankline
+                                # IIS Configuration
+                                Get-AbrWinSMBSummary
+                                # SMB Shares
+                                Get-AbrWinSMBShare
+                                # SMB Server Network Interface
+                                #Get-AbrWinSMBNetworkInterface
+
+                            }
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
         }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession

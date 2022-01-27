@@ -20,7 +20,8 @@
         "Networking": 1,
         "Storage": 1,
         "HyperV": 1,
-        "IIS": 1
+        "IIS": 1,
+        "SMB": 1
     },
     "HealthCheck": {
 
