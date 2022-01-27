@@ -66,25 +66,26 @@ function Get-AbrWinHostStorageMPIO
                                 }
                             }
                             try {
-                                $MpioAvailableHw = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-MPIOAvailableHw }
-                                if ($MpioAvailableHw) {
+                                $MpioAvailableHws = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-MPIOAvailableHw }
+                                if ($MpioAvailableHws) {
                                     Section -Style Heading4 'MPIO Detected Hardware' {
                                         Paragraph 'The following table details the hardware detected and claimed by MPIO'
                                         Blankline
                                         $MpioAvailableHwReport = @()
-                                        try {
-                                            $TempMpioAvailableHwReport = [PSCustomObject]@{
-                                                'Vendor' = $MpioAvailableHw.VendorId
-                                                'Product' = $MpioAvailableHw.ProductId
-                                                'BusType' = $MpioAvailableHw.BusType
-                                                'Multipathed' = ConvertTo-TextYN $MpioAvailableHw.IsMultipathed
+                                        foreach ($MpioAvailableHw in $MpioAvailableHws) {
+                                            try {
+                                                $TempMpioAvailableHwReport = [PSCustomObject]@{
+                                                    'Vendor' = $MpioAvailableHw.VendorId
+                                                    'Product' = $MpioAvailableHw.ProductId
+                                                    'BusType' = $MpioAvailableHw.BusType
+                                                    'Multipathed' = ConvertTo-TextYN $MpioAvailableHw.IsMultipathed
+                                                }
+                                                $MpioAvailableHwReport += $TempMpioAvailableHwReport
+                                            }
+                                            catch {
+                                                Write-PscriboMessage -IsWarning $_.Exception.Message
                                             }
                                         }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
-                                        }
-                                        $MpioAvailableHwReport += $TempMpioAvailableHwReport
-
                                         $TableParams = @{
                                             Name = "MPIO Available Hardware"
                                             List = $false

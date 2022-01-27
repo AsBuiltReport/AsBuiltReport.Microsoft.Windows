@@ -57,6 +57,7 @@ function Get-AbrWinHyperVNetworking {
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
+                <#
                 try {
                     $VmOsAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -ManagementOS
                     if ($VmOsAdapters) {
@@ -95,7 +96,7 @@ function Get-AbrWinHyperVNetworking {
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
-                }
+                }#>
                 $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
                 if ($VmSwitches) {
                     Section -Style Heading3 "Hyper-V vSwitch Settings" {

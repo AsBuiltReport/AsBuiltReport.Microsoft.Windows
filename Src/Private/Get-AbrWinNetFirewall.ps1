@@ -37,7 +37,7 @@ function Get-AbrWinNetFirewall {
                             try {
                                 $TempNetFirewallProfileReport = [PSCustomObject]@{
                                     'Profile' = $FirewallProfile.Name
-                                    'Profile Enabled' = $FirewallProfile.Enabled
+                                    'Profile Enabled' = ConvertTo-TextYN $FirewallProfile.Enabled
                                     'Inbound Action' = $FirewallProfile.DefaultInboundAction
                                     'Outbound Action' = $FirewallProfile.DefaultOutboundAction
                                 }

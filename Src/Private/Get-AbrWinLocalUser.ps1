@@ -38,7 +38,7 @@ function Get-AbrWinLocalUser {
                                 $TempLocalUsersReport = [PSCustomObject]@{
                                     'User Name' = $LocalUser.Name
                                     'Description' = $LocalUser.Description
-                                    'Account Enabled' = $LocalUser.Enabled
+                                    'Account Enabled' = ConvertTo-TextYN $LocalUser.Enabled
                                     'Last Logon Date' = Switch (($LocalUser.LastLogon).count) {
                                         0 {"-"}
                                         default {$LocalUser.LastLogon.ToShortDateString()}
