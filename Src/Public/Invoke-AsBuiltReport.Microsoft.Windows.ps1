@@ -38,8 +38,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             Paragraph "The following table details the Windows Host $System"
             BlankLine
             try {
-                $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Default -ErrorAction stop
-                $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Default -ErrorAction stop
+                $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Kerberos -ErrorAction stop
+                $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Kerberos -ErrorAction stop
             }
             catch {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
@@ -142,8 +142,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         Get-AbrWinHyperVNuma
                         # Hyper-V Networking
                         Get-AbrWinHyperVNetworking
-                        # Hyper-V VM Information
-                        Get-AbrWinHyperVHostVM
+                        # Hyper-V VM Information (Buggy as hell)
+                        #Get-AbrWinHyperVHostVM
                     }
                 }
             }

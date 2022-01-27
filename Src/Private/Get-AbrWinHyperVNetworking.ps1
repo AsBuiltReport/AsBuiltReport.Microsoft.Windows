@@ -57,7 +57,7 @@ function Get-AbrWinHyperVNetworking {
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
-
+                <# Buggy as hell
                 try {
                     $VmOsAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -ManagementOS
                     if ($VmOsAdapters) {
@@ -96,7 +96,7 @@ function Get-AbrWinHyperVNetworking {
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
-                }
+                }#>
                 try {
                     $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
                     if ($VmSwitches) {
