@@ -53,120 +53,138 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             #Host Hardware
             Get-AbrWinHostHWSummary
             #Host OS
-            try {
-                Section -Style Heading2 'Host Operating System' {
-                    Paragraph 'The following settings details host OS Settings'
-                    Blankline
-                    #Host OS Configuration
-                    Get-AbrWinOSConfig
-                    #Host Hotfixes
-                    Get-AbrWinOSHotfix
-                    #Host Drivers
-                    Get-AbrWinOSDriver
-                    #Host Roles and Features
-                    Get-AbrWinOSRoleFeature
-                    #Host 3rd Party Applications
-                    Get-AbrWinApplication
+            if ($InfoLevel.OperatingSystem -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Operating System' {
+                        Paragraph 'The following settings details host OS Settings'
+                        Blankline
+                        #Host OS Configuration
+                        Get-AbrWinOSConfig
+                        #Host Hotfixes
+                        Get-AbrWinOSHotfix
+                        #Host Drivers
+                        Get-AbrWinOSDriver
+                        #Host Roles and Features
+                        Get-AbrWinOSRoleFeature
+                        #Host 3rd Party Applications
+                        Get-AbrWinApplication
+                    }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
             #Local Users and Groups
-            try {
-                Section -Style Heading2 'Local Users and Groups' {
-                    Paragraph 'The following section details local users and groups configured'
-                    Blankline
-                    #Local Users
-                    Get-AbrWinLocalUser
-                    #Local Groups
-                    Get-AbrWinLocalGroup
-                    #Local Administrators
-                    Get-AbrWinLocalAdmin
+            if ($InfoLevel.Account -ge 1) {
+                try {
+                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object {$_.PrincipalSource -ne "ActiveDirectory"} }
+                    $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup | Where-Object {$_.PrincipalSource -ne "ActiveDirectory" }}
+                    $LocalAdmins = Invoke-Command -Session $TempPssSession { Get-LocalGroupMember -Name 'Administrators' -ErrorAction SilentlyContinue }
+                    if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
+                        Section -Style Heading2 'Local Users and Groups' {
+                            Paragraph 'The following section details local users and groups configured'
+                            Blankline
+                            #Local Users
+                            Get-AbrWinLocalUser
+                            #Local Groups
+                            Get-AbrWinLocalGroup
+                            #Local Administrators
+                            Get-AbrWinLocalAdmin
+                        }
+                    }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
             #Host Firewall
             Get-AbrWinNetFirewall
             #Host Networking
-            try {
-                Section -Style Heading2 'Host Networking' {
-                    Paragraph 'The following section details Host Network Configuration'
-                    Blankline
-                    #Host Network Adapter
-                    Get-AbrWinNetAdapter
-                    #Host Network IP Address
-                    Get-AbrWinNetIPAddress
-                    #Host DNS Client Setting
-                    Get-AbrWinNetDNSClient
-                    #Host DNS Server Setting
-                    Get-AbrWinNetDNSServer
-                    #Host Network Teaming
-                    Get-AbrWinNetTeamInterface
-                    #Host Network Adapter MTU
-                    Get-AbrWinNetAdapterMTU
+            if ($InfoLevel.Networking -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Networking' {
+                        Paragraph 'The following section details Host Network Configuration'
+                        Blankline
+                        #Host Network Adapter
+                        Get-AbrWinNetAdapter
+                        #Host Network IP Address
+                        Get-AbrWinNetIPAddress
+                        #Host DNS Client Setting
+                        Get-AbrWinNetDNSClient
+                        #Host DNS Server Setting
+                        Get-AbrWinNetDNSServer
+                        #Host Network Teaming
+                        Get-AbrWinNetTeamInterface
+                        #Host Network Adapter MTU
+                        Get-AbrWinNetAdapterMTU
+                    }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
             #Host Storage
-            try {
-                Section -Style Heading2 'Host Storage' {
-                    Paragraph 'The following section details the storage configuration of the host'
-                    #Local Disks
-                    Get-AbrWinHostStorage
-                    #Local Volumes
-                    Get-AbrWinHostStorageVolume
-                    #iSCSI Settings
-                    Get-AbrWinHostStorageISCSI
-                    #MPIO Setting
-                    Get-AbrWinHostStorageMPIO
+            if ($InfoLevel.Storage -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Storage' {
+                        Paragraph 'The following section details the storage configuration of the host'
+                        #Local Disks
+                        Get-AbrWinHostStorage
+                        #Local Volumes
+                        Get-AbrWinHostStorageVolume
+                        #iSCSI Settings
+                        Get-AbrWinHostStorageISCSI
+                        #MPIO Setting
+                        Get-AbrWinHostStorageMPIO
+                    }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
             #HyperV Configuration
-            try {
-                $HyperVInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Hyper-V*" } }
-                if ($HyperVInstalledCheck.InstallState -eq "Installed") {
-                    Section -Style Heading2 "Hyper-V Configuration Settings" {
-                        Paragraph 'The following table details the Hyper-V Server Settings'
-                        Blankline
-                        # Hyper-V Configuration
-                        Get-AbrWinHyperVSummary
-                        # Hyper-V Numa Information
-                        Get-AbrWinHyperVNuma
-                        # Hyper-V Networking
-                        Get-AbrWinHyperVNetworking
-                        # Hyper-V VM Information (Buggy as hell)
-                        #Get-AbrWinHyperVHostVM
+            if ($InfoLevel.HyperV -ge 1) {
+                try {
+                    $HyperVInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Hyper-V*" } }
+                    if ($HyperVInstalledCheck.InstallState -eq "Installed") {
+                        Section -Style Heading2 "Hyper-V Configuration Settings" {
+                            Paragraph 'The following table details the Hyper-V Server Settings'
+                            Blankline
+                            # Hyper-V Configuration
+                            Get-AbrWinHyperVSummary
+                            # Hyper-V Numa Information
+                            Get-AbrWinHyperVNuma
+                            # Hyper-V Networking
+                            Get-AbrWinHyperVNetworking
+                            # Hyper-V VM Information (Buggy as hell)
+                            #Get-AbrWinHyperVHostVM
+                        }
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
-            }
-            try {
-                $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
-                if ($IISInstalledCheck.InstallState -eq "Installed") {
-                    Section -Style Heading2 "IIS Configuration Settings" {
-                        Paragraph 'The following table details the IIS Server Settings'
-                        Blankline
-                        # Hyper-V Configuration
-                        Get-AbrWinIISSummary
-                        # Hyper-V Numa Information
-                        #Get-AbrWinIISBinding
-                        # Hyper-V Networking
-                        #Get-AbrWinIISWebSite
-                    }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            if ($InfoLevel.IIS -ge 1) {
+                try {
+                    $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
+                    if ($IISInstalledCheck.InstallState -eq "Installed") {
+                        Section -Style Heading2 "IIS Configuration Settings" {
+                            Paragraph 'The following table details the IIS Server Settings'
+                            Blankline
+                            # IIS Configuration
+                            Get-AbrWinIISSummary
+                            # IIS Web Application Pools
+                            Get-AbrWinIISWebAppPool
+                            # IIS Web Site
+                            Get-AbrWinIISWebSite
+
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
             }
         }
         Remove-PSSession $TempPssSession

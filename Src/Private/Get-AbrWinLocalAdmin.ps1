@@ -27,7 +27,6 @@ function Get-AbrWinLocalAdmin {
     process {
         if ($InfoLevel.Account -ge 1) {
             try {
-                $LocalAdmins = Invoke-Command -Session $TempPssSession { Get-LocalGroupMember -Name 'Administrators' }
                 if ($LocalAdmins) {
                     Section -Style Heading3 'Local Administrators' {
                         Paragraph 'The following table lists Local Administrators'

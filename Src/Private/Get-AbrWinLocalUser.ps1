@@ -27,7 +27,6 @@ function Get-AbrWinLocalUser {
     process {
         if ($InfoLevel.Account -ge 1) {
             try {
-                $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser }
                 if ($LocalUsers) {
                     Section -Style Heading3 'Local Users' {
                         Paragraph 'The following table details local users'

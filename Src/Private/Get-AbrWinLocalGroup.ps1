@@ -27,7 +27,6 @@ function Get-AbrWinLocalGroup {
     process {
         if ($InfoLevel.Account -ge 1) {
             try {
-                $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup }
                 if ($LocalGroups) {
                     Section -Style Heading3 'Local Groups' {
                         Paragraph 'The following table details local groups configured'
