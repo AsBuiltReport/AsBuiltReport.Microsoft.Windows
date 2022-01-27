@@ -42,7 +42,17 @@ function Get-AbrWinHostStorageISCSI {
                                     try {
                                         $TempHostInitiator = [PSCustomObject]@{
                                             'Node Address' = $HostInitiator.NodeAddress
-                                            'Operational Status' = $HostInitiator.OperationalStatus
+                                            'Operational Status' = Switch ($HostInitiator.OperationalStatus) {
+                                                1 {'Unknown'}
+                                                2 {'Operational'}
+                                                3 {'User Offline'}
+                                                4 {'Bypassed'}
+                                                5 {'In diagnostics mode'}
+                                                6 {'Link Down'}
+                                                7 {'Port Error'}
+                                                8 {'Loopback'}
+                                                default {$HostInitiator.OperationalStatus}
+                                            }
                                         }
                                     }
                                     catch {

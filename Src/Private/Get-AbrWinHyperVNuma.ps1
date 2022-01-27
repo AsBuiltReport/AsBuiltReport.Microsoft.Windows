@@ -37,8 +37,8 @@ function Get-AbrWinHyperVNuma {
                             try {
                                 $TempVmHostNumaReport = [PSCustomObject]@{
                                     'Numa Node Id' = $Node.NodeId
-                                    'Memory Available(GB)' = "$([math]::Round(($Node.MemoryAvailable)/1024,0)) GB"
-                                    'Memory Total(GB)' =  "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
+                                    'Memory Available' = "$([math]::Round(($Node.MemoryAvailable)/1024,0)) GB"
+                                    'Memory Total' =  "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
                                 }
                                 $VmHostNumaReport += $TempVmHostNumaReport
                             }

@@ -109,7 +109,7 @@ function Get-AbrWinHyperVNetworking {
                                     $TempVmSwitchesReport = [PSCustomObject]@{
                                         'Switch Name' = $VmSwitch.Name
                                         'Switch Type' = $VmSwitch.SwitchType
-                                        'Embedded Team' = $VmSwitch.EmbeddedTeamingEnabled
+                                        'Embedded Team' = ConvertTo-TextYN $VmSwitch.EmbeddedTeamingEnabled
                                         'Interface Description' = $VmSwitch.NetAdapterInterfaceDescription
                                     }
                                     $VmSwitchesReport += $TempVmSwitchesReport
@@ -137,15 +137,15 @@ function Get-AbrWinHyperVNetworking {
                                         $VmSwitchReport = [PSCustomObject]@{
                                             'Switch Name' = $VmSwitch.Name
                                             'Switch Type' = $VmSwitch.SwitchType
-                                            'Switch Embedded Teaming Status' = $VmSwitch.EmbeddedTeamingEnabled
+                                            'Switch Embedded Teaming Status' = ConvertTo-TextYN $VmSwitch.EmbeddedTeamingEnabled
                                             'Bandwidth Reservation Mode' = $VmSwitch.BandwidthReservationMode
                                             'Bandwidth Reservation Percentage' = $VmSwitch.Percentage
-                                            'Management OS Allowed' = $VmSwitch.AllowManagementOS
+                                            'Management OS Allowed' = ConvertTo-TextYN $VmSwitch.AllowManagementOS
                                             'Physical Adapters' = $VmSwitch.NetAdapterInterfaceDescriptions -Join ","
-                                            'IOV Support' = $VmSwitch.IovSupport
+                                            'IOV Support' = ConvertTo-TextYN $VmSwitch.IovSupport
                                             'IOV Support Reasons' = $VmSwitch.IovSupportReasons
                                             'Available VM Queues' = $VmSwitch.AvailableVMQueues
-                                            'Packet Direct Enabled' = $VmSwitch.PacketDirectinUse
+                                            'Packet Direct Enabled' = ConvertTo-TextYN $VmSwitch.PacketDirectinUse
                                         }
 
                                         $TableParams = @{

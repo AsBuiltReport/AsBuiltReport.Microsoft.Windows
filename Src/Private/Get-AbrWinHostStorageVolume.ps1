@@ -27,7 +27,7 @@ function Get-AbrWinHostStorageVolume {
     process {
         if ($InfoLevel.Storage -ge 1) {
             try {
-                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Volume | Where-Object {$_.DriveType -ne "CD-ROM"}}
+                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock {  Get-Volume | Where-Object {$_.DriveType -ne "CD-ROM" -and $NUll -ne $_.DriveLetter} }
                 if ($HostVolumes) {
                     Section -Style Heading3 'Host Volumes' {
                         Paragraph 'The following section details local volumes on the host'
@@ -39,8 +39,8 @@ function Get-AbrWinHostStorageVolume {
                                     'Drive Letter' = $HostVolume.DriveLetter
                                     'File System Label' = $HostVolume.FileSystemLabel
                                     'File System' = $HostVolume.FileSystem
-                                    'Size (GB)' = [Math]::Round($HostVolume.Size / 1gb)
-                                    'Free Space(GB)' = [Math]::Round($HostVolume.SizeRemaining / 1gb)
+                                    'Size' = "$([Math]::Round($HostVolume.Size / 1gb)) GB"
+                                    'Free Space' = "$([Math]::Round($HostVolume.SizeRemaining / 1gb)) GB"
                                     'Health Status' = $HostVolume.HealthStatus
                                 }
                                 $HostVolumeReport += $TempHostVolumeReport

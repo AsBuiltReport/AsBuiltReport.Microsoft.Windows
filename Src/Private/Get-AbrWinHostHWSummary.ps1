@@ -40,7 +40,7 @@ function Get-AbrWinHostHWSummary {
                         'Number of Processors' = $HostCPU.Length
                         'Number of CPU Cores' = $HostCPU[0].NumberOfCores
                         'Number of Logical Cores' = $HostCPU[0].NumberOfLogicalProcessors
-                        'Physical Memory (GB)' = [Math]::Round($HostComputer.TotalPhysicalMemory / 1Gb)
+                        'Physical Memory' = "$([Math]::Round($HostComputer.TotalPhysicalMemory / 1Gb)) GB"
                     }
                     $TableParams = @{
                         Name = "Host Hardware Specifications"

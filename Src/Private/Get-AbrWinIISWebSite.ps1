@@ -28,7 +28,7 @@ function Get-AbrWinIISWebSite {
             try {
                 $IISWebSites = Invoke-Command -Session $TempPssSession { Get-Website }
                 if ($IISWebSites) {
-                    Section -Style Heading3 'Web Sites Summary' {
+                    Section -Style Heading3 'Sites Summary' {
                         Paragraph 'The following table provide a summary of IIS Web Sites'
                         Blankline
                         $IISWebSitesrReport = @()
@@ -54,7 +54,7 @@ function Get-AbrWinIISWebSite {
                         try {
                             $IISWebSites = Invoke-Command -Session $TempPssSession { Get-Website }
                             if ($IISWebSites) {
-                                Section -Style Heading4 'Web Sites Configuration' {
+                                Section -Style Heading4 'Sites Configuration' {
                                     Paragraph 'The following section details IIS Web Sites configuration'
                                     Blankline
                                     $IISWebSitesrReport = @()

@@ -27,7 +27,7 @@ function Get-AbrWinHostStorage {
     process {
         if ($InfoLevel.Storage -ge 1) {
             try {
-                $HostDisks = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Disk }
+                $HostDisks = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Disk | Where-Object { $_.BusType -ne "iSCSI" -and $_.BusType -ne "Fibre Channel" } }
                 if ($HostDisks) {
                     Section -Style Heading3 'Local Disks' {
                         Paragraph 'The following table details physical disks installed in the host'
@@ -40,7 +40,7 @@ function Get-AbrWinHostStorage {
                                     'Model' = $Disk.Model
                                     'Serial Number' = $Disk.SerialNumber
                                     'Partition Style' = $Disk.PartitionStyle
-                                    'Disk Size(GB)' = [Math]::Round($Disk.Size / 1Gb)
+                                    'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
                                 $LocalDiskReport += $TempLocalDiskReport
                             }
@@ -65,7 +65,7 @@ function Get-AbrWinHostStorage {
             }
             #Report any SAN Disks if they exist
             try {
-                $SanDisks = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Disk | Where-Object { $_.BusType -Eq "iSCSI" -or $_.BusType -Eq "FCP" } }
+                $SanDisks = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Disk | Where-Object { $_.BusType -Eq "iSCSI" -or $_.BusType -Eq "Fibre Channel" } }
                 if ($SanDisks) {
                     Section -Style Heading3 'SAN Disks' {
                         Paragraph 'The following section details SAN disks connected to the host'
@@ -78,7 +78,7 @@ function Get-AbrWinHostStorage {
                                     'Model' = $Disk.Model
                                     'Serial Number' = $Disk.SerialNumber
                                     'Partition Style' = $Disk.PartitionStyle
-                                    'Disk Size(GB)' = [Math]::Round($Disk.Size / 1Gb)
+                                    'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
                                 $SanDiskReport += $TempSanDiskReport
                             }

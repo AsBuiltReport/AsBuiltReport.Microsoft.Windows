@@ -31,7 +31,7 @@ function Get-AbrWinHyperVSummary {
                 if ($VmHost) {
                     $VmHostReport = [PSCustomObject]@{
                         'Logical Processor Count' = $VmHost.LogicalProcessorCount
-                        'Memory Capacity (GB)' = [Math]::Round($VmHost.MemoryCapacity / 1gb)
+                        'Memory Capacity' = "$([Math]::Round($VmHost.MemoryCapacity / 1gb)) GB"
                         'VM Default Path' = $VmHost.VirtualMachinePath
                         'VM Disk Default Path' = $VmHost.VirtualHardDiskPath
                         'Supported VM Versions' = $VmHost.SupportedVmVersions -Join ","

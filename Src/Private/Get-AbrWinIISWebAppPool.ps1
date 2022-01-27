@@ -28,7 +28,7 @@ function Get-AbrWinIISWebAppPool {
             try {
                 $IISWebAppPools = Invoke-Command -Session $TempPssSession { Get-IISAppPool }
                 if ($IISWebAppPools) {
-                    Section -Style Heading3 'Web Application Pools' {
+                    Section -Style Heading3 'Application Pools' {
                         Paragraph 'The following table lists IIS Application Pools'
                         Blankline
                         $IISWebAppPoolsReport = @()
