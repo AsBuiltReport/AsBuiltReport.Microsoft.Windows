@@ -150,6 +150,24 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             catch {
                 Write-PscriboMessage -IsWarning $_.Exception.Message
             }
+            try {
+                $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
+                if ($IISInstalledCheck.InstallState -eq "Installed") {
+                    Section -Style Heading2 "IIS Configuration Settings" {
+                        Paragraph 'The following table details the IIS Server Settings'
+                        Blankline
+                        # Hyper-V Configuration
+                        Get-AbrWinIISSummary
+                        # Hyper-V Numa Information
+                        #Get-AbrWinIISBinding
+                        # Hyper-V Networking
+                        #Get-AbrWinIISWebSite
+                    }
+                }
+            }
+            catch {
+                Write-PscriboMessage -IsWarning $_.Exception.Message
+            }
         }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession
