@@ -4,5 +4,6 @@
         'PSReviewUnusedParameter',
         'PSUseDeclaredVarsMoreThanAssignments',
         'PSAvoidGlobalVars'
+        'PSUseSingularNouns'
     )
 }
