@@ -8,8 +8,8 @@ function Get-AbrWinHyperVHostVM {
         Version:        0.2.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
-        Twitter:        @jcolonfzenpr
-        Github:         rebelinux
+        Twitter:        @asbuiltreport
+        Github:         AsBuiltReport
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
 
     .LINK
@@ -132,6 +132,7 @@ function Get-AbrWinHyperVHostVM {
                                     catch {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
+                                    <#
                                     try {
                                         $VmNetworkAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -VMName $VM.Name
                                         if ($VmNetworkAdapters) {
@@ -205,7 +206,7 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     catch {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
-                                    }
+                                    }#>
                                     try {
                                         $VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
                                         if ($VmHardDisks) {

@@ -8,8 +8,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
         Version:        0.2.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
-        Twitter:        @jcolonfzenpr
-        Github:         rebelinux
+        Twitter:        @asbuiltreport
+        Github:         AsBuiltReport
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
 
     .LINK
