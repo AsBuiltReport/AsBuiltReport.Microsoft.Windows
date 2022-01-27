@@ -100,7 +100,7 @@ function Get-AbrWinHyperVNetworking {
                 $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
                 if ($VmSwitches) {
                     Section -Style Heading3 "Hyper-V vSwitch Settings" {
-                        Paragraph 'The following table details the Hyper-V vSwitches configured'
+                        Paragraph 'The following table provide a summary of Hyper-V configured vSwitches'
                         Blankline
                         $VmSwitchesReport = @()
                         ForEach ($VmSwitch in $VmSwitches) {

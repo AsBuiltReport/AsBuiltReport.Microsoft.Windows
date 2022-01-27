@@ -8,8 +8,8 @@ function Get-AbrWinHyperVNuma {
         Version:        0.2.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
-        Twitter:        @asbuiltreport
-        Github:         AsBuiltReport
+        Twitter:        @jcolonfzenpr
+        Github:         rebelinux
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
 
     .LINK
@@ -37,8 +37,8 @@ function Get-AbrWinHyperVNuma {
                             try {
                                 $TempVmHostNumaReport = [PSCustomObject]@{
                                     'Numa Node Id' = $Node.NodeId
-                                    'Memory Available(GB)' = ($Node.MemoryAvailable)/1024
-                                    'Memory Total(GB)' = ($Node.MemoryTotal)/1024
+                                    'Memory Available(GB)' = "$([math]::Round(($Node.MemoryAvailable)/1024,0)) GB"
+                                    'Memory Total(GB)' =  "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
                                 }
                                 $VmHostNumaReport += $TempVmHostNumaReport
                             }
