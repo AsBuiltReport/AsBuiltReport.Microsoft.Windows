@@ -27,33 +27,72 @@ function Get-AbrWinOSRoleFeature {
     process {
         if ($InfoLevel.OperatingSystem -ge 1) {
             try {
-                $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock{Get-WindowsFeature | Where-Object { $_.Installed -eq $True }}
+                $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
                 if ($HostRolesAndFeatures) {
-                    Section -Style Heading3 'Roles and Features' {
-                        Paragraph 'The following settings details host roles and features installed'
+                    Section -Style Heading3 'Roles' {
+                        Paragraph 'The following settings details host roles installed'
                         Blankline
                         [array]$HostRolesAndFeaturesReport = @()
                         ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
-                            try {
-                                $TempHostRolesAndFeaturesReport = [PSCustomObject] @{
-                                    'Feature Name' = $HostRoleAndFeature.DisplayName
-                                    'Feature Type' = $HostRoleAndFeature.FeatureType
-                                    'Description' = $HostRoleAndFeature.Description
+                            if ( $HostRoleAndFeature.FeatureType -eq 'Role') {
+                                try {
+                                    $TempHostRolesAndFeaturesReport = [PSCustomObject] @{
+                                        'Name' = $HostRoleAndFeature.DisplayName
+                                        'Type' = $HostRoleAndFeature.FeatureType
+                                        'Description' = $HostRoleAndFeature.Description
+                                    }
+                                    $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
+                                } catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
                                 }
-                                $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
-                            } catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
-                            Name = "Roles and Features"
+                            Name = "Roles"
                             List = $false
                             ColumnWidths = 20, 10, 70
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HostRolesAndFeaturesReport | Sort-Object -Property 'Feature Name' | Table @TableParams
+                        $HostRolesAndFeaturesReport | Sort-Object -Property 'Name' | Table @TableParams
+                        if ($InfoLevel.OperatingSystem -ge 2) {
+                            try {
+                                if ($HostRolesAndFeatures) {
+                                    Section -Style Heading3 'Features and Role Services' {
+                                        Paragraph 'The following settings details host features and role services installed'
+                                        Blankline
+                                        [array]$HostRolesAndFeaturesReport = @()
+                                        ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
+                                            if ( $HostRoleAndFeature.FeatureType -eq 'Role Service' -or $HostRoleAndFeature.FeatureType -eq 'Feature') {
+                                                try {
+                                                    $TempHostRolesAndFeaturesReport = [PSCustomObject] @{
+                                                        'Name' = $HostRoleAndFeature.DisplayName
+                                                        'Type' = $HostRoleAndFeature.FeatureType
+                                                        'Description' = $HostRoleAndFeature.Description
+                                                    }
+                                                    $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
+                                                } catch {
+                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                }
+                                            }
+                                        }
+                                        $TableParams = @{
+                                            Name = "Feature & Role Services"
+                                            List = $false
+                                            ColumnWidths = 20, 10, 70
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $HostRolesAndFeaturesReport | Sort-Object -Property 'Name' | Table @TableParams
+                                    }
+                                }
+                            }
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
+                        }
                     }
                 }
             }
