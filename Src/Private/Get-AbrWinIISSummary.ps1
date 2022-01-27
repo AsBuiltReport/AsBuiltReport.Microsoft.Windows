@@ -6,10 +6,9 @@ function Get-AbrWinIISSummary {
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
         Version:        0.2.0
-        Author:         Andrew Ramsay
-        Editor:         Jonathan Colon
-        Twitter:        @asbuiltreport
-        Github:         AsBuiltReport
+        Author:         Jonathan Colon
+        Twitter:        @jcolonfzenpr
+        Github:         rebelinux
         Credits:        Iain Brighton (@iainbrighton) - PScribo module
 
     .LINK
