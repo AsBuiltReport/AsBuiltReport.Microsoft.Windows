@@ -135,12 +135,24 @@ The **Options** schema allows certain options within the report to be toggled on
 
 The **InfoLevel** schema allows configuration of each section of the report at a granular level. The following sections can be set.
 
-There are 2 levels (0-1) of detail granularity for each section as follows;
+There are 3 levels (0-2) of detail granularity for each section as follows;
 
 | Setting | InfoLevel         | Description                                                                                                                                |
 |:-------:|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 |    0    | Disabled          | Does not collect or display any information                                                                                                |
 |    1    | Enabled           | Provides summarised information for a collection of objects                                                                                |
+|    2    | Adv Summary       | Provides condensed, detailed information for a collection of objects                                                                       |
+
+The table below outlines the default and maximum **InfoLevel** settings for each section.
+
+| Sub-Schema   | Default Setting | Maximum Setting |
+|--------------|:---------------:|:---------------:|
+| Hardware       |        1        |        1        |
+| OperatingSystem       |        1        |        2        |
+| Storage          |        1        |        1        |
+| Networking         |        1        |        1        |
+| IIS           |        1        |        1        |
+| HyperV           |        1        |        1        |
 
 ### Healthcheck
 
