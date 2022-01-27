@@ -8,6 +8,7 @@
 - Added table column sorting on primary key
 - Added table caption
 - Updated project ReadMe file
+- Added IIS initial section
 
 ### Changed
 
