@@ -132,7 +132,6 @@ function Get-AbrWinHyperVHostVM {
                                     catch {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
-                                    <#
                                     try {
                                         $VmNetworkAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -VMName $VM.Name
                                         if ($VmNetworkAdapters) {
@@ -206,7 +205,7 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     catch {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
-                                    }#>
+                                    }
                                     try {
                                         $VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
                                         if ($VmHardDisks) {

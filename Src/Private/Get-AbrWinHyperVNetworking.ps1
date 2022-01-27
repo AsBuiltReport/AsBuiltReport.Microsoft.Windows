@@ -57,7 +57,7 @@ function Get-AbrWinHyperVNetworking {
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
-                <#
+
                 try {
                     $VmOsAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -ManagementOS
                     if ($VmOsAdapters) {
@@ -96,73 +96,78 @@ function Get-AbrWinHyperVNetworking {
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
-                }#>
-                $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
-                if ($VmSwitches) {
-                    Section -Style Heading3 "Hyper-V vSwitch Settings" {
-                        Paragraph 'The following table provide a summary of Hyper-V configured vSwitches'
-                        Blankline
-                        $VmSwitchesReport = @()
-                        ForEach ($VmSwitch in $VmSwitches) {
-                            try {
-                                $TempVmSwitchesReport = [PSCustomObject]@{
-                                    'Switch Name' = $VmSwitch.Name
-                                    'Switch Type' = $VmSwitch.SwitchType
-                                    'Embedded Team' = $VmSwitch.EmbeddedTeamingEnabled
-                                    'Interface Description' = $VmSwitch.NetAdapterInterfaceDescription
-                                }
-                                $VmSwitchesReport += $TempVmSwitchesReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
-                            }
-                        }
-
-                        $TableParams = @{
-                            Name = "Virtual Switch Summary"
-                            List = $false
-                            ColumnWidths = 30, 20, 20, 30
-                        }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $VmSwitchesReport | Sort-Object -Property 'Switch Name' | Table @TableParams
-
-                        Foreach ($VmSwitch in $VmSwitches) {
-                            try {
-                                Section -Style Heading4 ($VmSwitch.Name) {
-                                    Paragraph 'The following table details the Hyper-V vSwitch'
-                                    Blankline
-                                    $VmSwitchReport = [PSCustomObject]@{
+                }
+                try {
+                    $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
+                    if ($VmSwitches) {
+                        Section -Style Heading3 "Hyper-V vSwitch Settings" {
+                            Paragraph 'The following table provide a summary of Hyper-V configured vSwitches'
+                            Blankline
+                            $VmSwitchesReport = @()
+                            ForEach ($VmSwitch in $VmSwitches) {
+                                try {
+                                    $TempVmSwitchesReport = [PSCustomObject]@{
                                         'Switch Name' = $VmSwitch.Name
                                         'Switch Type' = $VmSwitch.SwitchType
-                                        'Switch Embedded Teaming Status' = $VmSwitch.EmbeddedTeamingEnabled
-                                        'Bandwidth Reservation Mode' = $VmSwitch.BandwidthReservationMode
-                                        'Bandwidth Reservation Percentage' = $VmSwitch.Percentage
-                                        'Management OS Allowed' = $VmSwitch.AllowManagementOS
-                                        'Physical Adapters' = $VmSwitch.NetAdapterInterfaceDescriptions -Join ","
-                                        'IOV Support' = $VmSwitch.IovSupport
-                                        'IOV Support Reasons' = $VmSwitch.IovSupportReasons
-                                        'Available VM Queues' = $VmSwitch.AvailableVMQueues
-                                        'Packet Direct Enabled' = $VmSwitch.PacketDirectinUse
+                                        'Embedded Team' = $VmSwitch.EmbeddedTeamingEnabled
+                                        'Interface Description' = $VmSwitch.NetAdapterInterfaceDescription
                                     }
-
-                                    $TableParams = @{
-                                        Name = "VM Switch Details"
-                                        List = $true
-                                        ColumnWidths = 50, 50
-                                    }
-                                    if ($Report.ShowTableCaptions) {
-                                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                                    }
-                                    $VmSwitchReport | Table @TableParams
+                                    $VmSwitchesReport += $TempVmSwitchesReport
+                                }
+                                catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+
+                            $TableParams = @{
+                                Name = "Virtual Switch Summary"
+                                List = $false
+                                ColumnWidths = 30, 20, 20, 30
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $VmSwitchesReport | Sort-Object -Property 'Switch Name' | Table @TableParams
+
+                            Foreach ($VmSwitch in $VmSwitches) {
+                                try {
+                                    Section -Style Heading4 ($VmSwitch.Name) {
+                                        Paragraph 'The following table details the Hyper-V vSwitch'
+                                        Blankline
+                                        $VmSwitchReport = [PSCustomObject]@{
+                                            'Switch Name' = $VmSwitch.Name
+                                            'Switch Type' = $VmSwitch.SwitchType
+                                            'Switch Embedded Teaming Status' = $VmSwitch.EmbeddedTeamingEnabled
+                                            'Bandwidth Reservation Mode' = $VmSwitch.BandwidthReservationMode
+                                            'Bandwidth Reservation Percentage' = $VmSwitch.Percentage
+                                            'Management OS Allowed' = $VmSwitch.AllowManagementOS
+                                            'Physical Adapters' = $VmSwitch.NetAdapterInterfaceDescriptions -Join ","
+                                            'IOV Support' = $VmSwitch.IovSupport
+                                            'IOV Support Reasons' = $VmSwitch.IovSupportReasons
+                                            'Available VM Queues' = $VmSwitch.AvailableVMQueues
+                                            'Packet Direct Enabled' = $VmSwitch.PacketDirectinUse
+                                        }
+
+                                        $TableParams = @{
+                                            Name = "VM Switch Details"
+                                            List = $true
+                                            ColumnWidths = 50, 50
+                                        }
+                                        if ($Report.ShowTableCaptions) {
+                                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                                        }
+                                        $VmSwitchReport | Table @TableParams
+                                    }
+                                }
+                                catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                }
                             }
                         }
                     }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
             catch {
