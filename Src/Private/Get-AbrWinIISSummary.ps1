@@ -31,14 +31,14 @@ function Get-AbrWinIISSummary {
                 if ($IISApplicationDefaults -and $IISSiteDefaults) {
                     $IISServerManagerReport = [PSCustomObject]@{
                         'Default Application Pool' = ($IISApplicationDefaults).ApplicationPoolName
-                        'Enabled Protocols' =  ($IISApplicationDefaults).EnabledProtocols
-                        'Logfile Path' =  ($IISSiteDefaults).Directory
-                        'Server Auto Start' =  ($IISSiteDefaults).ServerAutoStart
+                        'Enabled Protocols' = (($IISApplicationDefaults).EnabledProtocols).toUpper()
+                        'Logfile Path' = ($IISSiteDefaults).Directory
+                        'Server Auto Start' = ConvertTo-TextYN ($IISSiteDefaults).ServerAutoStart
                     }
                     $TableParams = @{
                         Name = "IIS Host Settings"
-                        List = $true
-                        ColumnWidths = 50, 50
+                        List = $false
+                        ColumnWidths = 25, 25, 25, 25
                     }
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
