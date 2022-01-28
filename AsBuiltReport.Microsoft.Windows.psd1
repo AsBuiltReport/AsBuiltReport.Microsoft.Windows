@@ -12,7 +12,7 @@
 RootModule = 'AsBuiltReport.Microsoft.Windows.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.0'
+ModuleVersion = '0.2.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Andrew Ramsay'
 # CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2021 Andrew Ramsay. All rights reserved.'
+Copyright = '(c) 2022 Andrew Ramsay. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A PowerShell module to generate an as built report on the configuration of Microsoft Windows.'
