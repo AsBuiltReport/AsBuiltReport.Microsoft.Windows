@@ -24,6 +24,12 @@
         "SMB": 1
     },
     "HealthCheck": {
+        "Networking": {
+            "Firewall": true
+        },
+        "OperatingSystem": {
+            "Services": true
+        }
 
     }
 }

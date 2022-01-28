@@ -47,6 +47,11 @@ function Get-AbrWinNetFirewall {
                                 Write-PscriboMessage -IsWarning $_.Exception.Message
                             }
                         }
+
+                        if ($HealthCheck.Networking.Firewall) {
+                            $ServicesReport | Where-Object { $_.'Profile Enabled' -notlike 'No'} | Set-Style -Style Warning -Property 'Profile Enabled'
+                        }
+
                         $TableParams = @{
                             Name = "Windows Firewall Profiles"
                             List = $false
