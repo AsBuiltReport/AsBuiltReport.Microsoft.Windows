@@ -8,7 +8,9 @@
 - Added table column sorting on primary key
 - Added table caption
 - Updated project ReadMe file
-- Added IIS initial section
+- Added IIS Web Server section
+- Added SMB File Server section
+- Added Windows Service Status to OS section
 
 ### Changed
 
