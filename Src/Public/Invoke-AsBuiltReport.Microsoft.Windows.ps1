@@ -68,6 +68,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         Get-AbrWinOSRoleFeature
                         #Host 3rd Party Applications
                         Get-AbrWinApplication
+                        # Host Service Status
+                        Get-AbrWinOSService
                     }
                 }
                 catch {
@@ -195,7 +197,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Section -Style Heading2 "File Server Configuration Settings" {
                                 Paragraph 'The following table details the File Server Settings'
                                 Blankline
-                                # IIS Configuration
+                                # SMB Server Configuration
                                 Get-AbrWinSMBSummary
                                 # SMB Server Network Interface
                                 Get-AbrWinSMBNetworkInterface
