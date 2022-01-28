@@ -27,38 +27,78 @@ function Get-AbrWinSMBShare {
         if ($InfoLevel.SMB -ge 1) {
             try {
                 if ($SMBShares) {
-                    Section -Style Heading3 'Network Shares' {
-                        Paragraph 'The following table details network shares'
+                    Section -Style Heading3 'File Shares' {
+                        Paragraph 'The following section details network shares'
                         Blankline
                         $SMBSharesReport = @()
                         foreach ($SMBShare in $SMBShares) {
-                            try {
-                                $ShareAccess = Invoke-Command -Session $TempPssSession { Get-SmbShareAccess -Name ($using:SMBShare).Name }
-                                $TempSMBSharesReport = [PSCustomObject]@{
-                                    'Name' = $SMBShare.Name
-                                    'Scope Name' = $SMBShare.ScopeName
-                                    'Path' = $SMBShare.Path
-                                    'Description' =  $SMBShare.Description
-                                    'Access Based Enumeration Mode' = $SMBShare.FolderEnumerationMode
-                                    'Caching Mode' = $SMBShare.CachingMode
-                                    'Encrypt Data' = $SMBShare.EncryptData
-                                    'State' = $SMBShare.ShareState
-                                    'Share Access' = $ShareAccess.AccountName
+                            Section -Style Heading4 "$($SMBShare.Name) Share" {
+                                Paragraph "The following table details shares configuration"
+                                Blankline
+                                try {
+                                    $ShareAccess = Invoke-Command -Session $TempPssSession { Get-SmbShareAccess -Name ($using:SMBShare).Name }
+                                    $TempSMBSharesReport = [PSCustomObject]@{
+                                        'Name' = $SMBShare.Name
+                                        'Scope Name' = $SMBShare.ScopeName
+                                        'Path' = $SMBShare.Path
+                                        'Description' =  $SMBShare.Description
+                                        'Access Based Enumeration Mode' = $SMBShare.FolderEnumerationMode
+                                        'Caching Mode' = $SMBShare.CachingMode
+                                        'Encrypt Data' = $SMBShare.EncryptData
+                                        'State' = $SMBShare.ShareState
+                                    }
+                                    $SMBSharesReport = $TempSMBSharesReport
+                                    $TableParams = @{
+                                        Name = "File Server Shares - $($SMBShare.Name)"
+                                        List = $true
+                                        ColumnWidths = 40, 60
+                                    }
+                                    if ($Report.ShowTableCaptions) {
+                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                    }
+                                    $SMBSharesReport | Table @TableParams
                                 }
-                                $SMBSharesReport = $TempSMBSharesReport
+                                catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                }
+                                try {
+                                    $ShareAccess = Invoke-Command -Session $TempPssSession { Get-SmbShareAccess -Name ($using:SMBShare).Name }
+                                    if ($ShareAccess) {
+                                        Section -Style Heading5 'Permissions' {
+                                            Paragraph "The following table details $($SMBShare.Name) shares permissions"
+                                            Blankline
+                                            $ShareAccessReport = @()
+                                            foreach ($SMBACL in $ShareAccess) {
+                                                try {
+                                                    $TempSMBAccessReport = [PSCustomObject]@{
+                                                        'Scope Name' = $SMBACL.ScopeName
+                                                        'Account Name' = $SMBACL.AccountName
+                                                        'Access Control Type' =  $SMBACL.AccessControlType
+                                                        'Access Right' = $SMBACL.AccessRight
+                                                    }
+                                                    $ShareAccessReport += $TempSMBAccessReport
 
-                                $TableParams = @{
-                                    Name = "File Server Share - $($SMBShare.Name)"
-                                    List = $true
-                                    ColumnWidths = 40, 60
+                                                }
+                                                catch {
+                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                }
+                                            }
+
+                                            $TableParams = @{
+                                                Name = "Share Permissions - $($SMBShare.Name)"
+                                                List = $false
+                                                ColumnWidths = 25, 25, 25, 25
+                                            }
+                                            if ($Report.ShowTableCaptions) {
+                                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                                            }
+                                            $ShareAccessReport | Table @TableParams
+                                        }
+                                    }
                                 }
-                                if ($Report.ShowTableCaptions) {
-                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                catch {
+                                    Write-PscriboMessage -IsWarning $_.Exception.Message
                                 }
-                                $SMBSharesReport | Table @TableParams
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                     }

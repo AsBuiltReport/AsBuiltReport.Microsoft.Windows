@@ -197,10 +197,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Blankline
                                 # IIS Configuration
                                 Get-AbrWinSMBSummary
+                                # SMB Server Network Interface
+                                Get-AbrWinSMBNetworkInterface
                                 # SMB Shares
                                 Get-AbrWinSMBShare
-                                # SMB Server Network Interface
-                                #Get-AbrWinSMBNetworkInterface
+
 
                             }
                         }
