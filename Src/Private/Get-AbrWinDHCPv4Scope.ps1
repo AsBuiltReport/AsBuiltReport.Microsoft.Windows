@@ -33,19 +33,24 @@ function Get-AbrWinDHCPv4Scope {
                     BlankLine
                     $OutObj = @()
                     foreach ($Scope in $DHCPScopes) {
-                        Write-PscriboMessage "Collecting DHCP Server $($Scope.ScopeId) Scope"
-                        $SubnetMask = Convert-IpAddressToMaskLength $Scope.SubnetMask
-                        $inObj = [ordered] @{
-                            'Scope Id' = "$($Scope.ScopeId)/$($SubnetMask)"
-                            'Scope Name' = $Scope.Name
-                            'Scope Range' = "$($Scope.StartRange) - $($Scope.EndRange)"
-                            'Lease Duration' = Switch ($Scope.LeaseDuration) {
-                                "10675199.02:48:05.4775807" {"Unlimited"}
-                                default {$Scope.LeaseDuration}
+                        try {
+                            Write-PscriboMessage "Collecting DHCP Server $($Scope.ScopeId) Scope"
+                            $SubnetMask = Convert-IpAddressToMaskLength $Scope.SubnetMask
+                            $inObj = [ordered] @{
+                                'Scope Id' = "$($Scope.ScopeId)/$($SubnetMask)"
+                                'Scope Name' = $Scope.Name
+                                'Scope Range' = "$($Scope.StartRange) - $($Scope.EndRange)"
+                                'Lease Duration' = Switch ($Scope.LeaseDuration) {
+                                    "10675199.02:48:05.4775807" {"Unlimited"}
+                                    default {$Scope.LeaseDuration}
+                                }
+                                'State' = $Scope.State
                             }
-                            'State' = $Scope.State
+                            $OutObj += [pscustomobject]$inobj
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        }
                     }
 
                     $TableParams = @{

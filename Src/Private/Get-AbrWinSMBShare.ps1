@@ -5,7 +5,7 @@ function Get-AbrWinSMBShare {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -44,7 +44,7 @@ function Get-AbrWinSMBShare {
                                         'Description' =  $SMBShare.Description
                                         'Access Based Enumeration Mode' = $SMBShare.FolderEnumerationMode
                                         'Caching Mode' = $SMBShare.CachingMode
-                                        'Encrypt Data' = $SMBShare.EncryptData
+                                        'Encrypt Data' = ConvertTo-TextYN $SMBShare.EncryptData
                                         'State' = $SMBShare.ShareState
                                     }
                                     $SMBSharesReport = $TempSMBSharesReport
@@ -73,7 +73,7 @@ function Get-AbrWinSMBShare {
                                                     $TempSMBAccessReport = [PSCustomObject]@{
                                                         'Scope Name' = $SMBACL.ScopeName
                                                         'Account Name' = $SMBACL.AccountName
-                                                        'Access Control Type' =  $SMBACL.AccessControlType
+                                                        'Access Control Type' = $SMBACL.AccessControlType
                                                         'Access Right' = $SMBACL.AccessRight
                                                     }
                                                     $ShareAccessReport += $TempSMBAccessReport

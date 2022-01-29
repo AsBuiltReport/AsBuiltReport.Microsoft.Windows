@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -147,17 +147,20 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 try {
                     $HyperVInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Hyper-V*" } }
                     if ($HyperVInstalledCheck.InstallState -eq "Installed") {
-                        Section -Style Heading2 "Hyper-V Configuration Settings" {
-                            Paragraph 'The following table details the Hyper-V Server Settings'
-                            Blankline
-                            # Hyper-V Configuration
-                            Get-AbrWinHyperVSummary
-                            # Hyper-V Numa Information
-                            Get-AbrWinHyperVNuma
-                            # Hyper-V Networking
-                            Get-AbrWinHyperVNetworking
-                            # Hyper-V VM Information (Buggy as hell)
-                            #Get-AbrWinHyperVHostVM
+                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'vmms' -ErrorAction SilentlyContinue }
+                        if ($Status.Status -eq "Running") {
+                            Section -Style Heading2 "Hyper-V Configuration Settings" {
+                                Paragraph 'The following table details the Hyper-V Server Settings'
+                                Blankline
+                                # Hyper-V Configuration
+                                Get-AbrWinHyperVSummary
+                                # Hyper-V Numa Information
+                                Get-AbrWinHyperVNuma
+                                # Hyper-V Networking
+                                Get-AbrWinHyperVNetworking
+                                # Hyper-V VM Information (Buggy as hell)
+                                #Get-AbrWinHyperVHostVM
+                            }
                         }
                     }
                 }
@@ -169,16 +172,19 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 try {
                     $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
                     if ($IISInstalledCheck.InstallState -eq "Installed") {
-                        Section -Style Heading2 "IIS Configuration Settings" {
-                            Paragraph 'The following table details the IIS Server Settings'
-                            Blankline
-                            # IIS Configuration
-                            Get-AbrWinIISSummary
-                            # IIS Web Application Pools
-                            Get-AbrWinIISWebAppPool
-                            # IIS Web Site
-                            Get-AbrWinIISWebSite
+                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'W3SVC' -ErrorAction SilentlyContinue }
+                        if ($Status.Status -eq "Running") {
+                            Section -Style Heading2 "IIS Configuration Settings" {
+                                Paragraph 'The following table details the IIS Server Settings'
+                                Blankline
+                                # IIS Configuration
+                                Get-AbrWinIISSummary
+                                # IIS Web Application Pools
+                                Get-AbrWinIISWebAppPool
+                                # IIS Web Site
+                                Get-AbrWinIISWebSite
 
+                            }
                         }
                     }
                 }

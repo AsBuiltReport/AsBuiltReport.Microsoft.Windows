@@ -5,7 +5,7 @@ function Get-AbrWinIISWebAppPool {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,14 +33,19 @@ function Get-AbrWinIISWebAppPool {
                         Blankline
                         $IISWebAppPoolsReport = @()
                         foreach ($IISWebAppPool in $IISWebAppPools) {
-                            $TempIISWebAppPoolsReport = [PSCustomObject]@{
-                                'Name' = $IISWebAppPool.Name
-                                'Status' = $IISWebAppPool.State
-                                'CLR Ver' = $IISWebAppPool.ManagedRuntimeVersion
-                                'Pipeline Mode ' = $IISWebAppPool.ManagedPipelineMode
-                                'Start Mode' = $IISWebAppPool.StartMode
+                            try {
+                                $TempIISWebAppPoolsReport = [PSCustomObject]@{
+                                    'Name' = $IISWebAppPool.Name
+                                    'Status' = $IISWebAppPool.State
+                                    'CLR Ver' = $IISWebAppPool.ManagedRuntimeVersion
+                                    'Pipeline Mode ' = $IISWebAppPool.ManagedPipelineMode
+                                    'Start Mode' = $IISWebAppPool.StartMode
+                                }
+                                $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
                             }
-                            $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
                         }
 
                         $TableParams = @{

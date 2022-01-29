@@ -36,8 +36,8 @@ function Get-AbrWinDHCPInfrastructure {
                         'Domain Joined' = ConvertTo-TextYN $Settings.IsDomainJoined
                         'Authorized' = ConvertTo-TextYN $Settings.IsAuthorized
                         'Conflict Detection Attempts' = $Settings.ConflictDetectionAttempts
-                        'Activate Policies' = $Settings.ActivatePolicies
-                        'Dynamic Bootp' = $Settings.DynamicBootp
+                        'Activate Policies' = ConvertTo-TextYN $Settings.ActivatePolicies
+                        'Dynamic Bootp' = ConvertTo-TextYN $Settings.DynamicBootp
                         'Database Path' =  ConvertTo-EmptyToFiller $Database.FileName
                         'Database Backup Path' = ConvertTo-EmptyToFiller $Database.BackupPath
                         'Database Backup Interval' = switch ($Database.BackupInterval) {

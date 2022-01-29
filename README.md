@@ -77,14 +77,23 @@ A Microsoft Windows As Built Report can be generated with Administrator level pr
 
 ## :package: Module Installation
 
+The installation of the modules will depend on the roles that are being served on the server to be documented.
+
 ### PowerShell v5.x running on a Windows server (Target)
-<!-- ********** Add installation for any additional PowerShell module(s) ********** -->
+
 ```powershell
 Install-Module AsBuiltReport.Microsoft.Windows
+
+# DNS/DHCP Server powershell modules
 Install-WindowsFeature -Name RSAT-DNS-Server
 Install-WindowsFeature -Name RSAT-DHCP
+
+# Hyper-V Server powershell modules
 Install-WindowsFeature -Name Hyper-V-PowerShell
+
+#IIS Server powershell modules
 Install-WindowsFeature -Name web-mgmt-console
+Install-WindowsFeature -Name Web-Scripting-Tools
 
 ```
 
@@ -92,9 +101,18 @@ Install-WindowsFeature -Name web-mgmt-console
 <!-- ********** Add installation for any additional PowerShell module(s) ********** -->
 ```powershell
 Install-Module AsBuiltReport.Microsoft.Windows
+
+# DNS/DHCP Server powershell Modules
 Add-WindowsCapability –online –Name 'Rsat.Dns.Tools~~~~0.0.1.0'
 Add-WindowsCapability -Online -Name 'Rsat.DHCP.Tools~~~~0.0.1.0'
+
+# Hyper-V Server powershell modules
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
+
+#IIS Server powershell modules
+Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole
+Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerManagementTools
+Enable-WindowsOptionalFeature -Online -FeatureName IIS-ManagementScriptingTools
 
 ```
 

@@ -5,7 +5,7 @@ function Get-AbrWinIISWebSite {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -33,13 +33,18 @@ function Get-AbrWinIISWebSite {
                         Blankline
                         $IISWebSitesrReport = @()
                         foreach ($IISWebSite in $IISWebSites) {
-                            $TempIISWebSitesrReport = [PSCustomObject]@{
-                                'Name' = $IISWebSite.Name
-                                'Status' = $IISWebSite.state
-                                'Binding' = $IISWebSite.bindings.Collection
-                                'Application Pool' = $IISWebSite.applicationPool
+                            try {
+                                $TempIISWebSitesrReport = [PSCustomObject]@{
+                                    'Name' = $IISWebSite.Name
+                                    'Status' = $IISWebSite.state
+                                    'Binding' = $IISWebSite.bindings.Collection
+                                    'Application Pool' = $IISWebSite.applicationPool
+                                }
+                                $IISWebSitesrReport += $TempIISWebSitesrReport
                             }
-                            $IISWebSitesrReport += $TempIISWebSitesrReport
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
                         }
 
                         $TableParams = @{
@@ -59,64 +64,74 @@ function Get-AbrWinIISWebSite {
                                     Blankline
                                     $IISWebSitesrReport = @()
                                     foreach ($IISWebSite in $IISWebSites) {
-                                        Section -Style Heading5 "$($IISWebSite.Name)" {
-                                            Paragraph "The following table details $($IISWebSite.Name) settings"
-                                            Blankline
-                                            $SiteURL = Invoke-Command -Session $TempPssSession { Get-WebURL -PSPath "IIS:\Sites\$(($using:IISWebSite).Name)"}
-                                            $TempIISWebSitesrReport = [PSCustomObject]@{
-                                                'Name' = $IISWebSite.Name
-                                                'Auto Start' = ConvertTo-TextYN $IISWebSite.serverAutoStart
-                                                'Enabled Protocols ' = $IISWebSite.enabledProtocols
-                                                'URL' = Switch (($SiteURL.ResponseUri).count) {
-                                                    0 {"-"}
-                                                    default {$SiteURL.ResponseUri}
+                                        try {
+                                            Section -Style Heading5 "$($IISWebSite.Name)" {
+                                                Paragraph "The following table details $($IISWebSite.Name) settings"
+                                                Blankline
+                                                $SiteURL = Invoke-Command -Session $TempPssSession { Get-WebURL -PSPath "IIS:\Sites\$(($using:IISWebSite).Name)"}
+                                                $TempIISWebSitesrReport = [PSCustomObject]@{
+                                                    'Name' = $IISWebSite.Name
+                                                    'Auto Start' = ConvertTo-TextYN $IISWebSite.serverAutoStart
+                                                    'Enabled Protocols ' = $IISWebSite.enabledProtocols
+                                                    'URL' = Switch (($SiteURL.ResponseUri).count) {
+                                                        0 {"-"}
+                                                        default {$SiteURL.ResponseUri}
+                                                    }
+                                                    'Path ' = $IISWebSite.physicalPath
+                                                    'Log Path' = $IISWebSite.logFile.directory
+
                                                 }
-                                                'Path ' = $IISWebSite.physicalPath
-                                                'Log Path' = $IISWebSite.logFile.directory
+                                                $IISWebSitesrReport = $TempIISWebSitesrReport
 
-                                            }
-                                            $IISWebSitesrReport = $TempIISWebSitesrReport
-
-                                            $TableParams = @{
-                                                Name = "IIS Web Sites - $($IISWebSite.Name)"
-                                                List = $true
-                                                ColumnWidths = 40, 60
-                                            }
-                                            if ($Report.ShowTableCaptions) {
-                                                $TableParams['Caption'] = "- $($TableParams.Name)"
-                                            }
-                                            $IISWebSitesrReport | Table @TableParams
-                                            try {
-                                                $IISWebApps = Invoke-Command -Session $TempPssSession { Get-WebApplication -Site $(($using:IISWebSite).Name) }
-                                                if ($IISWebApps) {
-                                                    Section -Style Heading5 "Web Applications" {
-                                                        Paragraph "The following table details $($IISWebSite.Name) Web Application"
-                                                        Blankline
-                                                        $IISWebAppsReport = @()
-                                                        foreach ($IISWebApp in $IISWebApps) {
-                                                            $TempIISWebAppsReport = [PSCustomObject]@{
-                                                                'Name' = $IISWebApp.Path
-                                                                'Application pool' = $IISWebApp.Applicationpool
-                                                                'Physical Path ' = $IISWebApp.PhysicalPath
+                                                $TableParams = @{
+                                                    Name = "IIS Web Sites - $($IISWebSite.Name)"
+                                                    List = $true
+                                                    ColumnWidths = 40, 60
+                                                }
+                                                if ($Report.ShowTableCaptions) {
+                                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                }
+                                                $IISWebSitesrReport | Table @TableParams
+                                                try {
+                                                    $IISWebApps = Invoke-Command -Session $TempPssSession { Get-WebApplication -Site $(($using:IISWebSite).Name) }
+                                                    if ($IISWebApps) {
+                                                        Section -Style Heading5 "Web Applications" {
+                                                            Paragraph "The following table details $($IISWebSite.Name) Web Application"
+                                                            Blankline
+                                                            $IISWebAppsReport = @()
+                                                            foreach ($IISWebApp in $IISWebApps) {
+                                                                try {
+                                                                    $TempIISWebAppsReport = [PSCustomObject]@{
+                                                                        'Name' = $IISWebApp.Path
+                                                                        'Application pool' = $IISWebApp.Applicationpool
+                                                                        'Physical Path ' = $IISWebApp.PhysicalPath
+                                                                    }
+                                                                    $IISWebAppsReport += $TempIISWebAppsReport
+                                                                }
+                                                                catch {
+                                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                                }
                                                             }
-                                                            $IISWebAppsReport += $TempIISWebAppsReport
-                                                        }
 
-                                                        $TableParams = @{
-                                                            Name = "Web Applications - $($IISWebSite.Name)"
-                                                            List = $false
-                                                            ColumnWidths = 35, 20, 45
+                                                            $TableParams = @{
+                                                                Name = "Web Applications - $($IISWebSite.Name)"
+                                                                List = $false
+                                                                ColumnWidths = 35, 20, 45
+                                                            }
+                                                            if ($Report.ShowTableCaptions) {
+                                                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                                                            }
+                                                            $IISWebAppsReport | Table @TableParams
                                                         }
-                                                        if ($Report.ShowTableCaptions) {
-                                                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                                                        }
-                                                        $IISWebAppsReport | Table @TableParams
                                                     }
                                                 }
+                                                catch {
+                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                }
                                             }
-                                            catch {
-                                                Write-PscriboMessage -IsWarning $_.Exception.Message
-                                            }
+                                        }
+                                        catch {
+                                            Write-PscriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                 }
