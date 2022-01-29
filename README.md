@@ -62,6 +62,7 @@ PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are require
 
 - [AsBuiltReport.Microsoft.Windows Module](https://www.powershellgallery.com/packages/AsBuiltReport.Microsoft.Windows/)
 - [IISAdministration Module](https://docs.microsoft.com/en-us/powershell/module/iisadministration/?view=windowsserver2022-ps)
+- [SmbShare Module](https://docs.microsoft.com/en-us/powershell/module/smbshare/?view=windowsserver2022-ps)
 - [Hyper-V Module](https://docs.microsoft.com/en-us/powershell/module/hyper-v/?view=windowsserver2022-ps)
 - [DhcpServer Module](https://docs.microsoft.com/en-us/powershell/module/dhcpserver/?view=windowsserver2019-ps)
 - [DnsServer Module](https://docs.microsoft.com/en-us/powershell/module/dnsserver/?view=windowsserver2019-ps)
