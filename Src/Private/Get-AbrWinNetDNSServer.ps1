@@ -27,7 +27,7 @@ function Get-AbrWinNetDNSServer {
     process {
         if ($InfoLevel.Networking -ge 1) {
             try {
-                $DnsServers = Invoke-Command -Session $TempPssSession { Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses -notlike $null -and $_.InterfaceAlias -notlike "*isatap*" } }
+                $DnsServers = Invoke-Command -Session $TempPssSession { Get-DnsClientServerAddress -AddressFamily | Where-Object { $_.ServerAddresses -notlike $null -and $_.InterfaceAlias -notlike "*isatap*" } }
                 if ($DnsServers) {
                     Section -Style Heading3 'DNS Servers' {
                         Paragraph 'The following table details the DNS Server Addresses Configured'

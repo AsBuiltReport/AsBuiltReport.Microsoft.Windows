@@ -213,6 +213,48 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
+            if ($InfoLevel.DHCP -ge 1) {
+                try {
+                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DHCP*" } }
+                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
+                        Section -Style Heading2 "DHCP Server Configuration Settings" {
+                            Paragraph 'The following table details the DHCP Server Settings'
+                            Blankline
+                            # DHCP Server Configuration
+                            Get-AbrWinDHCPInfrastructure
+                            # DHCP Server Stats
+                            Get-AbrWinDHCPv4Statistic
+                            # DHCP Server Scope Info
+                            Get-AbrWinDHCPv4Scope
+                            Get-AbrWinDHCPv4ScopeServerSetting
+                             # DHCP Server Per Scope Info
+                            Get-AbrWinDHCPv4PerScopeSetting
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            if ($InfoLevel.DNS -ge 1) {
+                try {
+                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DNS*" } }
+                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
+                        Section -Style Heading2 "DNS Server Configuration Settings" {
+                            Paragraph 'The following table details the DNS Server Settings'
+                            Blankline
+                            # DHCP Server Configuration
+                            #Get-AbrWinDNSInfrastructure
+                            # DHCP Server Scope summary
+                            # SMB Shares
+                            #Get-AbrWinDHCP
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
         }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession

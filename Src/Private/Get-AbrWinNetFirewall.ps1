@@ -49,7 +49,7 @@ function Get-AbrWinNetFirewall {
                         }
 
                         if ($HealthCheck.Networking.Firewall) {
-                            $ServicesReport | Where-Object { $_.'Profile Enabled' -notlike 'No'} | Set-Style -Style Warning -Property 'Profile Enabled'
+                            $NetFirewallProfileReport | Where-Object { $_.'Profile Enabled' -notlike 'No'} | Set-Style -Style Warning -Property 'Profile Enabled'
                         }
 
                         $TableParams = @{
