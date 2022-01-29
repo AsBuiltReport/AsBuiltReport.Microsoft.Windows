@@ -30,16 +30,14 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     # Used to set values to TitleCase where required
     $TextInfo = (Get-Culture).TextInfo
 
-    # Update/rename the $System variable and build out your code within the ForEach loop. The ForEach loop enables AsBuiltReport to generate an as built configuration against multiple defined targets.
-
     #region foreach loop
     foreach ($System in $Target) {
         Section -Style Heading1 $System {
             Paragraph "The following table details the Windows Host $System"
             BlankLine
             try {
-                $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Kerberos -ErrorAction stop
-                $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Kerberos -ErrorAction stop
+                $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
+                $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
             }
             catch {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
@@ -205,6 +203,54 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinSMBShare
 
 
+                            }
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            if ($InfoLevel.DHCP -ge 1) {
+                try {
+                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DHCP*" } }
+                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
+                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DHCPServer' -ErrorAction SilentlyContinue }
+                        if ($Status.Status -eq "Running") {
+                            Section -Style Heading2 "DHCP Server Configuration Settings" {
+                                Paragraph 'The following table details the DHCP Server Settings'
+                                Blankline
+                                # DHCP Server Configuration
+                                Get-AbrWinDHCPInfrastructure
+                                # DHCP Server Stats
+                                Get-AbrWinDHCPv4Statistic
+                                # DHCP Server Scope Info
+                                Get-AbrWinDHCPv4Scope
+                                # DHCP Server Scope Settings
+                                Get-AbrWinDHCPv4ScopeServerSetting
+                                # DHCP Server Per Scope Info
+                                Get-AbrWinDHCPv4PerScopeSetting
+                            }
+                        }
+                    }
+                }
+                catch {
+                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            if ($InfoLevel.DNS -ge 1) {
+                try {
+                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DNS*" } }
+                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
+                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DNS' -ErrorAction SilentlyContinue }
+                        if ($Status.Status -eq "Running") {
+                            Section -Style Heading2 "DNS Server Configuration Settings" {
+                                Paragraph 'The following table details the DNS Server Settings'
+                                Blankline
+                                # DNS Server Configuration
+                                Get-AbrWinDNSInfrastructure
+                                # DNS Zones Configuration
+                                Get-AbrWinDNSZone
                             }
                         }
                     }

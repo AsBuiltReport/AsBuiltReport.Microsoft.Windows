@@ -1,5 +1,16 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.3.0] - 2022-01-29
+
+### Added
+
+- Added DHCP Server Section
+- Added DNS Server Section
+
+### Changed
+
+- Changed WINRM session authentication from kerberos to negotiate
+
 ## [0.2.0] - 2022-01-26
 
 ### Added

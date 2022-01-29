@@ -5,7 +5,7 @@ function Get-AbrWinOSService {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.3.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,7 +32,7 @@ function Get-AbrWinOSService {
                     Section -Style Heading3 'Services' {
                         Paragraph 'The following table details status of important services'
                         Blankline
-                        $Services = @('DNS','DFS Replication','Intersite Messaging','Kerberos Key Distribution Center','Active Directory Domain Services','W32Time','ADWS''Dhcp','Dnscache','gpsvc','HvHost','vmcompute','vmms','iphlpsvc','MSiSCSI','Netlogon','RasMan','SessionEnv','TermService','RpcSs','RpcEptMapper','SamSs','LanmanServer','Schedule','lmhosts','UsoSvc','mpssvc','W3SVC','MSSQLSERVER')
+                        $Services = @('DNS','DFS Replication','Intersite Messaging','Kerberos Key Distribution Center','Active Directory Domain Services','W32Time','ADWS','DHCPServer','Dnscache','gpsvc','HvHost','vmcompute','vmms','iphlpsvc','MSiSCSI','Netlogon','RasMan','SessionEnv','TermService','RpcSs','RpcEptMapper','SamSs','LanmanServer','Schedule','lmhosts','UsoSvc','mpssvc','W3SVC','MSSQLSERVER')
                         $ServicesReport = @()
                         Foreach ($Service in $Services) {
                             try {
