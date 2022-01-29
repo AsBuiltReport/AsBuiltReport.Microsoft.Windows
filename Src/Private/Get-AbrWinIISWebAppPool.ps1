@@ -33,14 +33,19 @@ function Get-AbrWinIISWebAppPool {
                         Blankline
                         $IISWebAppPoolsReport = @()
                         foreach ($IISWebAppPool in $IISWebAppPools) {
-                            $TempIISWebAppPoolsReport = [PSCustomObject]@{
-                                'Name' = $IISWebAppPool.Name
-                                'Status' = $IISWebAppPool.State
-                                'CLR Ver' = $IISWebAppPool.ManagedRuntimeVersion
-                                'Pipeline Mode ' = $IISWebAppPool.ManagedPipelineMode
-                                'Start Mode' = $IISWebAppPool.StartMode
+                            try {
+                                $TempIISWebAppPoolsReport = [PSCustomObject]@{
+                                    'Name' = $IISWebAppPool.Name
+                                    'Status' = $IISWebAppPool.State
+                                    'CLR Ver' = $IISWebAppPool.ManagedRuntimeVersion
+                                    'Pipeline Mode ' = $IISWebAppPool.ManagedPipelineMode
+                                    'Start Mode' = $IISWebAppPool.StartMode
+                                }
+                                $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
                             }
-                            $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
                         }
 
                         $TableParams = @{
