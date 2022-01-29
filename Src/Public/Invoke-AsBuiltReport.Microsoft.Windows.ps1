@@ -226,8 +226,9 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Get-AbrWinDHCPv4Statistic
                             # DHCP Server Scope Info
                             Get-AbrWinDHCPv4Scope
+                            # DHCP Server Scope Settings
                             Get-AbrWinDHCPv4ScopeServerSetting
-                             # DHCP Server Per Scope Info
+                            # DHCP Server Per Scope Info
                             Get-AbrWinDHCPv4PerScopeSetting
                         }
                     }
@@ -243,11 +244,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         Section -Style Heading2 "DNS Server Configuration Settings" {
                             Paragraph 'The following table details the DNS Server Settings'
                             Blankline
-                            # DHCP Server Configuration
-                            #Get-AbrWinDNSInfrastructure
-                            # DHCP Server Scope summary
-                            # SMB Shares
-                            #Get-AbrWinDHCP
+                            # DNS Server Configuration
+                            Get-AbrWinDNSInfrastructure
                         }
                     }
                 }
