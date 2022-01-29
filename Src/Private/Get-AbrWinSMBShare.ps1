@@ -44,7 +44,7 @@ function Get-AbrWinSMBShare {
                                         'Description' =  $SMBShare.Description
                                         'Access Based Enumeration Mode' = $SMBShare.FolderEnumerationMode
                                         'Caching Mode' = $SMBShare.CachingMode
-                                        'Encrypt Data' = $SMBShare.EncryptData
+                                        'Encrypt Data' = ConvertTo-TextYN $SMBShare.EncryptData
                                         'State' = $SMBShare.ShareState
                                     }
                                     $SMBSharesReport = $TempSMBSharesReport
@@ -73,7 +73,7 @@ function Get-AbrWinSMBShare {
                                                     $TempSMBAccessReport = [PSCustomObject]@{
                                                         'Scope Name' = $SMBACL.ScopeName
                                                         'Account Name' = $SMBACL.AccountName
-                                                        'Access Control Type' =  $SMBACL.AccessControlType
+                                                        'Access Control Type' = $SMBACL.AccessControlType
                                                         'Access Right' = $SMBACL.AccessRight
                                                     }
                                                     $ShareAccessReport += $TempSMBAccessReport

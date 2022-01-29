@@ -161,7 +161,7 @@ function Get-AbrWinDNSZone {
                                             'Zone Type' = $Zones.ZoneType
                                             'Replication Scope' = $Zones.ReplicationScope
                                             'Master Servers' = $Zones.MasterServers
-                                            'DS Integrated' = $Zones.IsDsIntegrated
+                                            'DS Integrated' = ConvertTo-TextYN $Zones.IsDsIntegrated
                                         }
                                         $OutObj += [pscustomobject]$inobj
                                     }
