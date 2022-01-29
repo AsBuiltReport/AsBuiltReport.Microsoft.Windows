@@ -63,6 +63,8 @@ PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are require
 - [AsBuiltReport.Microsoft.Windows Module](https://www.powershellgallery.com/packages/AsBuiltReport.Microsoft.Windows/)
 - [IISAdministration Module](https://docs.microsoft.com/en-us/powershell/module/iisadministration/?view=windowsserver2022-ps)
 - [Hyper-V Module](https://docs.microsoft.com/en-us/powershell/module/hyper-v/?view=windowsserver2022-ps)
+- [DhcpServer Module](https://docs.microsoft.com/en-us/powershell/module/dhcpserver/?view=windowsserver2019-ps)
+- [DnsServer Module](https://docs.microsoft.com/en-us/powershell/module/dnsserver/?view=windowsserver2019-ps)
 
 ### Linux & macOS
 
@@ -74,10 +76,25 @@ A Microsoft Windows As Built Report can be generated with Administrator level pr
 
 ## :package: Module Installation
 
-### PowerShell
-
+### PowerShell v5.x running on a Windows server (Target)
+<!-- ********** Add installation for any additional PowerShell module(s) ********** -->
 ```powershell
-install-module AsBuiltReport.Microsoft.Windows
+Install-Module AsBuiltReport.Microsoft.Windows
+Install-WindowsFeature -Name RSAT-DNS-Server
+Install-WindowsFeature -Name RSAT-DHCP
+Install-WindowsFeature -Name Hyper-V-PowerShell
+Install-WindowsFeature -Name web-mgmt-console
+
+```
+
+### PowerShell v5.x running on Windows 10 client computer (JumpBox)
+<!-- ********** Add installation for any additional PowerShell module(s) ********** -->
+```powershell
+Install-Module AsBuiltReport.Microsoft.Windows
+Add-WindowsCapability –online –Name 'Rsat.Dns.Tools~~~~0.0.1.0'
+Add-WindowsCapability -Online -Name 'Rsat.DHCP.Tools~~~~0.0.1.0'
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
+
 ```
 
 ### GitHub
@@ -153,6 +170,8 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | Networking         |        1        |        1        |
 | IIS           |        1        |        1        |
 | HyperV           |        1        |        1        |
+| DHCP           |        1        |        2        |
+| DNS           |        1        |        2        |
 
 ### Healthcheck
 
