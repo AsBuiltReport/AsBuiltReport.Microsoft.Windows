@@ -19,8 +19,9 @@ function Get-AbrWinDNSInfrastructure {
     )
 
     begin {
-        Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DNS)."
-        Write-PscriboMessage "Collecting Host DNS Server information."    }
+        Write-PScriboMessage "DNS InfoLevel set at $($InfoLevel.DNS)."
+        Write-PscriboMessage "Collecting Host DNS Server information."
+    }
 
     process {
         try {
@@ -59,7 +60,9 @@ function Get-AbrWinDNSInfrastructure {
                 try {
                     $DNSIPSetting = Get-NetAdapter -CimSession $TempCIMSession | Get-DnsClientServerAddress -CimSession $TempCIMSession -AddressFamily IPv4
                     if ($DNSIPSetting) {
-                        Section -Style Heading3 "Domain Controller DNS IP Configuration" {
+                        Section -Style Heading3 "DNS IP Configuration" {
+                            Paragraph "The following table details DNS Server IP Configuration Settings"
+                            Blankline
                             $OutObj = @()
                             try {
                                 $inObj = [ordered] @{
@@ -95,20 +98,20 @@ function Get-AbrWinDNSInfrastructure {
                     Write-PscriboMessage -IsWarning "$($_.Exception.Message) (DNS IP Configuration Table)"
                 }
             }
-            <#
+
             #---------------------------------------------------------------------------------------------#
             #                                 DNS Scanvenging Section                                     #
             #---------------------------------------------------------------------------------------------#
             if ($InfoLevel.DNS -ge 2) {
                 try {
-                    Section -Style Heading6 "Scavenging Options" {
-                        $OutObj = @()
-                        foreach ($DC in $DCs) {
-                            Write-PscriboMessage "Collecting Scavenging Options information from $($DC)."
+                    $DNSSetting = Get-DnsServerScavenging -CimSession $TempCIMSession
+                    if ($DNSSetting) {
+                        Section -Style Heading3 "Scavenging Options" {
+                            Paragraph "The following table details scavenging configuration settings"
+                            Blankline
+                            $OutObj = @()
                             try {
-                                $DNSSetting = Invoke-Command -Session $Session {Get-DnsServerScavenging -ComputerName $using:DC}
                                 $inObj = [ordered] @{
-                                    'DC Name' = $($DC.ToString().ToUpper().Split(".")[0])
                                     'NoRefresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.NoRefreshInterval
                                     'Refresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.RefreshInterval
                                     'Scavenging Interval' = ConvertTo-EmptyToFiller $DNSSetting.ScavengingInterval
@@ -123,22 +126,22 @@ function Get-AbrWinDNSInfrastructure {
                                         default {ConvertTo-EmptyToFiller $DNSSetting.ScavengingState}
                                     }
                                 }
+
                                 $OutObj += [pscustomobject]$inobj
+                                $TableParams = @{
+                                    Name = "Scavenging - $($System.toUpper().split(".")[0])"
+                                    List = $false
+                                    ColumnWidths = 20, 20, 20, 20, 20
+                                }
+                                if ($Report.ShowTableCaptions) {
+                                    $TableParams['Caption'] = "- $($TableParams.Name)"
+                                }
+                                $OutObj | Table @TableParams
                             }
                             catch {
                                 Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scavenging Item)"
                             }
                         }
-
-                        $TableParams = @{
-                            Name = "Scavenging - $($Domain.ToString().ToUpper())"
-                            List = $false
-                            ColumnWidths = 25, 15, 15, 15, 15, 15
-                        }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $OutObj | Sort-Object -Property 'DC Name' | Table @TableParams
                     }
                 }
                 catch {
@@ -149,40 +152,38 @@ function Get-AbrWinDNSInfrastructure {
             #                                 DNS Forwarder Section                                       #
             #---------------------------------------------------------------------------------------------#
             try {
-                Section -Style Heading6 "Forwarder Options" {
+                Section -Style Heading3 "Forwarder Options" {
+                    Paragraph "The following table details forwarder configuration settings"
+                    Blankline
                     $OutObj = @()
-                    foreach ($DC in $DCs) {
-                        Write-PscriboMessage "Collecting Forwarder Options information from $($DC)."
-                        try {
-                            $DNSSetting = Invoke-Command -Session $Session {Get-DnsServerForwarder -ComputerName $using:DC}
-                            $Recursion = Invoke-Command -Session $Session {Get-DnsServerRecursion -ComputerName $using:DC | Select-Object -ExpandProperty Enable}
-                            $inObj = [ordered] @{
-                                'DC Name' = $($DC.ToString().ToUpper().Split(".")[0])
-                                'IP Address' = $DNSSetting.IPAddress
-                                'Timeout' = ("$($DNSSetting.Timeout)/s")
-                                'Use Root Hint' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.UseRootHint)
-                                'Use Recursion' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Recursion)
-                            }
-                            $OutObj += [pscustomobject]$inobj
+                    try {
+                        $DNSSetting = Get-DnsServerForwarder -CimSession $TempCIMSession
+                        $Recursion = Get-DnsServerRecursion -CimSession $TempCIMSession
+                        $inObj = [ordered] @{
+                            'IP Address' = $DNSSetting.IPAddress -join ","
+                            'Timeout' = ("$($DNSSetting.Timeout)/s")
+                            'Use Root Hint' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.UseRootHint)
+                            'Use Recursion' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Recursion.Enable)
                         }
-                        catch {
-                            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Item)"
+                        $OutObj += [pscustomobject]$inobj
+                        $TableParams = @{
+                            Name = "Forwarders - $($System.toUpper().split(".")[0])"
+                            List = $false
+                            ColumnWidths = 25, 25, 25, 25
                         }
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+                        $OutObj | Table @TableParams
                     }
-                    $TableParams = @{
-                        Name = "Forwarders - $($Domain.ToString().ToUpper())"
-                        List = $false
-                        ColumnWidths = 35, 15, 15, 15, 20
+                    catch {
+                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Item)"
                     }
-                    if ($Report.ShowTableCaptions) {
-                        $TableParams['Caption'] = "- $($TableParams.Name)"
-                    }
-                    $OutObj | Sort-Object -Property 'DC Name' | Table @TableParams
                 }
             }
             catch {
                 Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Table)"
-            }#>
+            }
         }
         catch {
             Write-PscriboMessage -IsWarning "$($_.Exception.Message) (DNS Infrastructure Section)"

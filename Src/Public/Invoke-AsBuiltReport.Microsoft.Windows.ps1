@@ -246,6 +246,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Blankline
                             # DNS Server Configuration
                             Get-AbrWinDNSInfrastructure
+                            # DNS Zones Configuration
+                            Get-AbrWinDNSZone
                         }
                     }
                 }
