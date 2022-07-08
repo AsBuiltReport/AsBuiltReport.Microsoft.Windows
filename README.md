@@ -22,6 +22,9 @@
     <a href="https://twitter.com/AsBuiltReport" alt="Twitter">
             <img src="https://img.shields.io/twitter/follow/AsBuiltReport.svg?style=social"/></a>
 </p>
+<p align="center">
+    <a href='https://ko-fi.com/B0B7DDGZ7' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+</p>
 
 # Microsoft Windows As Built Report
 
@@ -35,7 +38,7 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 ## Sample Report - Custom Style 1
 
-Sample Microsoft Windows As Built report HTML file: [Sample Microsoft Windows As-Built Report.html](https://technomyth.zenprsolutions.net/wp-content/uploads/2022/01/Microsoft-Windows-As-Built-Report.html)
+Sample Microsoft Windows As Built report HTML file: [Sample Microsoft Windows As-Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/dev/Samples/Sample%20Microsoft%20Windows%20As%20Built%20Report.html "Sample Microsoft Windows As-Built Report")
 
 # :beginner: Getting Started
 
