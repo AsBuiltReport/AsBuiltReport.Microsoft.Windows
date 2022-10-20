@@ -5,7 +5,7 @@ function Get-AbrWinOSHotfix {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.4.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -64,37 +64,35 @@ function Get-AbrWinOSHotfix {
                 $UpdObj = @()
                 $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock {(New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsHidden=0 and IsInstalled=0").Updates | Select-Object Title,KBArticleIDs}
                 $UpdObj += if ($Updates) {
-                    Section -ExcludeFromTOC -Style NOTOCHeading6 $($DC.ToString().ToUpper().Split(".")[0]) {
-                        $OutObj = @()
-                        foreach ($Update in $Updates) {
-                            try {
-                                $inObj = [ordered] @{
-                                    'KB Article' = "KB$($Update.KBArticleIDs)"
-                                    'Name' = $Update.Title
-                                }
-                                $OutObj += [pscustomobject]$inobj
+                    $OutObj = @()
+                    foreach ($Update in $Updates) {
+                        try {
+                            $inObj = [ordered] @{
+                                'KB Article' = "KB$($Update.KBArticleIDs)"
+                                'Name' = $Update.Title
+                            }
+                            $OutObj += [pscustomobject]$inobj
 
-                                if ($HealthCheck.OperatingSystem.Updates) {
-                                    $OutObj | Set-Style -Style Warning
-                                }
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            if ($HealthCheck.OperatingSystem.Updates) {
+                                $OutObj | Set-Style -Style Warning
                             }
                         }
-                        $TableParams = @{
-                            Name = "Missing Windows Updates - $($DC.ToString().ToUpper().Split(".")[0])"
-                            List = $false
-                            ColumnWidths = 40, 60
+                        catch {
+                            Write-PscriboMessage -IsWarning $_.Exception.Message
                         }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $OutObj | Sort-Object -Property 'Name' | Table @TableParams
                     }
+                    $TableParams = @{
+                        Name = "Missing Windows Updates"
+                        List = $false
+                        ColumnWidths = 40, 60
+                    }
+                    if ($Report.ShowTableCaptions) {
+                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                    }
+                    $OutObj | Sort-Object -Property 'Name' | Table @TableParams
                 }
                 if ($UpdObj) {
-                    Section -Style Heading5 'Missing Windows Updates' {
+                    Section -Style Heading3 'Missing Windows Updates' {
                         Paragraph "The following section provides a summary of pending/missing windows updates."
                         BlankLine
                         $UpdObj

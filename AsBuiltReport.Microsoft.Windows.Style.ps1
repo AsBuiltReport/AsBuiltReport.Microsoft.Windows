@@ -82,7 +82,7 @@ Paragraph -Style Title $ReportConfig.Report.Name
 
 if ($AsBuiltConfig.Company.FullName) {
     # Add Company Name if specified
-    BlankLine -Count 2
+    BlankLine -Count 1
     Paragraph -Style Title2 $AsBuiltConfig.Company.FullName
     BlankLine -Count $LineCount
 } else {
