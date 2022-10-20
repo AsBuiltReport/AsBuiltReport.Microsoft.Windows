@@ -60,6 +60,50 @@ function Get-AbrWinOSHotfix {
             catch {
                 Write-PscriboMessage -IsWarning $_.Exception.Message
             }
+            try {
+                $UpdObj = @()
+                $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock {(New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsHidden=0 and IsInstalled=0").Updates | Select-Object Title,KBArticleIDs}
+                $UpdObj += if ($Updates) {
+                    Section -ExcludeFromTOC -Style NOTOCHeading6 $($DC.ToString().ToUpper().Split(".")[0]) {
+                        $OutObj = @()
+                        foreach ($Update in $Updates) {
+                            try {
+                                $inObj = [ordered] @{
+                                    'KB Article' = "KB$($Update.KBArticleIDs)"
+                                    'Name' = $Update.Title
+                                }
+                                $OutObj += [pscustomobject]$inobj
+
+                                if ($HealthCheck.OperatingSystem.Updates) {
+                                    $OutObj | Set-Style -Style Warning
+                                }
+                            }
+                            catch {
+                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            }
+                        }
+                        $TableParams = @{
+                            Name = "Missing Windows Updates - $($DC.ToString().ToUpper().Split(".")[0])"
+                            List = $false
+                            ColumnWidths = 40, 60
+                        }
+                        if ($Report.ShowTableCaptions) {
+                            $TableParams['Caption'] = "- $($TableParams.Name)"
+                        }
+                        $OutObj | Sort-Object -Property 'Name' | Table @TableParams
+                    }
+                }
+                if ($UpdObj) {
+                    Section -Style Heading5 'Missing Windows Updates' {
+                        Paragraph "The following section provides a summary of pending/missing windows updates."
+                        BlankLine
+                        $UpdObj
+                    }
+                }
+            }
+            catch {
+                Write-PscriboMessage -IsWarning $_.Exception.Message
+            }
         }
     }
     end {}
