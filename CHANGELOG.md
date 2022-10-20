@@ -1,5 +1,11 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.4.0] - 2022-10-20
+
+### Added
+
+- Added table to show the pending/missing Windows updates (Health Check)
+
 ## [0.3.0] - 2022-01-29
 
 ### Added

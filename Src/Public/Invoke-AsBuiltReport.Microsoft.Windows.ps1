@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.4.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,6 +21,22 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
         [String[]] $Target,
         [PSCredential] $Credential
     )
+
+    Write-PScriboMessage -IsWarning "Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
+    Write-PScriboMessage -IsWarning "Do not forget to update your report configuration file after each new release."
+    Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
+    Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
+
+    $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+
+    if ($InstalledVersion) {
+        Write-PScriboMessage -IsWarning "Installed AsBuiltReport.Microsoft.Windows Version: $($InstalledVersion.ToString())"
+        $MostCurrentVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+        if ($MostCurrentVersion -and ($MostCurrentVersion -gt $InstalledVersion)) {
+            Write-PScriboMessage -IsWarning "New Update: AsBuiltReport.Microsoft.Windows Version: $($MostCurrentVersion.ToString())"
+            Write-PScriboMessage -IsWarning "To Update run: Update-Module -Name AsBuiltReport.Microsoft.Windows -Force"
+        }
+    }
 
     # Import Report Configuration
     $Report = $ReportConfig.Report
