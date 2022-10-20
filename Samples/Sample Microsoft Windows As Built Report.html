@@ -1,0 +1,807 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>Microsoft Windows As Built Report</title>
+<style type="text/css">
+html { height: 100%; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; background: #e6e6e6; }
+page { background: white; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+@media print { body, page { margin: 0; box-shadow: 0; } }
+hr { margin-top: 1.0rem; }
+ .portrait { background: white; width: 210mm; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; position: relative; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+ .landscape { background: white; width: 297mm; display: block; margin-top: 1rem; margin-left: auto; margin-right: auto; margin-bottom: 1rem; position: relative; border-style: solid; border-width: 1px; border-color: #c6c6c6; }
+ .Caption { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; font-style: italic; color: #565656; }
+ .TOC { font-family: 'Arial'; font-size: 1.33rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Heading4 { font-family: 'Arial'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Heading2 { font-family: 'Arial'; font-size: 1.17rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Header { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; color: #565656; }
+ .Normal { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; }
+ .Title3 { font-family: 'Arial'; font-size: 1.00rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Info { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #e1f1f6; }
+ .TableDefaultHeading { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #fafafa; background-color: #0076ce; }
+ .Heading1 { font-family: 'Arial'; font-size: 1.33rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Title { font-family: 'Arial'; font-size: 2.00rem; text-align: center; font-weight: normal; color: #0076ce; }
+ .TableDefaultRow { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; }
+ .Title2 { font-family: 'Arial'; font-size: 1.50rem; text-align: center; font-weight: normal; color: #00447c; }
+ .Footer { font-family: 'Arial'; font-size: 0.83rem; text-align: center; font-weight: normal; color: #565656; }
+ .Warning { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #fef3b5; }
+ .Critical { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #f5dbd9; }
+ .Heading6 { font-family: 'Calibri','Candara','Segoe','Segoe UI','Optima','Arial','Sans-Serif'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #1f3763; }
+ .TableDefaultAltRow { font-family: 'Calibri','Candara','Segoe','Segoe UI','Optima','Arial','Sans-Serif'; font-size: 0.92rem; text-align: left; font-weight: normal; color: #000000; background-color: #d0ddee; }
+ .OK { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #dff0d0; }
+ .Heading5 { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #00447c; }
+ .Heading3 { font-family: 'Arial'; font-size: 1.00rem; text-align: left; font-weight: normal; color: #00447c; }
+ table.tabledefault { padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #0076ce; border-collapse: collapse; }
+ table.tabledefault th { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #fafafa; background-color: #0076ce; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #0076ce; border-collapse: collapse; }
+ table.tabledefault td { padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #0076ce; border-collapse: collapse; }
+ table.tabledefault tr:nth-child(odd) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #0076ce; border-collapse: collapse; }
+ table.tabledefault tr:nth-child(even) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.17rem 0.13rem 0.17rem; border-style: solid; border-width: 0.02rem; border-color: #0076ce; border-collapse: collapse; }
+ table.borderless { padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless th { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless td { padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless tr:nth-child(odd) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+ table.borderless tr:nth-child(even) { font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #565656; padding: 0.08rem 0.33rem 0rem 0.33rem; border-style: none; border-collapse: collapse; }
+</style></head><body>
+<div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+
+<div style="min-height: 247mm" ><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><div align="Center">
+<img src="data:image/png;base64, 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" alt="Microsoft Logo" height="100" width="100" />
+</div>
+<br /><br /><div class="Title">Microsoft Windows As Built Report</div><br /><div class="Title2">Zen Pr Solutions</div><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="borderless"><tbody>
+<tr><th>Author:</th><td>Jonathan Colon</td></tr>
+<tr><th>Date:</th><td>Thursday, October 20, 2022</td></tr>
+<tr><th>Version:</th><td>1.0</td></tr>
+</tbody></table>
+<br /></div>
+</div></div></div><div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+<div style="min-height: 247mm" ><div><div class="Header">Microsoft Windows As Built Report - v1.0</div><br /></div><h1 class="TOC">Table of Contents</h1><table>
+<tr><td>1</td><td><a href="#47e12451-efa0-4e0a-a7a9-629af062b07b" style="text-decoration: none;">server-dc-01v.pharmax.local</a></td></tr>
+<tr><td>1.1</td><td>&nbsp;&nbsp;&nbsp;<a href="#93c786af-1180-467a-bad4-af902bd90709" style="text-decoration: none;">Host Hardware Settings</a></td></tr>
+<tr><td>1.2</td><td>&nbsp;&nbsp;&nbsp;<a href="#850fe978-716a-4137-b813-f6045adf8351" style="text-decoration: none;">Host Operating System</a></td></tr>
+<tr><td>1.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#6245d689-3630-452e-9e5f-8707012c73ab" style="text-decoration: none;">OS Configuration</a></td></tr>
+<tr><td>1.2.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#119dc857-b7b5-4c3b-a4e9-68fdfa40b45d" style="text-decoration: none;">Installed Hotfixes</a></td></tr>
+<tr><td>1.2.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#f911cb24-36a3-43db-93d7-1876cc662de6" style="text-decoration: none;">Missing Windows Updates</a></td></tr>
+<tr><td>1.2.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#40ab778f-33d2-4708-9d53-bcba8b5f0923" style="text-decoration: none;">Drivers</a></td></tr>
+<tr><td>1.2.5</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#68435ae1-eb57-4eef-a9ec-388ec506ca1b" style="text-decoration: none;">Roles</a></td></tr>
+<tr><td>1.2.5.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#b4048c8c-8693-42a8-b52c-a2d800580c67" style="text-decoration: none;">Features and Role Services</a></td></tr>
+<tr><td>1.2.6</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#7064b7cc-acfe-45b0-b7eb-01f5d4415672" style="text-decoration: none;">Installed Applications</a></td></tr>
+<tr><td>1.2.7</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#63789165-fe42-4d7a-b52e-cdfe977e5517" style="text-decoration: none;">Services</a></td></tr>
+<tr><td>1.3</td><td>&nbsp;&nbsp;&nbsp;<a href="#41990f6d-ab43-4ffc-bebd-6e33ad6252d0" style="text-decoration: none;">Windows Firewall</a></td></tr>
+<tr><td>1.4</td><td>&nbsp;&nbsp;&nbsp;<a href="#2d23a97f-30d8-4801-984f-22191b688681" style="text-decoration: none;">Host Networking</a></td></tr>
+<tr><td>1.4.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#64bcd70f-a630-47ca-877b-d262f53a4495" style="text-decoration: none;">Network Adapters</a></td></tr>
+<tr><td>1.4.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#34098148-98ca-420f-a2a5-acc3b4979d24" style="text-decoration: none;">IP Addresses</a></td></tr>
+<tr><td>1.4.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#baa2cbda-7ce7-4402-ab08-e288e7592b57" style="text-decoration: none;">DNS Client</a></td></tr>
+<tr><td>1.4.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#1b1d288b-14f5-459a-9291-fd2c990895f7" style="text-decoration: none;">DNS Servers</a></td></tr>
+<tr><td>1.4.5</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#af8d24ff-eddc-4fd2-adb7-992cc14c5606" style="text-decoration: none;">Network Adapter MTU</a></td></tr>
+<tr><td>1.5</td><td>&nbsp;&nbsp;&nbsp;<a href="#327c71c9-c1ca-4913-8dc6-9bcb76c1dd33" style="text-decoration: none;">Host Storage</a></td></tr>
+<tr><td>1.5.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#765fb185-f675-48f7-aa6a-e0441b86b51b" style="text-decoration: none;">Local Disks</a></td></tr>
+<tr><td>1.5.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#4aea4a9a-1b55-4bd7-ab6d-6827328deb60" style="text-decoration: none;">Host Volumes</a></td></tr>
+<tr><td>1.6</td><td>&nbsp;&nbsp;&nbsp;<a href="#6ba9881a-8ebe-4737-8ae5-fbeff42969b6" style="text-decoration: none;">IIS Configuration Settings</a></td></tr>
+<tr><td>1.6.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#51ec7ef3-8c90-4b30-8cbb-c2598c04f3dd" style="text-decoration: none;">Application Pools</a></td></tr>
+<tr><td>1.6.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#6c580f52-81a7-4078-8b4f-b91c870e0049" style="text-decoration: none;">Sites Summary</a></td></tr>
+<tr><td>1.6.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#12a9c0b3-8541-4c94-b97b-8f5793d8bc66" style="text-decoration: none;">Sites Configuration</a></td></tr>
+<tr><td>1.6.2.1.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#293339a9-0802-4f7c-ae3f-e62f6de99254" style="text-decoration: none;">Default Web Site</a></td></tr>
+<tr><td>1.6.2.1.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#fd44bb61-03ee-4e0c-9909-11390b036445" style="text-decoration: none;">WSUS Administration</a></td></tr>
+<tr><td>1.6.2.1.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c0068479-d6aa-47bb-aacb-5fc93aabc18f" style="text-decoration: none;">Web Applications</a></td></tr>
+<tr><td>1.7</td><td>&nbsp;&nbsp;&nbsp;<a href="#e2342a23-0d3d-4620-a4cd-9a794b296f45" style="text-decoration: none;">File Server Configuration Settings</a></td></tr>
+<tr><td>1.7.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#811b1b97-e269-4c08-b172-fbcdb7e190a5" style="text-decoration: none;">SMB Network Interface</a></td></tr>
+<tr><td>1.7.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#26ea77a3-6fc9-4885-b338-99e13bf2689b" style="text-decoration: none;">File Shares</a></td></tr>
+<tr><td>1.7.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#2577af3d-0148-4b76-af64-e36a57cb191e" style="text-decoration: none;">NETLOGON Share</a></td></tr>
+<tr><td>1.7.2.1.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#388f6e8b-5c92-4b76-8deb-c8e2cfbea496" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#6c21aa1f-aad6-4e37-98b1-6dae07c95f04" style="text-decoration: none;">SYSVOL Share</a></td></tr>
+<tr><td>1.7.2.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#8f2ab585-178f-4d8d-b295-8cc007781b95" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#b90d60b1-f8c2-4872-a74f-8575addb3533" style="text-decoration: none;">UEMConfig Share</a></td></tr>
+<tr><td>1.7.2.3.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#91833784-01df-4661-81ce-b1a166ad3018" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ec52bb23-56e2-41f5-9fb5-3239392a868b" style="text-decoration: none;">UEMProfiles Share</a></td></tr>
+<tr><td>1.7.2.4.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#d84b301a-5f69-4bb3-9c3a-124ea23a43ec" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.5</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#0e2fb94d-1a9a-45b0-83a4-8cd47ca66382" style="text-decoration: none;">UpdateServicesPackages Share</a></td></tr>
+<tr><td>1.7.2.5.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#3b73c44a-b3a2-4757-b2a6-247ca752c48b" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.6</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#1ebb98b3-c330-457e-a490-87bd895c8a67" style="text-decoration: none;">WsusContent Share</a></td></tr>
+<tr><td>1.7.2.6.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#8b952a3f-41e6-4726-a3d4-f4a73b24a0b8" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.7.2.7</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#16e7f4d3-ecca-4c5e-8d01-9b9b50656c5e" style="text-decoration: none;">WSUSTemp Share</a></td></tr>
+<tr><td>1.7.2.7.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#6e6ef02c-bbb4-4df7-b8f1-4958f442194d" style="text-decoration: none;">Permissions</a></td></tr>
+<tr><td>1.8</td><td>&nbsp;&nbsp;&nbsp;<a href="#65ad4083-7a67-4139-9f93-87ed06219373" style="text-decoration: none;">DHCP Server Configuration Settings</a></td></tr>
+<tr><td>1.8.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#fd486fb3-19fd-4fe8-a567-e635925e46e9" style="text-decoration: none;">Service Statistics</a></td></tr>
+<tr><td>1.8.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#109b9cd8-6a51-4b15-b6c4-b205387a6613" style="text-decoration: none;">Scopes</a></td></tr>
+<tr><td>1.8.2.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#6aec537d-167c-4b4e-8a02-be575b50b50b" style="text-decoration: none;">Scope Statistics</a></td></tr>
+<tr><td>1.8.2.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#3bc79956-a21d-448b-8d81-141a3b57e320" style="text-decoration: none;">Network Interface Binding</a></td></tr>
+<tr><td>1.8.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#1fe3d492-39bb-46c7-b6d1-b13d86d2e2d3" style="text-decoration: none;">Scope Server Options</a></td></tr>
+<tr><td>1.8.3.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#9aaac421-5337-44fe-9aa4-60d7af026bbb" style="text-decoration: none;">Scope DNS Setting</a></td></tr>
+<tr><td>1.8.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#7d59924d-545a-4593-8e90-34a6856ffb80" style="text-decoration: none;">Per Scope Options</a></td></tr>
+<tr><td>1.8.4.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#967d76a0-f196-4ce4-9f50-7cc3393501e0" style="text-decoration: none;">10.10.32.0</a></td></tr>
+<tr><td>1.8.4.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ebe9e83e-5dd2-4d42-a658-5e58e6a85a8b" style="text-decoration: none;">10.10.33.0</a></td></tr>
+<tr><td>1.8.4.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#3f4eb5cf-b126-4ed0-bb89-bc85aa3e00db" style="text-decoration: none;">10.10.34.0</a></td></tr>
+<tr><td>1.8.4.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#cb66cfb9-e241-4231-b191-86b33a81729a" style="text-decoration: none;">10.10.35.0</a></td></tr>
+<tr><td>1.8.4.5</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#920f6c4a-d80c-455a-afdf-15387abcb98e" style="text-decoration: none;">192.168.2.0</a></td></tr>
+<tr><td>1.8.4.6</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#920a8522-46ea-4b84-a543-3e06d25a4588" style="text-decoration: none;">192.168.4.0</a></td></tr>
+<tr><td>1.8.4.7</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#bfd83b8a-4131-4d14-800b-68aaf750f258" style="text-decoration: none;">192.168.6.0</a></td></tr>
+<tr><td>1.8.4.8</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c7dd66c5-b299-4718-bd72-4eb36ca5751d" style="text-decoration: none;">192.168.7.0</a></td></tr>
+<tr><td>1.8.4.9</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#7c0604aa-b119-4220-a0c6-8ae4a08b95b0" style="text-decoration: none;">192.168.10.0</a></td></tr>
+<tr><td>1.8.4.10</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#517d8052-d34e-4e07-be89-aec77d85f012" style="text-decoration: none;">192.168.12.0</a></td></tr>
+<tr><td>1.9</td><td>&nbsp;&nbsp;&nbsp;<a href="#b697d883-d72a-432f-ae03-6c91e9c56054" style="text-decoration: none;">DNS Server Configuration Settings</a></td></tr>
+<tr><td>1.9.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#eb4812c0-fd11-4b2a-8d80-effe5f199652" style="text-decoration: none;">DNS IP Configuration</a></td></tr>
+<tr><td>1.9.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#4d865484-71b1-46af-9cd8-f316cbdccd45" style="text-decoration: none;">Scavenging Options</a></td></tr>
+<tr><td>1.9.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#702c42c7-5bba-4145-b357-f3c2ca3d03a9" style="text-decoration: none;">Forwarder Options</a></td></tr>
+<tr><td>1.9.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#937d4b44-995a-4f8f-8dc0-c653e423328d" style="text-decoration: none;">DNS Zone Configuration</a></td></tr>
+<tr><td>1.9.4.1</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#3573c292-545e-4308-a756-700dd55bf5c7" style="text-decoration: none;">Zone Transfers</a></td></tr>
+<tr><td>1.9.4.2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#db6f6377-7465-4551-9aa2-3a193317bb88" style="text-decoration: none;">Reverse Lookup Zone Configuration</a></td></tr>
+<tr><td>1.9.4.3</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#729cc0d5-ebee-4fad-933b-6965037e5414" style="text-decoration: none;">Conditional Forwarder</a></td></tr>
+<tr><td>1.9.4.4</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#a1d1e251-5465-4a6d-ad68-b1127b6a4c44" style="text-decoration: none;">Zone Scope Aging Properties</a></td></tr>
+</table>
+</div><div><br /><div class="Footer">Page 2</div></div></div></div><div class="portrait"><div class="Normal" style="padding-top: 5.92rem; padding-left: 5.92rem; padding-bottom: 5.92rem; padding-right: 5.92rem;">
+<div style="min-height: 247mm" ><div><div class="Header">Microsoft Windows As Built Report - v1.0</div><br /></div><a name="47e12451-efa0-4e0a-a7a9-629af062b07b"><h1 class="Heading1">1 server-dc-01v.pharmax.local</h1></a><div>The following table details the Windows Host server-dc-01v.pharmax.local</div><br /><a name="93c786af-1180-467a-bad4-af902bd90709"><h2 class="Heading2">1.1 Host Hardware Settings</h2></a><div>The following section details hardware settings for the host</div><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<tbody>
+<tr><th>Manufacturer</th><td>VMware, Inc.</td></tr>
+<tr><th>Model</th><td>VMware7,1</td></tr>
+<tr><th>Product ID</th><td>&nbsp;</td></tr>
+<tr><th>Serial Number</th><td>VMware-42 30 c4 38 76 68 26 b8-8b 58 37 88 3c c2 77 62</td></tr>
+<tr><th>BIOS Version</th><td>INTEL  - 6040000</td></tr>
+<tr><th>Processor Manufacturer</th><td>GenuineIntel</td></tr>
+<tr><th>Processor Model</th><td>Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz</td></tr>
+<tr><th>Number of Processors</th><td>&nbsp;</td></tr>
+<tr><th>Number of CPU Cores</th><td>2</td></tr>
+<tr><th>Number of Logical Cores</th><td>2</td></tr>
+<tr><th>Physical Memory</th><td>4 GB</td></tr>
+</tbody></table>
+<div class="Caption">Table 1 - Host Hardware Specifications</div><br /></div>
+<a name="850fe978-716a-4137-b813-f6045adf8351"><h2 class="Heading2">1.2 Host Operating System</h2></a><div>The following settings details host OS Settings</div><br /><a name="6245d689-3630-452e-9e5f-8707012c73ab"><h3 class="Heading3">1.2.1 OS Configuration</h3></a><div>The following section details hos OS configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<tbody>
+<tr><th>Windows Product Name</th><td>Windows Server 2019 Standard</td></tr>
+<tr><th>Windows Version</th><td>6.3</td></tr>
+<tr><th>Windows Build Number</th><td>10.0.17763</td></tr>
+<tr><th>Windows Install Type</th><td>Server</td></tr>
+<tr><th>AD Domain</th><td>pharmax.local</td></tr>
+<tr><th>Windows Installation Date</th><td>9/8/2020</td></tr>
+<tr><th>Time Zone</th><td>(UTC-04:00) Georgetown, La Paz, Manaus, San Juan</td></tr>
+<tr><th>License Type</th><td>Volume:GVLK</td></tr>
+<tr><th>Partial Product Key</th><td>J464C</td></tr>
+</tbody></table>
+<div class="Caption">Table 2 - OS Settings</div><br /></div>
+<a name="119dc857-b7b5-4c3b-a4e9-68fdfa40b45d"><h3 class="Heading3">1.2.2 Installed Hotfixes</h3></a><div>The following table details the OS Hotfixes installed</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:34%; min-width:34%; width:34%" /><col style="max-width:33%; min-width:33%; width:33%" /><col style="max-width:33%; min-width:33%; width:33%" /></colgroup>
+<thead><tr><th>Hotfix ID</th><th>Description</th><th>Installation Date</th></tr></thead><tbody>
+<tr><td>KB4486153</td><td>Update</td><td>9/4/2022</td></tr>
+<tr><td>KB4512577</td><td>Security Update</td><td>9/7/2019</td></tr>
+<tr><td>KB4523204</td><td>Security Update</td><td>12/3/2019</td></tr>
+<tr><td>KB4535680</td><td>Security Update</td><td>1/25/2021</td></tr>
+<tr><td>KB4549947</td><td>Security Update</td><td>5/26/2020</td></tr>
+<tr><td>KB4566424</td><td>Security Update</td><td>9/9/2020</td></tr>
+<tr><td>KB4570332</td><td>Security Update</td><td>9/9/2020</td></tr>
+<tr><td>KB4577667</td><td>Security Update</td><td>11/1/2020</td></tr>
+<tr><td>KB4587735</td><td>Security Update</td><td>12/31/2020</td></tr>
+<tr><td>KB4589208</td><td>Update</td><td>3/11/2021</td></tr>
+<tr><td>KB4598480</td><td>Security Update</td><td>1/25/2021</td></tr>
+<tr><td>KB4601393</td><td>Security Update</td><td>2/13/2021</td></tr>
+<tr><td>KB5000859</td><td>Security Update</td><td>3/11/2021</td></tr>
+<tr><td>KB5001404</td><td>Security Update</td><td>5/7/2021</td></tr>
+<tr><td>KB5003243</td><td>Security Update</td><td>5/17/2021</td></tr>
+<tr><td>KB5003711</td><td>Security Update</td><td>6/9/2021</td></tr>
+<tr><td>KB5005112</td><td>Security Update</td><td>8/11/2021</td></tr>
+<tr><td>KB5005701</td><td>Security Update</td><td>9/15/2021</td></tr>
+<tr><td>KB5006754</td><td>Update</td><td>11/12/2021</td></tr>
+<tr><td>KB5008287</td><td>Security Update</td><td>12/16/2021</td></tr>
+<tr><td>KB5008539</td><td>Update</td><td>12/7/2021</td></tr>
+<tr><td>KB5009642</td><td>Update</td><td>2/10/2022</td></tr>
+<tr><td>KB5011574</td><td>Update</td><td>4/16/2022</td></tr>
+<tr><td>KB5012170</td><td>Security Update</td><td>8/13/2022</td></tr>
+<tr><td>KB5012675</td><td>Update</td><td>5/11/2022</td></tr>
+<tr><td>KB5014031</td><td>Update</td><td>6/15/2022</td></tr>
+<tr><td>KB5014797</td><td>Update</td><td>7/17/2022</td></tr>
+<tr><td>KB5015896</td><td>Update</td><td>8/13/2022</td></tr>
+<tr><td>KB5017263</td><td>Update</td><td>10/13/2022</td></tr>
+<tr><td>KB5017315</td><td>Security Update</td><td>9/30/2022</td></tr>
+<tr><td>KB5017400</td><td>Update</td><td>10/13/2022</td></tr>
+</tbody></table>
+<div class="Caption">Table 3 - Installed Hotfixes</div><br /></div>
+<a name="f911cb24-36a3-43db-93d7-1876cc662de6"><h3 class="Heading3">1.2.3 Missing Windows Updates</h3></a><div>The following section provides a summary of pending/missing windows updates.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<thead><tr><th>KB Article</th><th>Name</th></tr></thead><tbody>
+<tr style="font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #fef3b5;"><td>KB5018419</td><td>2022-10 Cumulative Update for Windows Server 2019 for x64-based Systems (KB5018419)</td></tr>
+</tbody></table>
+<div class="Caption">Table 4 - Missing Windows Updates</div><br /></div>
+<a name="40ab778f-33d2-4708-9d53-bcba8b5f0923"><h3 class="Heading3">1.2.4 Drivers</h3></a><div>The following section details host drivers</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Class Description</th><th>Provider Name</th><th>Driver Version</th><th>Version Date</th></tr></thead><tbody>
+<tr><td>Display adapters</td><td>VMware, Inc.</td><td>9.17.4.1</td><td>7/13/2022</td></tr>
+<tr><td>Firmware</td><td>VMware, Inc.</td><td>1.0.0.0</td><td>4/24/2017</td></tr>
+<tr><td>Mice and other pointing devices</td><td>VMware, Inc.</td><td>12.5.12.0</td><td>10/27/2021</td></tr>
+<tr><td>Mice and other pointing devices</td><td>VMware, Inc.</td><td>12.5.12.0</td><td>10/27/2021</td></tr>
+<tr><td>Network adapters</td><td>VMware, Inc.</td><td>1.9.9.0</td><td>6/6/2022</td></tr>
+<tr><td>Network Service</td><td>Nmap Project</td><td>10.59.20.482</td><td>11/29/2021</td></tr>
+<tr><td>Printers</td><td>Microsoft</td><td>10.0.17763.1</td><td>6/21/2006</td></tr>
+<tr><td>Printers</td><td>Microsoft</td><td>10.0.17763.1</td><td>6/21/2006</td></tr>
+<tr><td>Storage controllers</td><td>VMware, Inc.</td><td>1.3.25.0</td><td>3/3/2022</td></tr>
+<tr><td>System devices</td><td>VMware, Inc.</td><td>9.8.16.0</td><td>7/11/2019</td></tr>
+<tr><td>System devices</td><td>VMware, Inc.</td><td>9.8.6.0</td><td>5/25/2016</td></tr>
+<tr><td>System devices</td><td>VMware, Inc.</td><td>9.8.18.0</td><td>10/29/2021</td></tr>
+</tbody></table>
+<div class="Caption">Table 5 - Hardware Drivers</div><br /></div>
+<a name="68435ae1-eb57-4eef-a9ec-388ec506ca1b"><h3 class="Heading3">1.2.5 Roles</h3></a><div>The following settings details host roles installed</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:10%; min-width:10%; width:10%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td>Active Directory Certificate Services</td><td>Role</td><td>Active Directory Certificate Services (AD CS) is used to create certification authorities and related role services that allow you to issue and manage certificates used in a variety of applications.</td></tr>
+<tr><td>Active Directory Domain Services</td><td>Role</td><td>Active Directory Domain Services (AD DS) stores information about objects on the network and makes this information available to users and network administrators. AD DS uses domain controllers to give network users access to permitted resources anywhere on the network through a single logon process.</td></tr>
+<tr><td>DHCP Server</td><td>Role</td><td>Dynamic Host Configuration Protocol (DHCP) Server enables you to centrally configure, manage, and provide temporary IP addresses and related information for client computers.</td></tr>
+<tr><td>DNS Server</td><td>Role</td><td>Domain Name System (DNS) Server provides name resolution for TCP/IP networks. DNS Server is easier to manage when it is installed on the same server as Active Directory Domain Services. If you select the Active Directory Domain Services role, you can install and configure DNS Server and Active Directory Domain Services to work together.</td></tr>
+<tr><td>File and Storage Services</td><td>Role</td><td>File and Storage Services includes services that are always installed, as well as functionality that you can install to help manage file servers and storage.</td></tr>
+<tr><td>Web Server (IIS)</td><td>Role</td><td>Web Server (IIS) provides a reliable, manageable, and scalable Web application infrastructure.</td></tr>
+<tr><td>Windows Server Update Services</td><td>Role</td><td>Windows Server Update Services allows network administrators to specify the Microsoft updates that should be installed, create separate groups of computers for different sets of updates, and get reports on the compliance levels of the computers and the updates that must be installed.</td></tr>
+</tbody></table>
+<div class="Caption">Table 6 - Roles</div><br /></div>
+<a name="b4048c8c-8693-42a8-b52c-a2d800580c67"><h4 class="Heading3">1.2.5.1 Features and Role Services</h4></a><div>The following settings details host features and role services installed</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:10%; min-width:10%; width:10%" /><col style="max-width:70%; min-width:70%; width:70%" /></colgroup>
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td>.NET Extensibility 4.7</td><td>Role Service</td><td>.NET extensibility allows managed code developers to change, add and extend web server functionality in the entire request pipeline, the configuration, and the UI. Developers can use the familiar ASP.NET extensibility model and rich .NET APIs to build Web server features that are just as powerful as those written using the native C++ APIs.</td></tr>
+<tr><td>.NET Framework 3.5 (includes .NET 2.0 and 3.0)</td><td>Feature</td><td>.NET Framework 3.5 combines the power of the .NET Framework 2.0 APIs with new technologies for building applications that offer appealing user interfaces, protect your customers&#39; personal identity information, enable seamless and secure communication, and provide the ability to model a range of business processes.</td></tr>
+<tr><td>.NET Framework 3.5 Features</td><td>Feature</td><td>.NET Framework 3.5 combines the power of the .NET Framework 2.0 APIs with new technologies for building applications that offer appealing user interfaces, protect your customers&#39; personal identity information, enable seamless and secure communication, and provide the ability to model a range of business processes.</td></tr>
+<tr><td>.NET Framework 4.7</td><td>Feature</td><td>.NET Framework 4.7 provides a comprehensive and consistent programming model for quickly and easily building and running applications that are built for various platforms including desktop PCs, Servers, smart phones and the public and private cloud.</td></tr>
+<tr><td>.NET Framework 4.7 Features</td><td>Feature</td><td>.NET Framework 4.7 provides a comprehensive and consistent programming model for quickly and easily building and running applications that are built for various platforms including desktop PCs, Servers, smart phones and the public and private cloud.</td></tr>
+<tr><td>Active Directory Administrative Center</td><td>Feature</td><td>Active Directory Administrative Center provides users and network administrators with an enhanced Active Directory data management experience and a rich graphical user interface (GUI) to perform common Active Directory object management tasks.</td></tr>
+<tr><td>Active Directory Certificate Services Tools</td><td>Feature</td><td>Active Directory Certificate Services Tools includes the Certification Authority, Certificate Templates, Enterprise PKI, and Online Responder Management snap-ins.</td></tr>
+<tr><td>Active Directory module for Windows PowerShell</td><td>Feature</td><td>The Active Directory module for Windows PowerShel and the tools it provides can be used by Active Directory administrators to manage Active Directory Domain Services (AD DS) at the command line.</td></tr>
+<tr><td>AD DS and AD LDS Tools</td><td>Feature</td><td>Active Directory Domain Services (AD DS) and Active Directory Lightweight Directory Services (AD LDS) Tools includes snap-ins and command-line tools for remotely managing AD DS and AD LDS.</td></tr>
+<tr><td>AD DS Snap-Ins and Command-Line Tools</td><td>Feature</td><td>Active Directory Domain Services Snap-Ins and Command-Line Tools includes Active Directory Users and Computers, Active Directory Domains and Trusts, Active Directory Sites and Services, and other snap-ins and command-line tools for remotely managing Active Directory domain controllers.</td></tr>
+<tr><td>AD DS Tools</td><td>Feature</td><td>Active Directory Domain Services (AD DS) Tools includes snap-ins and command-line tools for remotely managing AD DS.</td></tr>
+<tr><td>API and PowerShell cmdlets</td><td>Feature</td><td>Installs the .NET API and PowerShell cmdlets for remote management, automated task creation, and managing WSUS from the command line.</td></tr>
+<tr><td>Application Development</td><td>Role Service</td><td>Application Development provides infrastructure for developing and hosting Web applications. Use these features to create Web content or extend the functionality of IIS. These technologies typically provide a way to perform dynamic operations that result in the creation of HTML output, which IIS then sends to fulfill client requests.</td></tr>
+<tr><td>ASP.NET 4.7</td><td>Role Service</td><td>ASP.NET provides a server side object oriented programming environment for building Web sites and Web applications using managed code. ASP.NET 4.7 is not simply a new version of ASP. Having been entirely re-architected to provide a highly productive programming experience based on the .NET Framework, ASP.NET provides a robust infrastructure for building web applications.</td></tr>
+<tr><td>ASP.NET 4.7</td><td>Feature</td><td>ASP.NET 4.7 provides core support for running ASP.NET 4.7 stand-alone applications as well as applications that are integrated with IIS.</td></tr>
+<tr><td>Certification Authority</td><td>Role Service</td><td>Certification Authority (CA) is used to issue and manage certificates. Multiple CAs can be linked to form a public key infrastructure.</td></tr>
+<tr><td>Certification Authority Management Tools</td><td>Feature</td><td>Active Directory Certification Authority Management Tools includes the Certification Authority, Certificate Templates, and Enterprise PKI snap-ins.</td></tr>
+<tr><td>Common HTTP Features</td><td>Role Service</td><td>Common HTTP Features supports basic HTTP functionality, such as delivering standard file formats and configuring custom server properties. Use Common HTTP Features to create custom error messages, to configure how the server responds to requests that do not specify a document, or to automatically redirect some requests to a different location.</td></tr>
+<tr><td>Configuration APIs</td><td>Feature</td><td>Configuration APIs enable applications that are built using the .NET Framework to configure Windows Process Activation Model programmatically. This lets the application developer automatically configure Windows Process Activation Model settings when the application runs instead of requiring the administrator to manually configure these settings.</td></tr>
+<tr><td>Default Document</td><td>Role Service</td><td>Default Document lets you configure a default file for the Web server to return when users do not specify a file in a request URL. Default documents make it easier and more convenient for users to reach your Web site.</td></tr>
+<tr><td>DHCP Server Tools</td><td>Feature</td><td>DHCP Server Tools includes the DHCP MMC snap-in, DHCP server netsh context and Windows PowerShell module for DHCP Server.</td></tr>
+<tr><td>DNS Server Tools</td><td>Feature</td><td>DNS Server Tools includes the DNS Manager snap-in, dnscmd.exe command-line tool and Windows PowerShell module for DNS Server.</td></tr>
+<tr><td>Dynamic Content Compression</td><td>Role Service</td><td>Dynamic Content Compression provides infrastructure to configure HTTP compression of dynamic content. Enabling dynamic compression always gives you more efficient utilization of bandwidth, but if your server&#39;s processor utilization is already very high, the CPU load imposed by dynamic compression might make your site perform more slowly.</td></tr>
+<tr><td>File and iSCSI Services</td><td>Role Service</td><td>File and iSCSI Services provides technologies that help you manage file servers and storage, reduce disk space utilization, replicate and cache files to branch offices, move or fail over a file share to another cluster node, and share files by using the NFS protocol.</td></tr>
+<tr><td>File Server</td><td>Role Service</td><td>File Server manages shared folders and enables users to access files on this computer from the network.</td></tr>
+<tr><td>Group Policy Management</td><td>Feature</td><td>Group Policy Management is a scriptable Microsoft Management Console (MMC) snap-in, providing a single administrative tool for managing Group Policy across the enterprise. Group Policy Management is the standard tool for managing Group Policy.</td></tr>
+<tr><td>HTTP Activation</td><td>Feature</td><td>HTTP Activation supports process activation via HTTP. Applications that use HTTP Activation can start and stop dynamically in response to work items that arrive over the network via HTTP.</td></tr>
+<tr><td>Hyper-V Management Tools</td><td>Feature</td><td>Hyper-V Management Tools includes GUI and command-line tools for managing Hyper-V.</td></tr>
+<tr><td>Hyper-V Module for Windows PowerShell</td><td>Feature</td><td>Hyper-V Module for Windows PowerShell includes Windows PowerShell cmdlets for managing Hyper-V.</td></tr>
+<tr><td>IIS 6 Management Compatibility</td><td>Role Service</td><td>IIS 6 Management Compatibility provides forward compatibility for your applications and scripts that use the two IIS APIs, Admin Base Object (ABO) and Active Directory Service Interface (ADSI). You can use existing IIS 6 scripts to manage the IIS 10 Web server.</td></tr>
+<tr><td>IIS 6 Metabase Compatibility</td><td>Role Service</td><td>IIS 6 Metabase Compatibility provides infrastructure to query and configure the metabase so that you can run applications and scripts migrated from earlier versions of IIS that use Admin Base Object (ABO) or Active Directory Service Interface (ADSI) APIs.</td></tr>
+<tr><td>IIS Management Console</td><td>Role Service</td><td>IIS Management Console provides infrastructure to manage IIS 10 by using a user interface. You can use the IIS management console to manage a local or remote Web server that runs IIS 10. To manage SMTP, you must install and use the IIS 6 Management Console.</td></tr>
+<tr><td>IIS Management Scripts and Tools</td><td>Role Service</td><td>IIS Management Scripts and Tools provide infrastructure to programmatically manage an IIS 10 Web server by using commands in a command window or by running scripts. You can use these tools when you want to automate commands in batch files or when you do not want to incur the overhead of managing IIS by using the user interface.</td></tr>
+<tr><td>ISAPI Extensions</td><td>Role Service</td><td>Internet Server Application Programming Interface (ISAPI) Extensions provides support for dynamic Web content developing using ISAPI extensions. An ISAPI extension runs when requested just like any other static HTML file or dynamic ASP file. Since ISAPI applications are compiled code, they are processed much faster than ASP files or files that call COM+ components.</td></tr>
+<tr><td>ISAPI Filters</td><td>Role Service</td><td>Internet Server Application Programming Interface (ISAPI) Filters provides support for Web applications that use ISAPI filters. ISAPI filters are files that can extend or change the functionality provided by IIS. An ISAPI filter reviews every request made to the Web server, until the filter finds one that it needs to process.</td></tr>
+<tr><td>Management Tools</td><td>Role Service</td><td>Management Tools provide infrastructure to manage a Web server that runs IIS 10. You can use the IIS user interface, command-line tools, and scripts to manage the Web server. You can also edit the configuration files directly.</td></tr>
+<tr><td>Online Responder Tools</td><td>Feature</td><td>Online Responder Tools includes the Online Responder Management snap-in.</td></tr>
+<tr><td>Performance</td><td>Role Service</td><td>Performance provides infrastructure for output caching by integrating the dynamic output-caching capabilities of ASP.NET with the static output-caching capabilities that were present in IIS 6.0. IIS also lets you use bandwidth more effectively and efficiently by using common compression mechanisms such as Gzip and Deflate.</td></tr>
+<tr><td>Process Model</td><td>Feature</td><td>Process Model hosts Web and WCF services. Introduced with IIS 6.0, the process model is a new architecture that features rapid failure protection, health monitoring, and recycling. Windows Process Activation Service Process Model removes the dependency on HTTP.</td></tr>
+<tr><td>Remote Server Administration Tools</td><td>Feature</td><td>Remote Server Administration Tools includes snap-ins and command-line tools for remotely managing roles and features.</td></tr>
+<tr><td>Request Filtering</td><td>Role Service</td><td>Request Filtering screens all incoming requests to the server and filters these requests based on rules set by the administrator. Many malicious attacks share common characteristics, like extremely long requests, or requests for an unusual action. By filtering requests, you can attempt to mitigate the impact of these type attacks.</td></tr>
+<tr><td>Role Administration Tools</td><td>Feature</td><td>Role Administration Tools includes snap-ins and command-line tools for remotely managing roles.</td></tr>
+<tr><td>Security</td><td>Role Service</td><td>Security provides infrastructure for securing the Web server from users and requests. IIS supports multiple authentication methods. Pick an appropriate authentication scheme based upon the role of the server. Filter all incoming requests, rejecting without processing requests that match user defined values, or restrict requests based on originating address space.</td></tr>
+<tr><td>Static Content</td><td>Role Service</td><td>Static Content allows the Web server to publish static Web file formats, such as HTML pages and image files. Use Static Content to publish files on your Web server that users can then view using a Web browser.</td></tr>
+<tr><td>Storage Services</td><td>Role Service</td><td>Storage Services provides storage management functionality that is always installed and cannot be removed.</td></tr>
+<tr><td>System Data Archiver</td><td>Feature</td><td>Provides services to collect and archive Windows Server system data.</td></tr>
+<tr><td>TCP Port Sharing</td><td>Feature</td><td>TCP Port Sharing allows multiple net.tcp applications to share a single TCP port. Consequently, these applications can coexist on the same physical computer in separate, isolated processes, while sharing the network infrastructure required to send and receive traffic over a TCP port, such as port 808.</td></tr>
+<tr><td>User Interface Management Console</td><td>Feature</td><td>Installs the WSUS Management Console user interface (UI).</td></tr>
+<tr><td>WCF Services</td><td>Feature</td><td>Windows Communication Foundation (WCF) Activation uses Windows Process Activation Service to invoke applications remotely over the network by using protocols such as HTTP, Message Queuing, TCP, and named pipes. Consequently, applications can start and stop dynamically in response to incoming work items, resulting in application hosting that is more robust, manageable, and efficient.</td></tr>
+<tr><td>Web Server</td><td>Role Service</td><td>Web Server provides support for HTML Web sites and optional support for ASP.NET, ASP, and Web server extensions. You can use the Web Server to host an internal or external Web site or to provide an environment for developers to create Web-based applications.</td></tr>
+<tr><td>WID Connectivity</td><td>Role Service</td><td>Installs the database used by WSUS into WID.</td></tr>
+<tr><td>Windows Authentication</td><td>Role Service</td><td>Windows authentication is a low cost authentication solution for internal Web sites. This authentication scheme allows administrators in a Windows domain to take advantage of the domain infrastructure for authenticating users. Do not use Windows authentication if users who must be authenticated access your Web site from behind firewalls and proxy servers.</td></tr>
+<tr><td>Windows Defender Antivirus</td><td>Feature</td><td>Windows Defender Antivirus helps protect your machine from malware.</td></tr>
+<tr><td>Windows Internal Database</td><td>Feature</td><td>Windows Internal Database is a relational data store that can be used only by Windows roles and features, such as Active Directory Rights Management Services, Windows Server Update Services, and Windows System Resource Manager.</td></tr>
+<tr><td>Windows PowerShell</td><td>Feature</td><td>Windows PowerShell enables you to automate local and remote Windows administration. This task-based command-line shell and scripting language is built on the Microsoft .NET Framework. It includes hundreds of built-in commands and lets you write and distribute your own commands and scripts.</td></tr>
+<tr><td>Windows PowerShell 2.0 Engine</td><td>Feature</td><td>Windows PowerShell 2.0 Engine includes the core components from Windows PowerShell 2.0 for backward compatibility with existing Windows PowerShell host applications.</td></tr>
+<tr><td>Windows PowerShell 5.1</td><td>Feature</td><td>Windows PowerShell enables you to automate local and remote Windows administration. This task-based command-line shell and scripting language is built on the Microsoft .NET Framework. It includes hundreds of built-in commands and lets you write and distribute your own commands and scripts.</td></tr>
+<tr><td>Windows PowerShell ISE</td><td>Feature</td><td>Windows PowerShell Integrated Scripting Environment (ISE) lets you compose, edit, and debug scripts and run multi-line interactive commands in a graphical environment. Features include IntelliSense, tab completion, snippets, color-coded syntax, line numbering, selective execution, graphical debugging, right-to-left language and Unicode support.</td></tr>
+<tr><td>Windows Process Activation Service</td><td>Feature</td><td>Windows Process Activation Service generalizes the IIS process model, removing the dependency on HTTP. All the features of IIS that were previously available only to HTTP applications are now available to applications hosting Windows Communication Foundation (WCF) services, using non-HTTP protocols. IIS 10.0 also uses Windows Process Activation Service for message-based activation over HTTP.</td></tr>
+<tr><td>Windows Server Update Services Tools</td><td>Feature</td><td>Windows Server Update Services Tools includes graphical and Powershell tools for managing WSUS.</td></tr>
+<tr><td>WoW64 Support</td><td>Feature</td><td>Includes all of WoW64 to support running 32-bit applications on Server Core installations.  This feature is required for full Server installations. Uninstalling WoW64 Support will convert a full Server installation into a Server Core installation.</td></tr>
+<tr><td>WSUS Services</td><td>Role Service</td><td>Installs the services used by Windows Server Update Services: Update Service, the Reporting Web Service, the API Remoting Web Service, the Client Web Service, the Simple Web Authentication Web Service, the Server Synchronization Service, and the DSS Authentication Web Service.</td></tr>
+<tr><td>XPS Viewer</td><td>Feature</td><td>The XPS Viewer is used to read, set permissions for, and digitally sign XPS documents.</td></tr>
+</tbody></table>
+<div class="Caption">Table 7 - Feature &amp; Role Services</div><br /></div>
+<a name="7064b7cc-acfe-45b0-b7eb-01f5d4415672"><h3 class="Heading3">1.2.6 Installed Applications</h3></a><div>The following settings details applications listed in Add/Remove Programs</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Application Name</th><th>Publisher</th><th>Version</th><th>Install Date</th></tr></thead><tbody>
+<tr><td>7-Zip 19.00 (x64)</td><td>Igor Pavlov</td><td>&nbsp;</td><td>-</td></tr>
+<tr><td>AD Replication Status Tool 1.0</td><td>Microsoft Corporation</td><td>51773855</td><td>20220903</td></tr>
+<tr><td>Administrative Templates (.admx) for Windows 10 October 2020 Update</td><td>Microsoft Coporation</td><td>16777216</td><td>20210310</td></tr>
+<tr><td>DiskMax 6.21</td><td>KoshyJohn.com</td><td>&nbsp;</td><td>17/11/2021</td></tr>
+<tr><td>Lingering Object Liquidator v2</td><td>Microsoft Corp</td><td>16777216</td><td>20220710</td></tr>
+<tr><td>Local Administrator Password Solution</td><td>Microsoft Corporation</td><td>100794368</td><td>20201101</td></tr>
+<tr><td>Microsoft Command Line Utilities 15 for SQL Server</td><td>Microsoft Corporation</td><td>251660240</td><td>20210128</td></tr>
+<tr><td>Microsoft Edge</td><td>Microsoft Corporation</td><td>1577059296</td><td>20211002</td></tr>
+<tr><td>Microsoft Edge Update</td><td>&nbsp;</td><td>1.3.169.31</td><td>-</td></tr>
+<tr><td>Microsoft ODBC Driver 17 for SQL Server</td><td>Microsoft Corporation</td><td>285605889</td><td>20210128</td></tr>
+<tr><td>Microsoft Report Viewer 2012 Runtime</td><td>Microsoft Corporation</td><td>184618364</td><td>20210310</td></tr>
+<tr><td>Microsoft System CLR Types for SQL Server 2012 (x64)</td><td>Microsoft Corporation</td><td>184818521</td><td>20210310</td></tr>
+<tr><td>Microsoft System CLR Types for SQL Server 2019</td><td>Microsoft Corporation</td><td>251660240</td><td>20210310</td></tr>
+<tr><td>Microsoft Visual C++ 2015-2022 Redistributable (x64) - 14.32.31326</td><td>Microsoft Corporation</td><td>&nbsp;</td><td>-</td></tr>
+<tr><td>Microsoft Visual C++ 2015-2022 Redistributable (x86) - 14.32.31326</td><td>Microsoft Corporation</td><td>&nbsp;</td><td>-</td></tr>
+<tr><td>Microsoft Visual C++ 2022 X64 Additional Runtime - 14.32.31326</td><td>Microsoft Corporation</td><td>237009502</td><td>20220825</td></tr>
+<tr><td>Microsoft Visual C++ 2022 X64 Minimum Runtime - 14.32.31326</td><td>Microsoft Corporation</td><td>237009502</td><td>20220825</td></tr>
+<tr><td>Microsoft Visual C++ 2022 X86 Additional Runtime - 14.32.31326</td><td>Microsoft Corporation</td><td>237009502</td><td>20220825</td></tr>
+<tr><td>Microsoft Visual C++ 2022 X86 Minimum Runtime - 14.32.31326</td><td>Microsoft Corporation</td><td>237009502</td><td>20220825</td></tr>
+<tr><td>Npcap</td><td>Nmap Project</td><td>&nbsp;</td><td>-</td></tr>
+<tr><td>RVTools</td><td>Robware</td><td>67305473</td><td>20220824</td></tr>
+<tr><td>Veeam Agent for Microsoft Windows</td><td>Veeam Software Group GmbH</td><td>83886083</td><td>20220916</td></tr>
+<tr><td>Veeam Backup Transport</td><td>Veeam Software Group GmbH</td><td>184549377</td><td>20220916</td></tr>
+<tr><td>Veeam Backup VSS Integration</td><td>Veeam Software Group GmbH</td><td>184549377</td><td>20220916</td></tr>
+<tr><td>Veeam Installer Service</td><td>Veeam Software Group GmbH</td><td>11</td><td>&nbsp;</td></tr>
+<tr><td>Veeam VSS Hardware Provider</td><td>Veeam Software Group GmbH</td><td>83886081</td><td>20220916</td></tr>
+<tr><td>VMware Tools</td><td>VMware, Inc.</td><td>201392128</td><td>20220825</td></tr>
+</tbody></table>
+<div class="Caption">Table 8 - Installed Applications</div><br /></div>
+<a name="63789165-fe42-4d7a-b52e-cdfe977e5517"><h3 class="Heading3">1.2.7 Services</h3></a><div>The following table details status of important services</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Display Name</th><th>Short Name</th><th>Status</th></tr></thead><tbody>
+<tr><td>Active Directory Domain Services</td><td>NTDS</td><td>Running</td></tr>
+<tr><td>Active Directory Web Services</td><td>ADWS</td><td>Running</td></tr>
+<tr><td>DFS Replication</td><td>DFSR</td><td>Running</td></tr>
+<tr><td>DHCP Server</td><td>DHCPServer</td><td>Running</td></tr>
+<tr><td>DNS Client</td><td>Dnscache</td><td>Running</td></tr>
+<tr><td>DNS Server</td><td>DNS</td><td>Running</td></tr>
+<tr><td>Group Policy Client</td><td>gpsvc</td><td>Running</td></tr>
+<tr><td>HV Host Service</td><td>HvHost</td><td style="font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #fef3b5;">Stopped</td></tr>
+<tr><td>Intersite Messaging</td><td>IsmServ</td><td>Running</td></tr>
+<tr><td>IP Helper</td><td>iphlpsvc</td><td>Running</td></tr>
+<tr><td>Kerberos Key Distribution Center</td><td>Kdc</td><td>Running</td></tr>
+<tr><td>Microsoft iSCSI Initiator Service</td><td>MSiSCSI</td><td style="font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #fef3b5;">Stopped</td></tr>
+<tr><td>Netlogon</td><td>Netlogon</td><td>Running</td></tr>
+<tr><td>Remote Access Connection Manager</td><td>RasMan</td><td>Running</td></tr>
+<tr><td>Remote Desktop Configuration</td><td>SessionEnv</td><td>Running</td></tr>
+<tr><td>Remote Desktop Services</td><td>TermService</td><td>Running</td></tr>
+<tr><td>Remote Procedure Call (RPC)</td><td>RpcSs</td><td>Running</td></tr>
+<tr><td>RPC Endpoint Mapper</td><td>RpcEptMapper</td><td>Running</td></tr>
+<tr><td>Security Accounts Manager</td><td>SamSs</td><td>Running</td></tr>
+<tr><td>Server</td><td>LanmanServer</td><td>Running</td></tr>
+<tr><td>Task Scheduler</td><td>Schedule</td><td>Running</td></tr>
+<tr><td>TCP/IP NetBIOS Helper</td><td>lmhosts</td><td>Running</td></tr>
+<tr><td>Update Orchestrator Service</td><td>UsoSvc</td><td>Running</td></tr>
+<tr><td>Windows Defender Firewall</td><td>mpssvc</td><td>Running</td></tr>
+<tr><td>Windows Time</td><td>W32Time</td><td>Running</td></tr>
+<tr><td>World Wide Web Publishing Service</td><td>W3SVC</td><td>Running</td></tr>
+</tbody></table>
+<div class="Caption">Table 9 - Services Status</div><br /></div>
+<a name="41990f6d-ab43-4ffc-bebd-6e33ad6252d0"><h2 class="Heading2">1.3 Windows Firewall</h2></a><div>The Following table is a the Windowss Firewall Summary</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Profile</th><th>Profile Enabled</th><th>Inbound Action</th><th>Outbound Action</th></tr></thead><tbody>
+<tr><td>Domain</td><td>No</td><td>NotConfigured</td><td>NotConfigured</td></tr>
+<tr><td>Private</td><td>No</td><td>NotConfigured</td><td>NotConfigured</td></tr>
+<tr><td>Public</td><td>No</td><td>NotConfigured</td><td>NotConfigured</td></tr>
+</tbody></table>
+<div class="Caption">Table 10 - Windows Firewall Profiles</div><br /></div>
+<a name="2d23a97f-30d8-4801-984f-22191b688681"><h2 class="Heading2">1.4 Host Networking</h2></a><div>The following section details Host Network Configuration</div><br /><a name="64bcd70f-a630-47ca-877b-d262f53a4495"><h3 class="Heading3">1.4.1 Network Adapters</h3></a><div>The Following table details host network adapters</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:35%; min-width:35%; width:35%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:15%; min-width:15%; width:15%" /></colgroup>
+<thead><tr><th>Adapter Name</th><th>Adapter Description</th><th>Mac Address</th><th>Link Speed</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>vmxnet3 Ethernet Adapter</td><td>00-50-56-B0-06-66</td><td>10 Gbps</td></tr>
+</tbody></table>
+<div class="Caption">Table 11 - Network Adapters</div><br /></div>
+<a name="34098148-98ca-420f-a2a5-acc3b4979d24"><h3 class="Heading3">1.4.2 IP Addresses</h3></a><div>The following table details IP Addresses assigned to hosts</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:10%; min-width:10%; width:10%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Interface Name</th><th>Interface Description</th><th>IPv4 Addresses</th><th>Subnet Mask</th><th>IPv4 Gateway</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>vmxnet3 Ethernet Adapter</td><td>192.168.5.1</td><td>24</td><td>192.168.5.254</td></tr>
+</tbody></table>
+<div class="Caption">Table 12 - Net IP Addresse</div><br /></div>
+<a name="baa2cbda-7ce7-4402-ab08-e288e7592b57"><h3 class="Heading3">1.4.3 DNS Client</h3></a><div>The following table details the DNS Seach Domains</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>DNS Suffix</th><th>Use Suffix Search List</th><th>Use Devolution</th><th>Devolution Level</th></tr></thead><tbody>
+<tr><td>pharmax.local</td><td>Yes</td><td>Yes</td><td>0</td></tr>
+</tbody></table>
+<div class="Caption">Table 13 - DNS Seach Domain</div><br /></div>
+<a name="1b1d288b-14f5-459a-9291-fd2c990895f7"><h3 class="Heading3">1.4.4 DNS Servers</h3></a><div>The following table details the DNS Server Addresses Configured</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<thead><tr><th>Interface</th><th>Server Address</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>192.168.5.1,127.0.0.1,8.8.8.8</td></tr>
+</tbody></table>
+<div class="Caption">Table 14 - DNS Servers</div><br /></div>
+<a name="af8d24ff-eddc-4fd2-adb7-992cc14c5606"><h3 class="Heading3">1.4.5 Network Adapter MTU</h3></a><div>The following table lists Network Adapter MTU settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:50%; min-width:50%; width:50%" /><col style="max-width:50%; min-width:50%; width:50%" /></colgroup>
+<thead><tr><th>Adapter Name</th><th>MTU Size</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>1514</td></tr>
+</tbody></table>
+<div class="Caption">Table 15 - Network Adapter MTU</div><br /></div>
+<a name="327c71c9-c1ca-4913-8dc6-9bcb76c1dd33"><h2 class="Heading2">1.5 Host Storage</h2></a><div>The following section details the storage configuration of the host</div><a name="765fb185-f675-48f7-aa6a-e0441b86b51b"><h3 class="Heading3">1.5.1 Local Disks</h3></a><div>The following table details physical disks installed in the host</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Disk Number</th><th>Model</th><th>Serial Number</th><th>Partition Style</th><th>Disk Size</th></tr></thead><tbody>
+<tr><td>0</td><td>Virtual disk    </td><td>6000c29c7f11e99c680100bda1fc4ab7</td><td>2</td><td>60 GB</td></tr>
+<tr><td>1</td><td>Virtual disk    </td><td>6000c2995177a4c4f6abbc62df6d231c</td><td>2</td><td>500 GB</td></tr>
+</tbody></table>
+<div class="Caption">Table 16 - Local Disks</div><br /></div>
+<a name="4aea4a9a-1b55-4bd7-ab6d-6827328deb60"><h3 class="Heading3">1.5.2 Host Volumes</h3></a><div>The following section details local volumes on the host</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:15%; min-width:15%; width:15%" /></colgroup>
+<thead><tr><th>Drive Letter</th><th>File System Label</th><th>File System</th><th>Size</th><th>Free Space</th><th>Health Status</th></tr></thead><tbody>
+<tr><td>C</td><td>&nbsp;</td><td>NTFS</td><td>59 GB</td><td>31 GB</td><td>1</td></tr>
+<tr><td>E</td><td>WSUS</td><td>NTFS</td><td>500 GB</td><td>290 GB</td><td>0</td></tr>
+</tbody></table>
+<div class="Caption">Table 17 - Host Volumes</div><br /></div>
+<a name="6ba9881a-8ebe-4737-8ae5-fbeff42969b6"><h2 class="Heading2">1.6 IIS Configuration Settings</h2></a><div>The following table details the IIS Server Settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Default Application Pool</th><th>Enabled Protocols</th><th>Logfile Path</th><th>Server Auto Start</th></tr></thead><tbody>
+<tr><td>DefaultAppPool</td><td>HTTP</td><td>%SystemDrive%\inetpub\logs\LogFiles</td><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 18 - IIS Host Settings</div><br /></div>
+<a name="51ec7ef3-8c90-4b30-8cbb-c2598c04f3dd"><h3 class="Heading3">1.6.1 Application Pools</h3></a><div>The following table lists IIS Application Pools</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:30%; min-width:30%; width:30%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Name</th><th>Status</th><th>CLR Ver</th><th>Pipeline Mode </th><th>Start Mode</th></tr></thead><tbody>
+<tr><td>DefaultAppPool</td><td>Started</td><td>v4.0</td><td>Integrated</td><td>OnDemand</td></tr>
+<tr><td>.NET v4.5 Classic</td><td>Started</td><td>v4.0</td><td>Classic</td><td>OnDemand</td></tr>
+<tr><td>.NET v4.5</td><td>Started</td><td>v4.0</td><td>Integrated</td><td>OnDemand</td></tr>
+<tr><td>WsusPool</td><td>Started</td><td>v4.0</td><td>Integrated</td><td>OnDemand</td></tr>
+</tbody></table>
+<div class="Caption">Table 19 - Application Pools</div><br /></div>
+<a name="6c580f52-81a7-4078-8b4f-b91c870e0049"><h3 class="Heading3">1.6.2 Sites Summary</h3></a><div>The following table provide a summary of IIS Web Sites</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Status</th><th>Binding</th><th>Application Pool</th></tr></thead><tbody>
+<tr><td>Default Web Site</td><td>Stopped</td><td>http 192.168.5.1:80:server-dc-01v</td><td>DefaultAppPool</td></tr>
+<tr><td>WSUS Administration</td><td>Started</td><td>http :8530:<br />https *:8531: sslFlags=0</td><td>WsusPool</td></tr>
+</tbody></table>
+<div class="Caption">Table 20 - IIS Web Sites</div><br /></div>
+<a name="12a9c0b3-8541-4c94-b97b-8f5793d8bc66"><h4 class="Heading4">1.6.2.1 Sites Configuration</h4></a><div>The following section details IIS Web Sites configuration</div><br /><a name="293339a9-0802-4f7c-ae3f-e62f6de99254"><h5 class="Heading5">1.6.2.1.1 Default Web Site</h5></a><div>The following table details Default Web Site settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>Default Web Site</td></tr>
+<tr><th>Auto Start</th><td>No</td></tr>
+<tr><th>Enabled Protocols </th><td>http</td></tr>
+<tr><th>URL</th><td>-</td></tr>
+<tr><th>Path </th><td>%SystemDrive%\inetpub\wwwroot</td></tr>
+<tr><th>Log Path</th><td>%SystemDrive%\inetpub\logs\LogFiles</td></tr>
+</tbody></table>
+<div class="Caption">Table 21 - IIS Web Sites - Default Web Site</div><br /></div>
+<a name="fd44bb61-03ee-4e0c-9909-11390b036445"><h5 class="Heading5">1.6.2.1.2 WSUS Administration</h5></a><div>The following table details WSUS Administration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>WSUS Administration</td></tr>
+<tr><th>Auto Start</th><td>Yes</td></tr>
+<tr><th>Enabled Protocols </th><td>http</td></tr>
+<tr><th>URL</th><td>http://localhost:8530/</td></tr>
+<tr><th>Path </th><td>C:\Program Files\Update Services\WebServices\Root\</td></tr>
+<tr><th>Log Path</th><td>%SystemDrive%\inetpub\logs\LogFiles</td></tr>
+</tbody></table>
+<div class="Caption">Table 22 - IIS Web Sites - WSUS Administration</div><br /></div>
+<a name="c0068479-d6aa-47bb-aacb-5fc93aabc18f"><h6 class="Heading5">1.6.2.1.2.1 Web Applications</h6></a><div>The following table details WSUS Administration Web Application</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:35%; min-width:35%; width:35%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:45%; min-width:45%; width:45%" /></colgroup>
+<thead><tr><th>Name</th><th>Application pool</th><th>Physical Path </th></tr></thead><tbody>
+<tr><td>/ReportingWebService</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\ReportingWebService</td></tr>
+<tr><td>/ClientWebService</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\ClientWebService</td></tr>
+<tr><td>/SimpleAuthWebService</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\SimpleAuthWebService</td></tr>
+<tr><td>/ServerSyncWebService</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\ServerSyncWebService</td></tr>
+<tr><td>/DssAuthWebService</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\DssAuthWebService</td></tr>
+<tr><td>/Inventory</td><td>WsusPool</td><td>C:\Program Files\Update Services\Inventory</td></tr>
+<tr><td>/ApiRemoting30</td><td>WsusPool</td><td>C:\Program Files\Update Services\WebServices\ApiRemoting30</td></tr>
+</tbody></table>
+<div class="Caption">Table 23 - Web Applications - WSUS Administration</div><br /></div>
+<a name="e2342a23-0d3d-4620-a4cd-9a794b296f45"><h2 class="Heading2">1.7 File Server Configuration Settings</h2></a><div>The following table details the File Server Settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Auto Share Server</th><td>Yes</td></tr>
+<tr><th>Enable Leasing</th><td>Yes</td></tr>
+<tr><th>Enable MultiChannel</th><td>Yes</td></tr>
+<tr><th>Enable Oplocks</th><td>Yes</td></tr>
+<tr><th>Keep Alive Time</th><td>2</td></tr>
+<tr><th>SMB1 Protocol</th><td>No</td></tr>
+<tr><th>SMB2 Protocol</th><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 24 - SMB Server Settings</div><br /></div>
+<a name="811b1b97-e269-4c08-b172-fbcdb7e190a5"><h3 class="Heading3">1.7.1 SMB Network Interface</h3></a><div>The following table provide a summary of the SMB protocol network interface information</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:34%; min-width:34%; width:34%" /><col style="max-width:16%; min-width:16%; width:16%" /><col style="max-width:16%; min-width:16%; width:16%" /><col style="max-width:34%; min-width:34%; width:34%" /></colgroup>
+<thead><tr><th>Name</th><th>RSS Capable</th><th>RDMA Capable</th><th>IP Address</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>Yes</td><td>No</td><td>192.168.5.1</td></tr>
+</tbody></table>
+<div class="Caption">Table 25 - SMB Network Interfaces</div><br /></div>
+<a name="26ea77a3-6fc9-4885-b338-99e13bf2689b"><h3 class="Heading3">1.7.2 File Shares</h3></a><div>The following section details network shares</div><br /><a name="2577af3d-0148-4b76-af64-e36a57cb191e"><h4 class="Heading4">1.7.2.1 NETLOGON Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>NETLOGON</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>C:\Windows\SYSVOL\sysvol\pharmax.local\SCRIPTS</td></tr>
+<tr><th>Description</th><td>Logon server share </td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 26 - File Server Shares - NETLOGON</div><br /></div>
+<a name="388f6e8b-5c92-4b76-8deb-c8e2cfbea496"><h5 class="Heading5">1.7.2.1.1 Permissions</h5></a><div>The following table details NETLOGON shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Read</td></tr>
+<tr><td>*</td><td>BUILTIN\Administrators</td><td>Allow</td><td>Full</td></tr>
+</tbody></table>
+<div class="Caption">Table 27 - Share Permissions - NETLOGON</div><br /></div>
+<a name="6c21aa1f-aad6-4e37-98b1-6dae07c95f04"><h4 class="Heading4">1.7.2.2 SYSVOL Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>SYSVOL</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>C:\Windows\SYSVOL\sysvol</td></tr>
+<tr><th>Description</th><td>Logon server share </td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 28 - File Server Shares - SYSVOL</div><br /></div>
+<a name="8f2ab585-178f-4d8d-b295-8cc007781b95"><h5 class="Heading5">1.7.2.2.1 Permissions</h5></a><div>The following table details SYSVOL shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Read</td></tr>
+<tr><td>*</td><td>BUILTIN\Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>NT AUTHORITY\Authenticated Users</td><td>Allow</td><td>Full</td></tr>
+</tbody></table>
+<div class="Caption">Table 29 - Share Permissions - SYSVOL</div><br /></div>
+<a name="b90d60b1-f8c2-4872-a74f-8575addb3533"><h4 class="Heading4">1.7.2.3 UEMConfig Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>UEMConfig</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>E:\UEMConfig</td></tr>
+<tr><th>Description</th><td>&nbsp;</td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 30 - File Server Shares - UEMConfig</div><br /></div>
+<a name="91833784-01df-4661-81ce-b1a166ad3018"><h5 class="Heading5">1.7.2.3.1 Permissions</h5></a><div>The following table details UEMConfig shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Full</td></tr>
+</tbody></table>
+<div class="Caption">Table 31 - Share Permissions - UEMConfig</div><br /></div>
+<a name="ec52bb23-56e2-41f5-9fb5-3239392a868b"><h4 class="Heading4">1.7.2.4 UEMProfiles Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>UEMProfiles</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>E:\UEMProfiles</td></tr>
+<tr><th>Description</th><td>&nbsp;</td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 32 - File Server Shares - UEMProfiles</div><br /></div>
+<a name="d84b301a-5f69-4bb3-9c3a-124ea23a43ec"><h5 class="Heading5">1.7.2.4.1 Permissions</h5></a><div>The following table details UEMProfiles shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Full</td></tr>
+</tbody></table>
+<div class="Caption">Table 33 - Share Permissions - UEMProfiles</div><br /></div>
+<a name="0e2fb94d-1a9a-45b0-83a4-8cd47ca66382"><h4 class="Heading4">1.7.2.5 UpdateServicesPackages Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>UpdateServicesPackages</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>E:\wsus\UpdateServicesPackages</td></tr>
+<tr><th>Description</th><td>A network share to be used by client systems for collecting all software packages (usually applications) published on this WSUS system.</td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 34 - File Server Shares - UpdateServicesPackages</div><br /></div>
+<a name="3b73c44a-b3a2-4757-b2a6-247ca752c48b"><h5 class="Heading5">1.7.2.5.1 Permissions</h5></a><div>The following table details UpdateServicesPackages shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>BUILTIN\Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>PHARMAX\WSUS Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>NT AUTHORITY\NETWORK SERVICE</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Read</td></tr>
+</tbody></table>
+<div class="Caption">Table 35 - Share Permissions - UpdateServicesPackages</div><br /></div>
+<a name="1ebb98b3-c330-457e-a490-87bd895c8a67"><h4 class="Heading4">1.7.2.6 WsusContent Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>WsusContent</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>E:\wsus\WsusContent</td></tr>
+<tr><th>Description</th><td>A network share to be used by Local Publishing to place published content on this WSUS system.</td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 36 - File Server Shares - WsusContent</div><br /></div>
+<a name="8b952a3f-41e6-4726-a3d4-f4a73b24a0b8"><h5 class="Heading5">1.7.2.6.1 Permissions</h5></a><div>The following table details WsusContent shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>BUILTIN\Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>PHARMAX\WSUS Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>NT AUTHORITY\NETWORK SERVICE</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>Everyone</td><td>Allow</td><td>Read</td></tr>
+</tbody></table>
+<div class="Caption">Table 37 - Share Permissions - WsusContent</div><br /></div>
+<a name="16e7f4d3-ecca-4c5e-8d01-9b9b50656c5e"><h4 class="Heading4">1.7.2.7 WSUSTemp Share</h4></a><div>The following table details shares configuration</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Name</th><td>WSUSTemp</td></tr>
+<tr><th>Scope Name</th><td>*</td></tr>
+<tr><th>Path</th><td>C:\Program Files\Update Services\LogFiles\WSUSTemp</td></tr>
+<tr><th>Description</th><td>A network share used by Local Publishing from a Remote WSUS Console Instance.</td></tr>
+<tr><th>Access Based Enumeration Mode</th><td>Unrestricted</td></tr>
+<tr><th>Caching Mode</th><td>Manual</td></tr>
+<tr><th>Encrypt Data</th><td>No</td></tr>
+<tr><th>State</th><td>Online</td></tr>
+</tbody></table>
+<div class="Caption">Table 38 - File Server Shares - WSUSTemp</div><br /></div>
+<a name="6e6ef02c-bbb4-4df7-b8f1-4958f442194d"><h5 class="Heading5">1.7.2.7.1 Permissions</h5></a><div>The following table details WSUSTemp shares permissions</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Scope Name</th><th>Account Name</th><th>Access Control Type</th><th>Access Right</th></tr></thead><tbody>
+<tr><td>*</td><td>BUILTIN\Administrators</td><td>Allow</td><td>Full</td></tr>
+<tr><td>*</td><td>PHARMAX\WSUS Administrators</td><td>Allow</td><td>Full</td></tr>
+</tbody></table>
+<div class="Caption">Table 39 - Share Permissions - WSUSTemp</div><br /></div>
+<a name="65ad4083-7a67-4139-9f93-87ed06219373"><h2 class="Heading2">1.8 DHCP Server Configuration Settings</h2></a><div>The following table details the DHCP Server Settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Domain Joined</th><td>Yes</td></tr>
+<tr><th>Authorized</th><td>Yes</td></tr>
+<tr><th>Conflict Detection Attempts</th><td>1</td></tr>
+<tr><th>Activate Policies</th><td>Yes</td></tr>
+<tr><th>Dynamic Bootp</th><td>Yes</td></tr>
+<tr><th>Database Path</th><td>C:\Windows\system32\dhcp\dhcp.mdb</td></tr>
+<tr><th>Database Backup Path</th><td>C:\Windows\system32\dhcp\backup</td></tr>
+<tr><th>Database Backup Interval</th><td>60 min</td></tr>
+<tr><th>Database Logging Enabled</th><td>Yes</td></tr>
+<tr><th>User Name</th><td>administrator</td></tr>
+<tr><th>Domain Name</th><td>PHARMAX.LOCAL</td></tr>
+</tbody></table>
+<div class="Caption">Table 40 - DHCP Servers Settings - SERVER-DC-01V</div><br /></div>
+<a name="fd486fb3-19fd-4fe8-a567-e635925e46e9"><h3 class="Heading3">1.8.1 Service Statistics</h3></a><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:17%; min-width:17%; width:17%" /><col style="max-width:17%; min-width:17%; width:17%" /><col style="max-width:17%; min-width:17%; width:17%" /><col style="max-width:17%; min-width:17%; width:17%" /><col style="max-width:16%; min-width:16%; width:16%" /><col style="max-width:16%; min-width:16%; width:16%" /></colgroup>
+<thead><tr><th>Total Scopes</th><th>Total Addresses</th><th>Addresses In Use</th><th>Addresses Available</th><th>Percentage In Use</th><th>Percentage Available</th></tr></thead><tbody>
+<tr><td>10</td><td>2118</td><td>217</td><td>1901</td><td>10</td><td>90</td></tr>
+</tbody></table>
+<div class="Caption">Table 41 - DHCP Server Statistics - SERVER-DC-01V</div><br /></div>
+<a name="109b9cd8-6a51-4b15-b6c4-b205387a6613"><h3 class="Heading3">1.8.2 Scopes</h3></a><div>The following section provides detailed information of the Scope configuration.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:35%; min-width:35%; width:35%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:10%; min-width:10%; width:10%" /></colgroup>
+<thead><tr><th>Scope Id</th><th>Scope Name</th><th>Scope Range</th><th>Lease Duration</th><th>State</th></tr></thead><tbody>
+<tr><td>10.10.32.0/24</td><td>ESXi-vMotion-DR</td><td>10.10.32.10 - 10.10.32.250</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>10.10.33.0/24</td><td>ESX-VM-NETWORK-DR</td><td>10.10.33.40 - 10.10.33.253</td><td>100.00:00:00</td><td>Active</td></tr>
+<tr><td>10.10.34.0/24</td><td>ESXi-ISCSI-BLOCK-A-DR</td><td>10.10.34.10 - 10.10.34.253</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>10.10.35.0/24</td><td>ESXi-ISCSI-BLOCK-B-DR</td><td>10.10.35.10 - 10.10.35.253</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.10.0/24</td><td>ESX-vSAN-NET</td><td>192.168.10.10 - 192.168.10.253</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.12.0/24</td><td>ESXi-ISCSI-BLOCK-B</td><td>192.168.12.10 - 192.168.12.240</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.2.0/24</td><td>ESXi-vMotion</td><td>192.168.2.10 - 192.168.2.253</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.4.0/24</td><td>ESXi-NFS-File</td><td>192.168.4.10 - 192.168.4.20</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.6.0/24</td><td>ESXi-ISCSI-BLOCK-A</td><td>192.168.6.10 - 192.168.6.240</td><td>8.00:00:00</td><td>Active</td></tr>
+<tr><td>192.168.7.0/24</td><td>ESX-VM-NETWORK</td><td>192.168.7.40 - 192.168.7.253</td><td>Unlimited</td><td>Active</td></tr>
+</tbody></table>
+<div class="Caption">Table 42 - Scopes - SERVER-DC-01V</div><br /></div>
+<a name="6aec537d-167c-4b4e-8a02-be575b50b50b"><h4 class="Heading4">1.8.2.1 Scope Statistics</h4></a><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Scope Id</th><th>Free IP</th><th>In Use IP</th><th>Percentage In Use</th><th>Reserved IP</th></tr></thead><tbody>
+<tr><td>10.10.32.0</td><td>241</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>10.10.33.0</td><td>210</td><td>4</td><td>2</td><td>3</td></tr>
+<tr><td>10.10.34.0</td><td>244</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>10.10.35.0</td><td>244</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>192.168.10.0</td><td>244</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>192.168.12.0</td><td>228</td><td>3</td><td>1</td><td>3</td></tr>
+<tr><td>192.168.2.0</td><td>244</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>192.168.4.0</td><td>11</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>192.168.6.0</td><td>229</td><td>2</td><td>1</td><td>2</td></tr>
+<tr><td>192.168.7.0</td><td>6</td><td>208</td><td style="font-family: 'Arial'; font-size: 0.83rem; text-align: left; font-weight: normal; color: #000000; background-color: #fef3b5;">97</td><td>17</td></tr>
+</tbody></table>
+<div class="Caption">Table 43 - Scope Statistics - SERVER-DC-01V</div><br /></div>
+<a name="3bc79956-a21d-448b-8d81-141a3b57e320"><h4 class="Heading4">1.8.2.2 Network Interface Binding</h4></a><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Interface Alias</th><th>IP Address</th><th>Subnet Mask</th><th>State</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>192.168.5.1</td><td>255.255.255.0</td><td>Enabled</td></tr>
+</tbody></table>
+<div class="Caption">Table 44 - Network Interface binding - SERVER-DC-01V</div><br /></div>
+<a name="1fe3d492-39bb-46c7-b6d1-b13d86d2e2d3"><h3 class="Heading3">1.8.3 Scope Server Options</h3></a><div>The following section provides a summary of the DHCP servers Scope Server Options information.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Time Server</td><td>4</td><td>192.168.5.1</td><td>-</td></tr>
+<tr><td>Name Servers</td><td>5</td><td>192.168.5.1</td><td>-</td></tr>
+<tr><td>DNS Servers</td><td>6</td><td>192.168.5.1</td><td>-</td></tr>
+<tr><td>NTP Servers</td><td>42</td><td>192.168.5.1</td><td>-</td></tr>
+<tr><td>Simple Mail Transport Protocol (SMTP) Servers</td><td>69</td><td>192.168.7.21</td><td>-</td></tr>
+<tr><td>Post Office Protocol (POP3) Servers</td><td>70</td><td>192.168.7.21</td><td>-</td></tr>
+<tr><td>&nbsp;</td><td>81</td><td>55</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 45 - Scopes Server Options - SERVER-DC-01V</div><br /></div>
+<a name="9aaac421-5337-44fe-9aa4-60d7af026bbb"><h4 class="Heading4">1.8.3.1 Scope DNS Setting</h4></a><div>The following section provides a summary of the DHCP servers Scope DNS Setting information.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Dynamic Updates</th><td>Always</td></tr>
+<tr><th>Dns Suffix</th><td>-</td></tr>
+<tr><th>Name Protection</th><td>Yes</td></tr>
+<tr><th>Update Dns RR For Older Clients</th><td>Yes</td></tr>
+<tr><th>Disable Dns Ptr RR Update</th><td>No</td></tr>
+<tr><th>Delete Dns RR On Lease Expiry</th><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 46 - Scopes DNS Setting - SERVER-DC-01V</div><br /></div>
+<a name="7d59924d-545a-4593-8e90-34a6856ffb80"><h3 class="Heading3">1.8.4 Per Scope Options</h3></a><div>The following section provides a summary of the DHCP servers Scope Server Options information.</div><br /><a name="967d76a0-f196-4ce4-9f50-7cc3393501e0"><h4 class="Heading4">1.8.4.1 10.10.32.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>10.10.32.254</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 47 - Scopes Options - 10.10.32.0</div><br /></div>
+<a name="ebe9e83e-5dd2-4d42-a658-5e58e6a85a8b"><h4 class="Heading4">1.8.4.2 10.10.33.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>10.10.33.254</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>8640000</td><td>-</td></tr>
+<tr><td>Boot Server Host Name</td><td>66</td><td>192.168.5.2</td><td>-</td></tr>
+<tr><td>Bootfile Name</td><td>67</td><td>snponly64.efi.vmw-hardwired</td><td>-</td></tr>
+<tr><td>&nbsp;</td><td>81</td><td>23</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 48 - Scopes Options - 10.10.33.0</div><br /></div>
+<a name="3f4eb5cf-b126-4ed0-bb89-bc85aa3e00db"><h4 class="Heading4">1.8.4.3 10.10.34.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>DNS Servers</td><td>6</td><td>192.168.5.1<br />192.168.5.1</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 49 - Scopes Options - 10.10.34.0</div><br /></div>
+<a name="cb66cfb9-e241-4231-b191-86b33a81729a"><h4 class="Heading4">1.8.4.4 10.10.35.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>DNS Servers</td><td>6</td><td>192.168.5.1<br />192.168.5.1</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 50 - Scopes Options - 10.10.35.0</div><br /></div>
+<a name="920f6c4a-d80c-455a-afdf-15387abcb98e"><h4 class="Heading4">1.8.4.5 192.168.2.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>192.168.2.254</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 51 - Scopes Options - 192.168.2.0</div><br /></div>
+<a name="920a8522-46ea-4b84-a543-3e06d25a4588"><h4 class="Heading4">1.8.4.6 192.168.4.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>192.168.4.254</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 52 - Scopes Options - 192.168.4.0</div><br /></div>
+<a name="bfd83b8a-4131-4d14-800b-68aaf750f258"><h4 class="Heading4">1.8.4.7 192.168.6.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 53 - Scopes Options - 192.168.6.0</div><br /></div>
+<a name="c7dd66c5-b299-4718-bd72-4eb36ca5751d"><h4 class="Heading4">1.8.4.8 192.168.7.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>192.168.7.254</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>4294967295</td><td>-</td></tr>
+<tr><td>Boot Server Host Name</td><td>66</td><td>192.168.5.2</td><td>-</td></tr>
+<tr><td>Bootfile Name</td><td>67</td><td>snponly64.efi.vmw-hardwired</td><td>-</td></tr>
+<tr><td>&nbsp;</td><td>81</td><td>23</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 54 - Scopes Options - 192.168.7.0</div><br /></div>
+<a name="7c0604aa-b119-4220-a0c6-8ae4a08b95b0"><h4 class="Heading4">1.8.4.9 192.168.10.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>Router</td><td>3</td><td>192.168.10.254</td><td>-</td></tr>
+<tr><td>DNS Servers</td><td>6</td><td>192.168.5.1<br />192.168.5.1</td><td>-</td></tr>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 55 - Scopes Options - 192.168.10.0</div><br /></div>
+<a name="517d8052-d34e-4e07-be89-aec77d85f012"><h4 class="Heading4">1.8.4.10 192.168.12.0</h4></a><div>The following table details Scope Server Options Settings.</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>Name</th><th>Option Id</th><th>Value</th><th>Policy Name</th></tr></thead><tbody>
+<tr><td>DNS Domain Name</td><td>15</td><td>pharmax.local</td><td>-</td></tr>
+<tr><td>Lease</td><td>51</td><td>691200</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 56 - Scopes Options - 192.168.12.0</div><br /></div>
+<a name="b697d883-d72a-432f-ae03-6c91e9c56054"><h2 class="Heading2">1.9 DNS Server Configuration Settings</h2></a><div>The following table details the DNS Server Settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Build Number</th><td>17763</td></tr>
+<tr><th>IPv6</th><td>Yes</td></tr>
+<tr><th>DnsSec</th><td>No</td></tr>
+<tr><th>ReadOnly DC</th><td>No</td></tr>
+<tr><th>Listening IP</th><td>192.168.5.1</td></tr>
+<tr><th>All IPs</th><td>192.168.5.1</td></tr>
+</tbody></table>
+<div class="Caption">Table 57 - DNS Servers Settings - SERVER-DC-01V</div><br /></div>
+<a name="eb4812c0-fd11-4b2a-8d80-effe5f199652"><h3 class="Heading3">1.9.1 DNS IP Configuration</h3></a><div>The following table details DNS Server IP Configuration Settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>Interface</th><th>DNS IP 1</th><th>DNS IP 2</th><th>DNS IP 3</th><th>DNS IP 4</th></tr></thead><tbody>
+<tr><td>Ethernet0</td><td>192.168.5.1</td><td>127.0.0.1</td><td>8.8.8.8</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 58 - IP Configuration - SERVER-DC-01V</div><br /></div>
+<a name="4d865484-71b1-46af-9cd8-f316cbdccd45"><h3 class="Heading3">1.9.2 Scavenging Options</h3></a><div>The following table details scavenging configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /></colgroup>
+<thead><tr><th>NoRefresh Interval</th><th>Refresh Interval</th><th>Scavenging Interval</th><th>Last Scavenge Time</th><th>Scavenging State</th></tr></thead><tbody>
+<tr><td>7.00:00:00</td><td>7.00:00:00</td><td>7.00:00:00</td><td>-</td><td>Enabled</td></tr>
+</tbody></table>
+<div class="Caption">Table 59 - Scavenging - SERVER-DC-01V</div><br /></div>
+<a name="702c42c7-5bba-4145-b357-f3c2ca3d03a9"><h3 class="Heading3">1.9.3 Forwarder Options</h3></a><div>The following table details forwarder configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:25%; min-width:25%; width:25%" /></colgroup>
+<thead><tr><th>IP Address</th><th>Timeout</th><th>Use Root Hint</th><th>Use Recursion</th></tr></thead><tbody>
+<tr><td>8.8.8.8,10.0.0.138</td><td>3/s</td><td>Yes</td><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 60 - Forwarders - SERVER-DC-01V</div><br /></div>
+<a name="937d4b44-995a-4f8f-8dc0-c653e423328d"><h3 class="Heading3">1.9.4 DNS Zone Configuration</h3></a><div>The following table details zones configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /></colgroup>
+<thead><tr><th>Zone Name</th><th>Zone Type</th><th>Replication Scope</th><th>Dynamic Update</th><th>DS Integrated</th><th>Read Only</th><th>Signed</th></tr></thead><tbody>
+<tr><td>_msdcs.pharmax.local</td><td>Primary</td><td>Forest</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>pharmax.local</td><td>Primary</td><td>Domain</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>TrustAnchors</td><td>Primary</td><td>Forest</td><td>None</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>uia.local</td><td>Stub</td><td>Domain</td><td>-</td><td>Yes</td><td>No</td><td>-</td></tr>
+<tr><td>zenprsolutions.local</td><td>Stub</td><td>Domain</td><td>-</td><td>Yes</td><td>No</td><td>-</td></tr>
+</tbody></table>
+<div class="Caption">Table 61 - Zones - SERVER-DC-01V</div><br /></div>
+<a name="3573c292-545e-4308-a756-700dd55bf5c7"><h4 class="Heading4">1.9.4.1 Zone Transfers</h4></a><div>The following table details zone transfer configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:40%; min-width:40%; width:40%" /><col style="max-width:60%; min-width:60%; width:60%" /></colgroup>
+<tbody>
+<tr><th>Zone Name</th><td>pharmax.local</td></tr>
+<tr><th>Secondary Servers</th><td>172.23.4.1</td></tr>
+<tr><th>Notify Servers</th><td>-</td></tr>
+<tr><th>Secure Secondaries</th><td>Send zone transfers only to name servers that are authoritative for the zone.</td></tr>
+</tbody></table>
+<div class="Caption">Table 62 - Zone Transfers - PHARMAX.LOCAL</div><br /></div>
+<a name="db6f6377-7465-4551-9aa2-3a193317bb88"><h4 class="Heading4">1.9.4.2 Reverse Lookup Zone Configuration</h4></a><div>The following table details reverse looup zone configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /><col style="max-width:12%; min-width:12%; width:12%" /></colgroup>
+<thead><tr><th>Zone Name</th><th>Zone Type</th><th>Replication Scope</th><th>Dynamic Update</th><th>DS Integrated</th><th>Read Only</th><th>Signed</th></tr></thead><tbody>
+<tr><td>0.in-addr.arpa</td><td>Primary</td><td>None</td><td>None</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>10.10.in-addr.arpa</td><td>Primary</td><td>Domain</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>127.in-addr.arpa</td><td>Primary</td><td>None</td><td>None</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>168.192.in-addr.arpa</td><td>Primary</td><td>Domain</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>23.172.in-addr.arpa</td><td>Primary</td><td>Domain</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>255.in-addr.arpa</td><td>Primary</td><td>None</td><td>None</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>70.23.172.in-addr.arpa</td><td>Primary</td><td>Forest</td><td>Secure</td><td>Yes</td><td>No</td><td>No</td></tr>
+</tbody></table>
+<div class="Caption">Table 63 - Zones - SERVER-DC-01V</div><br /></div>
+<a name="729cc0d5-ebee-4fad-933b-6965037e5414"><h4 class="Heading4">1.9.4.3 Conditional Forwarder</h4></a><div>The following table details conditional forwarder configuration settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:20%; min-width:20%; width:20%" /><col style="max-width:15%; min-width:15%; width:15%" /></colgroup>
+<thead><tr><th>Zone Name</th><th>Zone Type</th><th>Replication Scope</th><th>Master Servers</th><th>DS Integrated</th></tr></thead><tbody>
+<tr><td>b12.local</td><td>Forwarder</td><td>Forest</td><td>10.10.30.1</td><td>Yes</td></tr>
+<tr><td>zenprsolutions.gov</td><td>Forwarder</td><td>Domain</td><td>8.8.8.8</td><td>Yes</td></tr>
+</tbody></table>
+<div class="Caption">Table 64 - Conditional Forwarders - SERVER-DC-01V</div><br /></div>
+<a name="a1d1e251-5465-4a6d-ad68-b1127b6a4c44"><h4 class="Heading4">1.9.4.4 Zone Scope Aging Properties</h4></a><div>The following table details zone configuration aging settings</div><br /><div style="word-break: break-word; overflow-wrap: anywhere; "><table class="tabledefault" style="width:100%; table-layout: fixed;"><colgroup><col style="max-width:25%; min-width:25%; width:25%" /><col style="max-width:10%; min-width:10%; width:10%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:15%; min-width:15%; width:15%" /><col style="max-width:35%; min-width:35%; width:35%" /></colgroup>
+<thead><tr><th>Zone Name</th><th>Aging Enabled</th><th>Refresh Interval</th><th>NoRefresh Interval</th><th>Available For Scavenge</th></tr></thead><tbody>
+<tr><td>_msdcs.pharmax.local</td><td>Yes</td><td>7.00:00:00</td><td>7.00:00:00</td><td>Thu, 27 Oct 2022 12:00:00 GMT</td></tr>
+<tr><td>pharmax.local</td><td>Yes</td><td>7.00:00:00</td><td>7.00:00:00</td><td>Thu, 27 Oct 2022 12:00:00 GMT</td></tr>
+<tr><td>TrustAnchors</td><td>Yes</td><td>7.00:00:00</td><td>7.00:00:00</td><td>Thu, 27 Oct 2022 12:00:00 GMT</td></tr>
+</tbody></table>
+<div class="Caption">Table 65 - Zone Aging Properties - SERVER-DC-01V</div><br /></div>
+</div>
+<div><br /><div class="Footer">Page 3</div></div></div></div></body>

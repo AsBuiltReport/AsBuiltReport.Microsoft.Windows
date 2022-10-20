@@ -31,7 +31,8 @@
             "Firewall": true
         },
         "OperatingSystem": {
-            "Services": true
+            "Services": true,
+            "Updates": true
         },
         "DNS": {
             "Aging": true,
