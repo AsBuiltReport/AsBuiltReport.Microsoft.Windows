@@ -1,5 +1,11 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.4.1] - 2022-10-XX
+
+### Fixed
+
+- Fixes [#8](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/8)
+
 ## [0.4.0] - 2022-10-20
 
 ### Added
