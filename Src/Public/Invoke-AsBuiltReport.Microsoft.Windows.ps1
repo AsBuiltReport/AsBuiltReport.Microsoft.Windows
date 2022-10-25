@@ -27,16 +27,20 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
     Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
 
-    $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+    Try {
+        $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
 
-    if ($InstalledVersion) {
-        Write-PScriboMessage -IsWarning "Installed AsBuiltReport.Microsoft.Windows Version: $($InstalledVersion.ToString())"
-        $MostCurrentVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
-        if ($MostCurrentVersion -and ($MostCurrentVersion -gt $InstalledVersion)) {
-            Write-PScriboMessage -IsWarning "New Update: AsBuiltReport.Microsoft.Windows Version: $($MostCurrentVersion.ToString())"
-            Write-PScriboMessage -IsWarning "To Update run: Update-Module -Name AsBuiltReport.Microsoft.Windows -Force"
+        if ($InstalledVersion) {
+            Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($InstalledVersion.ToString()) is currently installed."
+            $LatestVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+            if ($LatestVersion -gt $InstalledVersion) {
+                Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($LatestVersion.ToString()) is available."
+                Write-PScriboMessage -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
+            }
         }
-    }
+    } Catch {
+            Write-PscriboMessage -IsWarning $_.Exception.Message
+        }
 
     # Import Report Configuration
     $Report = $ReportConfig.Report
