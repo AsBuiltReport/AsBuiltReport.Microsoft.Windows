@@ -59,11 +59,11 @@ This report is compatible with the following PowerShell versions;
 <!-- ********** Update supported PowerShell versions ********** -->
 | Windows PowerShell 5.1 |     PowerShell 7    |
 |:----------------------:|:--------------------:|
-|   :white_check_mark:   | :white_check_mark: |
+|   :white_check_mark:   | :x: |
 
 ## :wrench: System Requirements
 <!-- ********** Update system requirements ********** -->
-PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are required for generating a Microsoft Windows As Built report.
+PowerShell 5.1 and the following PowerShell modules are required for generating a Microsoft Windows As Built report.
 
 - [AsBuiltReport.Microsoft.Windows Module](https://www.powershellgallery.com/packages/AsBuiltReport.Microsoft.Windows/)
 - [IISAdministration Module](https://docs.microsoft.com/en-us/powershell/module/iisadministration/?view=windowsserver2022-ps)
@@ -74,7 +74,7 @@ PowerShell 5.1 or PowerShell 7, and the following PowerShell modules are require
 
 ### Linux & macOS
 
-This report does not support Linux or Mac due to the fact that the Windows modules are dependent on the .NET Framework. Until Microsoft migrates these modules to native PowerShell Core, only PowerShell >= (5.x, 7) will be supported on Windows.
+This report does not support Linux or Mac due to the fact that the Windows modules are dependent on the .NET Framework. Until Microsoft migrates these modules to native PowerShell Core, only PowerShell >= 5.1.x will be supported on Windows.
 
 ### :closed_lock_with_key: Required Privileges
 
