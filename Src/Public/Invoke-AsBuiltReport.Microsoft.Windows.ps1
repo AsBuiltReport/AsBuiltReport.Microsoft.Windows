@@ -42,6 +42,14 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             Write-PscriboMessage -IsWarning $_.Exception.Message
         }
 
+        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+
+
+    if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+
+        throw "The requested operation requires elevation: Run PowerShell console as administrator"
+    }
+
     # Import Report Configuration
     $Report = $ReportConfig.Report
     $InfoLevel = $ReportConfig.InfoLevel
@@ -63,7 +71,27 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
                 throw
             }
+
             $script:HostInfo = Invoke-Command -Session $TempPssSession { Get-ComputerInfo }
+
+            #Validate Required Modules and Features
+            $script:OSType = Invoke-Command -Session $TempPssSession { (Get-ComputerInfo).OsProductType }
+            if ($OSType.Value -eq 'WorkStation') {
+                Get-RequiredFeature -Name 'IIS-WebServerRole' -OSType $OSType.Value -Feature $True
+                Get-RequiredFeature -Name 'IIS-WebServerManagementTools' -OSType $OSType.Value -Feature $True
+                Get-RequiredFeature -Name 'IIS-ManagementScriptingTools' -OSType $OSType.Value -Feature $True
+                Get-RequiredFeature -Name 'Rsat.Dns.Tools~~~~0.0.1.0' -OSType $OSType.Value
+                Get-RequiredFeature -Name 'Rsat.DHCP.Tools~~~~0.0.1.0' -OSType $OSType.Value
+
+            }
+            if ($OSType.Value -eq 'Server' -or $OSType.Value -eq 'DomainController') {
+                Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value
+                Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value
+                Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value
+                Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value
+                Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value
+            }
+
             $script:HostCPU = Get-CimInstance -Class Win32_Processor -CimSession $TempCimSession
             $script:HostComputer = Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCimSession
             $script:HostBIOS = Get-CimInstance -Class Win32_Bios -CimSession $TempCimSession
@@ -163,7 +191,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 }
             }
             #HyperV Configuration
-            if ($InfoLevel.HyperV -ge 1) {
+            if ($InfoLevel.HyperV -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 try {
                     $HyperVInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Hyper-V*" } }
                     if ($HyperVInstalledCheck.InstallState -eq "Installed") {
@@ -188,7 +216,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            if ($InfoLevel.IIS -ge 1) {
+            if ($InfoLevel.IIS -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 try {
                     $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
                     if ($IISInstalledCheck.InstallState -eq "Installed") {
@@ -212,7 +240,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            if ($InfoLevel.SMB -ge 1) {
+            if ($InfoLevel.SMB -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 try {
                     $SMBInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*FileAndStorage-Services*" } }
                     if ($SMBInstalledCheck.InstallState -eq "Installed") {
@@ -237,7 +265,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            if ($InfoLevel.DHCP -ge 1) {
+            if ($InfoLevel.DHCP -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 try {
                     $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DHCP*" } }
                     if ($DHCPInstalledCheck.InstallState -eq "Installed") {
@@ -264,7 +292,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            if ($InfoLevel.DNS -ge 1) {
+            if ($InfoLevel.DNS -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 try {
                     $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DNS*" } }
                     if ($DHCPInstalledCheck.InstallState -eq "Installed") {

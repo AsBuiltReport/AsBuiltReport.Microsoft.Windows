@@ -100,6 +100,9 @@ Install-WindowsFeature -Name Hyper-V-PowerShell
 Install-WindowsFeature -Name web-mgmt-console
 Install-WindowsFeature -Name Web-Scripting-Tools
 
+#FailOver Cluster powershell modules
+Install-WindowsFeature -Name RSAT-Clustering-PowerShell
+
 ```
 
 ### PowerShell v5.x running on Windows 10 client computer (JumpBox)
@@ -110,6 +113,9 @@ Install-Module AsBuiltReport.Microsoft.Windows
 # DNS/DHCP Server powershell Modules
 Add-WindowsCapability –online –Name 'Rsat.Dns.Tools~~~~0.0.1.0'
 Add-WindowsCapability -Online -Name 'Rsat.DHCP.Tools~~~~0.0.1.0'
+
+#FailOver Cluster powershell modules
+Add-WindowsCapability -Online -Name 'Rsat.FailoverCluster.Management.Tools~~~~0.0.1.0'
 
 # Hyper-V Server powershell modules
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
