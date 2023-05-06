@@ -105,7 +105,7 @@ Install-WindowsFeature -Name RSAT-Clustering-PowerShell
 
 ```
 
-### PowerShell v5.x running on Windows 10 client computer (JumpBox)
+### PowerShell v5.x running on Windows client computer
 <!-- ********** Add installation for any additional PowerShell module(s) ********** -->
 ```powershell
 Install-Module AsBuiltReport.Microsoft.Windows
@@ -230,5 +230,4 @@ PS C:\> New-AsBuiltReport -Report Microsoft.Windows -Target 'win-server-01v.cont
 ## :x: Known Issues
 
 - Issues with WinRM when using the IP address instead of the "Fully Qualified Domain Name".
-- This project relies heavily on the remote connection function through WinRM. For this reason the use of a Windows 10 client is specifically used as a jumpbox.
-- The report provides the ability to extract the configuration of the Hyper-V/IIS services. In order to obtain this information it is required that the servers running these services have powershell modules installed for each service.
+- The report provides the ability to extract the configuration of the DNS/DHCP/Hyper-V/IIS/FailOver-Cluster services. In order to obtain this information it is required that the servers running these services have the corresponding powershell modules installed.

@@ -29,8 +29,17 @@ function Get-RequiredFeature {
         $OSType,
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
-        [Bool]
-        $Feature = $False
+        [Switch]
+        $Feature = $False,
+
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [Switch]
+        $Status = $False,
+
+        [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $Service
     )
 
     process {
@@ -38,20 +47,47 @@ function Get-RequiredFeature {
         if ($OSType -eq 'WorkStation') {
             if ($Feature) {
                 $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsOptionalFeature -FeatureName $Using:Name -Online }
-                if ($RequiredFeature.State -ne "Enabled")  {
-                    throw "$Name is required to run the Microsoft AD As Built Report. Run 'Enable-WindowsOptionalFeature -Online -FeatureName '$($Name)'' to install the required modules. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.AD"
+                if ($Status)  {
+                    if ($RequiredFeature.State -eq "Enabled") {
+                        return $true
+                    } else {
+                        return $false
+                    }
+                }
+                if (-Not $Status) {
+                    if ($RequiredFeature.State -ne "Enabled") {
+                        Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Enable-WindowsOptionalFeature -Online -FeatureName '$($Name)'' to install the required modules."
+                    }
                 }
             } else {
                 $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsCapability -online -Name $Using:Name }
-                if ($RequiredFeature.State -ne "Installed")  {
-                    throw "$Name is required to run the Microsoft AD As Built Report. Run 'Add-WindowsCapability -online -Name '$($Name)'' to install the required modules. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.AD"
+                if ($Status)  {
+                    if ($RequiredFeature.State -eq "Installed") {
+                        return $true
+                    } else {
+                        return $false
+                    }
+                }
+                if (-Not $Status) {
+                    if ($RequiredFeature.State -ne "Installed") {
+                        Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Add-WindowsCapability -online -Name '$($Name)'' to install the required modules."
+                    }
                 }
             }
         }
         elseif ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
             $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsFeature -Name $Using:Name }
-            if ($RequiredFeature.InstallState -ne 'Installed')  {
-                throw "$Name is required to run the Microsoft AD As Built Report. Run 'Install-WindowsFeature -Name '$($Name)'' to install the required modules. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.AD"
+            if ($Status)  {
+                if ($RequiredFeature.InstallState -eq 'Installed') {
+                    return $true
+                } else {
+                    return $false
+                }
+            }
+            if (-Not $Status) {
+                if ($RequiredFeature.InstallState -ne 'Installed') {
+                    Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Install-WindowsFeature -Name '$($Name)'' to install the required modules."
+                }
             }
         }
         else {
