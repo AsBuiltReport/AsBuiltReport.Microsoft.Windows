@@ -315,14 +315,30 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
                 if ($Status.Status -eq "Running") {
                     try {
-                        if (Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status) {
+                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { (Get-Cluster).Name }
+                        if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status )-and $Cluster) {
                             Section -Style Heading2 "Failover Cluster Configuration" {
                                 Paragraph 'The following table details the Failover Cluster Settings'
                                 Blankline
-                                # # DNS Server Configuration
-                                # Get-AbrWinDNSInfrastructure
-                                # # DNS Zones Configuration
-                                # Get-AbrWinDNSZone
+                                # Failover Cluster Server Configuration
+                                Get-AbrWinFOCluster
+                                # Cluster Access Permission
+                                Get-AbrWinFOClusterPermission
+                                # Cluster Nodes
+                                Get-AbrWinFOClusterNode
+                                # Cluster Available Disks
+                                Get-AbrWinFOClusterAvailableDisk
+                                # Cluster Fault Domain
+                                Get-AbrWinFOClusterFaultDomain
+                                # Cluster Networks
+                                Get-AbrWinFOClusterNetwork
+                                # Cluser Quorum
+                                Get-AbrWinFOClusterQuorum
+                                #Cluster Resources
+                                Get-AbrWinFOClusterResource
+                                #Cluster Shared Volume
+                                Get-AbrWinFOClusterSharedVolume
+
                             }
                         }
                         else {

@@ -5,7 +5,7 @@ function Get-AbrWinNetFirewall {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.0
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -49,7 +49,7 @@ function Get-AbrWinNetFirewall {
                         }
 
                         if ($HealthCheck.Networking.Firewall) {
-                            $NetFirewallProfileReport | Where-Object { $_.'Profile Enabled' -notlike 'No'} | Set-Style -Style Warning -Property 'Profile Enabled'
+                            $NetFirewallProfileReport | Where-Object { $_.'Profile Enabled' -notlike 'Yes'} | Set-Style -Style Warning -Property 'Profile Enabled'
                         }
 
                         $TableParams = @{

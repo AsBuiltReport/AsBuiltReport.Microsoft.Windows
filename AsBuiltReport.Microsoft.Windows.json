@@ -44,6 +44,12 @@
             "Credential": true,
             "Statistics": true,
             "BP": true
+        },
+        "FailOverCluster": {
+            "Nodes": true,
+            "Network": true,
+            "ClusterSharedVolume": true
+
         }
     }
 }

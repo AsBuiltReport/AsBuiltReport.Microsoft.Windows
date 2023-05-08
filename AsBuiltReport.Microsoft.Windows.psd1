@@ -12,7 +12,7 @@
 RootModule = 'AsBuiltReport.Microsoft.Windows.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.4.0'
+ModuleVersion = '0.5.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -54,7 +54,7 @@ PowerShellVersion = '5.1'
 RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
-            ModuleVersion = '1.2.0'
+            ModuleVersion = '1.3.0'
         }
     )
 

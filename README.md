@@ -202,6 +202,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | HyperV           |        1        |        1        |
 | DHCP           |        1        |        2        |
 | DNS           |        1        |        2        |
+| FailOverCluster           |        1        |        2        |
 
 ### Healthcheck
 
