@@ -25,7 +25,7 @@ function Get-AbrWinOSRoleFeature {
     }
 
     process {
-        if ($InfoLevel.OperatingSystem -ge 1) {
+        if ($InfoLevel.OperatingSystem -ge 1 -and $OSType.Value -ne 'WorkStation') {
             try {
                 $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
                 if ($HostRolesAndFeatures) {

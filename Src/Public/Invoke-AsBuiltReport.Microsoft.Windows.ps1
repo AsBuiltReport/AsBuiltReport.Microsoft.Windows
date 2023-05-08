@@ -27,15 +27,27 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
     Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
 
-    $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+    Try {
+        $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
 
-    if ($InstalledVersion) {
-        Write-PScriboMessage -IsWarning "Installed AsBuiltReport.Microsoft.Windows Version: $($InstalledVersion.ToString())"
-        $MostCurrentVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
-        if ($MostCurrentVersion -and ($MostCurrentVersion -gt $InstalledVersion)) {
-            Write-PScriboMessage -IsWarning "New Update: AsBuiltReport.Microsoft.Windows Version: $($MostCurrentVersion.ToString())"
-            Write-PScriboMessage -IsWarning "To Update run: Update-Module -Name AsBuiltReport.Microsoft.Windows -Force"
+        if ($InstalledVersion) {
+            Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($InstalledVersion.ToString()) is currently installed."
+            $LatestVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+            if ($LatestVersion -gt $InstalledVersion) {
+                Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($LatestVersion.ToString()) is available."
+                Write-PScriboMessage -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
+            }
         }
+    } Catch {
+            Write-PscriboMessage -IsWarning $_.Exception.Message
+        }
+
+        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+
+
+    if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+
+        throw "The requested operation requires elevation: Run PowerShell console as administrator"
     }
 
     # Import Report Configuration
@@ -59,7 +71,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
                 throw
             }
+
             $script:HostInfo = Invoke-Command -Session $TempPssSession { Get-ComputerInfo }
+
+            #Validate Required Modules and Features
+            $script:OSType = Invoke-Command -Session $TempPssSession { (Get-ComputerInfo).OsProductType }
             $script:HostCPU = Get-CimInstance -Class Win32_Processor -CimSession $TempCimSession
             $script:HostComputer = Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCimSession
             $script:HostBIOS = Get-CimInstance -Class Win32_Bios -CimSession $TempCimSession
@@ -160,13 +176,12 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             }
             #HyperV Configuration
             if ($InfoLevel.HyperV -ge 1) {
-                try {
-                    $HyperVInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Hyper-V*" } }
-                    if ($HyperVInstalledCheck.InstallState -eq "Installed") {
-                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'vmms' -ErrorAction SilentlyContinue }
-                        if ($Status.Status -eq "Running") {
-                            Section -Style Heading2 "Hyper-V Configuration Settings" {
-                                Paragraph 'The following table details the Hyper-V Server Settings'
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'vmms' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 "Hyper-V Configuration" {
+                                Paragraph 'The following table details the Hyper-V server settings'
                                 Blankline
                                 # Hyper-V Configuration
                                 Get-AbrWinHyperVSummary
@@ -177,21 +192,24 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # Hyper-V VM Information (Buggy as hell)
                                 #Get-AbrWinHyperVHostVM
                             }
+                        } else {
+                            Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No HyperV service detected. Disabling HyperV server section"
                 }
             }
             if ($InfoLevel.IIS -ge 1) {
-                try {
-                    $IISInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*Web-Server*" } }
-                    if ($IISInstalledCheck.InstallState -eq "Installed") {
-                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'W3SVC' -ErrorAction SilentlyContinue }
-                        if ($Status.Status -eq "Running") {
-                            Section -Style Heading2 "IIS Configuration Settings" {
-                                Paragraph 'The following table details the IIS Server Settings'
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'W3SVC' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (((Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Status)) -or ((Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Status))) {
+                            Section -Style Heading2 "IIS Configuration" {
+                                Paragraph 'The following table details the IIS server settings'
                                 Blankline
                                 # IIS Configuration
                                 Get-AbrWinIISSummary
@@ -199,33 +217,38 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinIISWebAppPool
                                 # IIS Web Site
                                 Get-AbrWinIISWebSite
-
+                            }
+                        } else  {
+                            If ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
+                                Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service "IIS"
+                                Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service "IIS"
+                            } else {
+                                Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Service "IIS"
+                                Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Service "IIS"
+                                Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service "IIS"
                             }
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No W3SVC service detected. Disabling IIS server section"
                 }
             }
             if ($InfoLevel.SMB -ge 1) {
                 try {
-                    $SMBInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*FileAndStorage-Services*" } }
-                    if ($SMBInstalledCheck.InstallState -eq "Installed") {
-                        $Global:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object {$_.Special -like 'False'} }
-                        if ($SMBShares) {
-                            Section -Style Heading2 "File Server Configuration Settings" {
-                                Paragraph 'The following table details the File Server Settings'
-                                Blankline
-                                # SMB Server Configuration
-                                Get-AbrWinSMBSummary
-                                # SMB Server Network Interface
-                                Get-AbrWinSMBNetworkInterface
-                                # SMB Shares
-                                Get-AbrWinSMBShare
-
-
-                            }
+                    $Global:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object {$_.Special -like 'False'} }
+                    if ($SMBShares) {
+                        Section -Style Heading2 "File Server Configuration" {
+                            Paragraph 'The following table details the File Server settings'
+                            Blankline
+                            # SMB Server Configuration
+                            Get-AbrWinSMBSummary
+                            # SMB Server Network Interface
+                            Get-AbrWinSMBNetworkInterface
+                            # SMB Shares
+                            Get-AbrWinSMBShare
                         }
                     }
                 }
@@ -233,14 +256,13 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
             }
-            if ($InfoLevel.DHCP -ge 1) {
-                try {
-                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DHCP*" } }
-                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
-                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DHCPServer' -ErrorAction SilentlyContinue }
-                        if ($Status.Status -eq "Running") {
-                            Section -Style Heading2 "DHCP Server Configuration Settings" {
-                                Paragraph 'The following table details the DHCP Server Settings'
+            if ($InfoLevel.DHCP -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DHCPServer' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 "DHCP Server Configuration" {
+                                Paragraph 'The following table details the DHCP server configurations'
                                 Blankline
                                 # DHCP Server Configuration
                                 Get-AbrWinDHCPInfrastructure
@@ -253,34 +275,84 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # DHCP Server Per Scope Info
                                 Get-AbrWinDHCPv4PerScopeSetting
                             }
+                        } else {
+                            Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service "DHCP Server"
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No DHCPServer service detected. Disabling Dhcp server section"
                 }
             }
-            if ($InfoLevel.DNS -ge 1) {
-                try {
-                    $DHCPInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "*DNS*" } }
-                    if ($DHCPInstalledCheck.InstallState -eq "Installed") {
-                        $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DNS' -ErrorAction SilentlyContinue }
-                        if ($Status.Status -eq "Running") {
-                            Section -Style Heading2 "DNS Server Configuration Settings" {
-                                Paragraph 'The following table details the DNS Server Settings'
+            if ($InfoLevel.DNS -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DNS' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 "DNS Server Configuration" {
+                                Paragraph 'The following table details the DNS server settings'
                                 Blankline
                                 # DNS Server Configuration
                                 Get-AbrWinDNSInfrastructure
                                 # DNS Zones Configuration
                                 Get-AbrWinDNSZone
                             }
+                        } else {
+                            Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service "DNS Server"
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No DNS Server service detected. Disabling DNS server section"
                 }
             }
+
+            if ($InfoLevel.FailOverCluster -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
+                if ($Status.Status -eq "Running") {
+                    try {
+                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { (Get-Cluster).Name }
+                        if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status )-and $Cluster) {
+                            Section -Style Heading2 "Failover Cluster Configuration" {
+                                Paragraph 'The following table details the Failover Cluster Settings'
+                                Blankline
+                                # Failover Cluster Server Configuration
+                                Get-AbrWinFOCluster
+                                # Cluster Access Permission
+                                Get-AbrWinFOClusterPermission
+                                # Cluster Nodes
+                                Get-AbrWinFOClusterNode
+                                # Cluster Available Disks
+                                Get-AbrWinFOClusterAvailableDisk
+                                # Cluster Fault Domain
+                                Get-AbrWinFOClusterFaultDomain
+                                # Cluster Networks
+                                Get-AbrWinFOClusterNetwork
+                                # Cluser Quorum
+                                Get-AbrWinFOClusterQuorum
+                                #Cluster Resources
+                                Get-AbrWinFOClusterResource
+                                #Cluster Shared Volume
+                                Get-AbrWinFOClusterSharedVolume
+
+                            }
+                        }
+                        else {
+                            Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service "FailOver Cluster"
+                        }
+                    }
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No FailOver Cluster service detected. Disabling FailOver Cluster section"
+                }
+            }
+
         }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession

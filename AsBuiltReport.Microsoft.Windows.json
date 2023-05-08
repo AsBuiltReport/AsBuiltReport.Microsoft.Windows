@@ -23,7 +23,8 @@
         "IIS": 1,
         "SMB": 1,
         "DHCP": 1,
-        "DNS": 1
+        "DNS": 1,
+        "FailOverCluster": 1
 
     },
     "HealthCheck": {
@@ -43,6 +44,12 @@
             "Credential": true,
             "Statistics": true,
             "BP": true
+        },
+        "FailOverCluster": {
+            "Nodes": true,
+            "Network": true,
+            "ClusterSharedVolume": true
+
         }
     }
 }

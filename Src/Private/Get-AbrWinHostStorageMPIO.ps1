@@ -26,7 +26,7 @@ function Get-AbrWinHostStorageMPIO
     }
 
     process {
-        if ($InfoLevel.Storage -ge 1) {
+        if ($InfoLevel.Storage -ge 1 -and $OSType.Value -ne 'WorkStation') {
             try {
                 $MPIOInstalledCheck = Invoke-Command -Session $TempPssSession { Get-WindowsFeature | Where-Object { $_.Name -like "Multipath*" } }
                 if ($MPIOInstalledCheck.InstallState -eq "Installed") {

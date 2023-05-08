@@ -1,5 +1,24 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.5.0] - 2023-05-08
+
+### Added
+
+- Added FailOver Cluster section
+
+### Changed
+
+- Improved bug and feature request templates
+- Changed default logo from Microsoft to the AsBuiltReport logo due to licensing requirements
+- Changed default report style font to 'Segoe Ui' to align with Microsoft guidelines
+- Changed Required Modules to AsBuiltReport.Core v1.3.0
+
+## [0.4.1] - 2022-10-20
+
+### Fixed
+
+- Fixes [#8](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/8)
+
 ## [0.4.0] - 2022-10-20
 
 ### Added
