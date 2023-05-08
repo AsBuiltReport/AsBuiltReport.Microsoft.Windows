@@ -110,40 +110,32 @@ function Invoke-DcDiag {
 }# end
 
 function ConvertTo-EmptyToFiller {
-        <#
-        .SYNOPSIS
-        Used by As Built Report to convert empty culumns to "-".
-        .DESCRIPTION
+    <#
+    .SYNOPSIS
+    Used by As Built Report to convert empty culumns to "-".
+    .DESCRIPTION
+    .NOTES
+        Version:        0.5.0
+        Author:         Jonathan Colon
+    .EXAMPLE
+    .LINK
+    #>
+    [CmdletBinding()]
+    [OutputType([String])]
+    Param
+        (
+        [Parameter (
+            Position = 0,
+            Mandatory)]
+            [AllowEmptyString()]
+            [string]$TEXT
+        )
 
-        .NOTES
-            Version:        0.4.0
-            Author:         Jonathan Colon
-
-        .EXAMPLE
-
-        .LINK
-
-        #>
-        [CmdletBinding()]
-        [OutputType([String])]
-        Param
-            (
-            [Parameter (
-                Position = 0,
-                Mandatory)]
-                [AllowEmptyString()]
-                [string]
-                $TEXT
-            )
-
-        switch ($TEXT) {
-                "" {"-"; break}
-                $Null {"-"; break}
-                "True" {"Yes"; break}
-                "False" {"No"; break}
-                default {$TEXT}
-            }
-        } # end
+    switch ([string]::IsNullOrEmpty($TEXT)) {
+        $true {"--"; break}
+        default {$TEXT}
+    }
+}
 
 function Convert-IpAddressToMaskLength {
     <#
