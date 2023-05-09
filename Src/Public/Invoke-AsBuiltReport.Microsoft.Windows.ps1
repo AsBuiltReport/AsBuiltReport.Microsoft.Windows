@@ -190,7 +190,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # Hyper-V Networking
                                 Get-AbrWinHyperVNetworking
                                 # Hyper-V VM Information (Buggy as hell)
-                                #Get-AbrWinHyperVHostVM
+                                Get-AbrWinHyperVHostVM
                             }
                         } else {
                             Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"
