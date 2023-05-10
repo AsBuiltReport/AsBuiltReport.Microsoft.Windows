@@ -26,7 +26,8 @@ function Get-AbrWinHyperVHostVM {
 
     process {
         if ($InfoLevel.HyperV -ge 1) {
-            $Vms = Get-VM -CimSession $TempCimSession
+            #$Vms = Get-VM -CimSession $TempCimSession
+            $global:Vms = Invoke-Command -Session $TempPssSession { Get-VM }
             if ($Vms) {
                 try {
                     Section -Style Heading2 'Hyper-V VMs' {
@@ -37,12 +38,7 @@ function Get-AbrWinHyperVHostVM {
                             try {
                                 $TempVmSummary = [PSCustomObject]@{
                                     'VM Name' = $Vm.Name
-                                    'vCPU Count' = $Vm.ProcessorCount
-                                    'Memory (GB)' = [Math]::Round($Vm.MemoryAssigned / 1gb)
-                                    'Memory Type' = $Vm.DynamicMemoryEnabled
-                                    'Generation' = $Vm.Generation
-                                    'Version' = $Vm.Version
-                                    'Numa Aligned' = $Vm.NumaAligned
+                                    'State' = $Vm.State
                                 }
                                 $VmSummary += $TempVmSummary
                             }
@@ -105,7 +101,8 @@ function Get-AbrWinHyperVHostVM {
                                             Paragraph 'The following section details the status of Integration Services'
                                             Blankline
                                             $VmIntegrationServiceSummary = @()
-                                            Foreach ($Service in ($Vm.VMIntegrationService)) {
+                                            $VMIntegrationService = Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMIntegrationService -VMName $VmName} -ArgumentList $Vm.Name
+                                            Foreach ($Service in $VMIntegrationService) {
                                                 try {
                                                     $TempVmIntegrationServiceSummary = [PSCustomObject]@{
                                                         'Service Name' = $Service.Name
@@ -133,7 +130,8 @@ function Get-AbrWinHyperVHostVM {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
                                     try {
-                                        $VmNetworkAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -VMName $VM.Name
+                                        #$VmNetworkAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -VMName $VM.Name
+                                        $VmNetworkAdapters = Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMNetworkAdapter -VMName $VmName} -ArgumentList $Vm.Name
                                         if ($VmNetworkAdapters) {
                                             Section -Style Heading4 'VM Network Adapters' {
                                                 Paragraph 'The following table details the network adapter details'
@@ -170,9 +168,10 @@ function Get-AbrWinHyperVHostVM {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
                                     try {
-                                        $VmAdapterVlan = Get-VMNetworkAdapterVlan -CimSession $TempCimSession -VMName $VM.Name
+                                        #$VmAdapterVlan = Get-VMNetworkAdapterVlan -CimSession $TempCimSession -VMName $VM.Name
+                                        $VmAdapterVlan =  Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMNetworkAdapterVlan -VMName $VmName} -ArgumentList $Vm.Name
                                         if ($VmAdapterVlan) {
-                                            Section -Style Heading4 'VM Network Adpater VLANs' {
+                                            Section -Style Heading4 'VM Network Adapter VLANs' {
                                                 Paragraph 'The following section details the VLAN configuration of VM Network Adapters'
                                                 BlankLine
                                                 $VmAdapterVlanReport = @()
@@ -207,7 +206,8 @@ function Get-AbrWinHyperVHostVM {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
                                     try {
-                                        $VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
+                                         #$VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
+                                        $VmHardDisks =Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMHardDiskDrive -VMName $VmName} -ArgumentList $Vm.Name
                                         if ($VmHardDisks) {
                                             Section -Style Heading4 'VM Hard Disks' {
                                                 Paragraph 'The following table details the VM hard disks'
