@@ -30,7 +30,7 @@ function Get-AbrWinHyperVHostVM {
             $global:Vms = Invoke-Command -Session $TempPssSession { Get-VM }
             if ($Vms) {
                 try {
-                    Section -Style Heading2 'Hyper-V VMs' {
+                    Section -Style Heading3 'Hyper-V VMs' {
                         Paragraph 'The following section details the Hyper-V VMs running on this host'
                         Blankline
                         $VmSummary = @()
@@ -57,30 +57,30 @@ function Get-AbrWinHyperVHostVM {
                         $VmSummary | Sort-Object 'VM Name' | Table @TableParams
                         foreach ($Vm in $Vms) {
                             try {
-                                Section -Style Heading3 ($Vm.Name) {
+                                Section -Style Heading4 ($Vm.Name) {
                                     Paragraph 'The following sections detail the VM configuration settings'
                                     Blankline
                                     try {
-                                        Section -Style Heading4 'Virtual Machine Configuration' {
-                                            Blankline
+                                        Section -ExcludeFromTOC -Style NOTOCHeading5 'Virtual Machine Configuration' {
+                                            $DVDDrives = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMDvdDrive -VMName ($using:Vm).Name}
                                             $VmConfiguration = [PSCustomObject]@{
                                                 'VM id' = $Vm.VMid
                                                 'VM Path' = $Vm.Path
                                                 'Uptime' = $Vm.Uptime
                                                 'vCPU Count' = $Vm.ProcessorCount
                                                 'Memory Assigned (GB)' = [Math]::Round($Vm.MemoryAssigned / 1gb)
-                                                'Dynamic Memory Enabled' = $Vm.DynamicMemoryEnabled
+                                                'Dynamic Memory Enabled' = ConvertTo-TextYN $Vm.DynamicMemoryEnabled
                                                 'Memory Startup (GB)' = [Math]::Round($Vm.MemoryStartup / 1gb)
                                                 'Memory Minimum (GB)' = [Math]::Round($Vm.MemoryMinimum / 1gb)
                                                 'Memory Maximum (GB)' = [Math]::Round($Vm.MemoryMaximum / 1gb)
-                                                'Numa Aligned' = $Vm.NumaAligned
+                                                'Numa Aligned' = ConvertTo-EmptyToFiller $Vm.NumaAligned
                                                 'Nuber of Numa Nodes' = $Vm.NumaNodesCount
                                                 'Number of Numa Sockets' = $Vm.NumaSocketCount
                                                 'Check Point Type' = $Vm.CheckpointType
-                                                'Parent Snapshot Id' = $Vm.ParentSnapshotId
-                                                'Parent Snapshot Name' = $Vm.ParentSnapshotName
+                                                'Parent Snapshot Id' = ConvertTo-EmptyToFiller $Vm.ParentSnapshotId
+                                                'Parent Snapshot Name' = ConvertTo-EmptyToFiller $Vm.ParentSnapshotName
                                                 'Generation' = $Vm.Generation
-                                                'DVD Drives' = $Vm.DVDDrives -Join ","
+                                                'DVD Drives' = $DVDDrives | ForEach-Object {"Controller Type: $($_.ControllerType), Media Type: $($_.DvdMediaType), Path: $($_.Path)"}
                                             }
                                             $TableParams = @{
                                                 Name = "Virtual Machines"
@@ -97,17 +97,17 @@ function Get-AbrWinHyperVHostVM {
                                         Write-PscriboMessage -IsWarning $_.Exception.Message
                                     }
                                     try {
-                                        Section -Style Heading4 'Virtual Machine Guest Integration Service' {
+                                        Section -ExcludeFromTOC -Style NOTOCHeading5 'Virtual Machine Guest Integration Service' {
                                             Paragraph 'The following section details the status of Integration Services'
                                             Blankline
                                             $VmIntegrationServiceSummary = @()
-                                            $VMIntegrationService = Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMIntegrationService -VMName $VmName} -ArgumentList $Vm.Name
+                                            $VMIntegrationService = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMIntegrationService -VMName ($using:Vm).Name}
                                             Foreach ($Service in $VMIntegrationService) {
                                                 try {
                                                     $TempVmIntegrationServiceSummary = [PSCustomObject]@{
                                                         'Service Name' = $Service.Name
-                                                        'Service State' = $Service.Enabled
-                                                        'Primary Status' = $Service.PrimaryStatusDescription
+                                                        'Service State' = ConvertTo-TextYN $Service.Enabled
+                                                        'Primary Status' = ConvertTo-EmptyToFiller $Service.PrimaryStatusDescription
                                                     }
                                                     $VmIntegrationServiceSummary += $TempVmIntegrationServiceSummary
                                                 }
@@ -131,9 +131,9 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     try {
                                         #$VmNetworkAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -VMName $VM.Name
-                                        $VmNetworkAdapters = Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMNetworkAdapter -VMName $VmName} -ArgumentList $Vm.Name
+                                        $VmNetworkAdapters = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMNetworkAdapter -VMName ($using:Vm).Name }
                                         if ($VmNetworkAdapters) {
-                                            Section -Style Heading4 'VM Network Adapters' {
+                                            Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapters' {
                                                 Paragraph 'The following table details the network adapter details'
                                                 BlankLine
                                                 $VmNetworkAdapterReport = @()
@@ -142,7 +142,7 @@ function Get-AbrWinHyperVHostVM {
                                                         $TempVmNetworkAdapter = [PSCustomObject]@{
                                                             'Name' = $Adapter.Name
                                                             'Mac Address' = $Adapter.MacAddress
-                                                            'IP Address' = $Adapter.IPAddresses[0]
+                                                            'IP Address' = ConvertTo-EmptyToFiller ($Adapter.IPAddresses)
                                                             'Switch Name' = $Adapter.SwitchName
                                                         }
                                                         $VmNetworkAdapterReport += $TempVmNetworkAdapter
@@ -169,9 +169,9 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     try {
                                         #$VmAdapterVlan = Get-VMNetworkAdapterVlan -CimSession $TempCimSession -VMName $VM.Name
-                                        $VmAdapterVlan =  Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMNetworkAdapterVlan -VMName $VmName} -ArgumentList $Vm.Name
+                                        $VmAdapterVlan =  Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMNetworkAdapterVlan -VMName ($using:Vm).Name | Select-Object -Property * }
                                         if ($VmAdapterVlan) {
-                                            Section -Style Heading4 'VM Network Adapter VLANs' {
+                                            Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapter VLANs' {
                                                 Paragraph 'The following section details the VLAN configuration of VM Network Adapters'
                                                 BlankLine
                                                 $VmAdapterVlanReport = @()
@@ -207,15 +207,15 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     try {
                                          #$VmHardDisks = Get-VMHardDiskDrive -CimSession $TempCimSession -VMName $VM.Name
-                                        $VmHardDisks =Invoke-Command -Session $TempPssSession -ScriptBlock{param($VmName) Get-VMHardDiskDrive -VMName $VmName} -ArgumentList $Vm.Name
+                                        $VmHardDisks =Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMHardDiskDrive -VMName ($using:Vm).Name }
                                         if ($VmHardDisks) {
-                                            Section -Style Heading4 'VM Hard Disks' {
+                                            Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Hard Disks' {
                                                 Paragraph 'The following table details the VM hard disks'
                                                 BlankLine
                                                 $VmDiskReport = @()
                                                 foreach ($VmHardDisk in $VMHardDisks) {
                                                     try {
-                                                        $VmVhd = Get-VHD -CimSession $TempCimSession -Path $VmHardDisk.Path
+                                                        $VmVhd = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VHD -Path ($using:VmHardDisk).Path }
                                                         $TempVmDiskReport = [PSCustomObject]@{
                                                             'Disk Path' = $VmVhd.Path
                                                             'Disk Format' = $VmVhd.VhdFormat
