@@ -189,7 +189,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinHyperVNuma
                                 # Hyper-V Networking
                                 Get-AbrWinHyperVNetworking
-                                # Hyper-V VM Information (Buggy as hell)
+                                # Hyper-V VM Information
                                 Get-AbrWinHyperVHostVM
                             }
                         } else {
