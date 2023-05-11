@@ -30,8 +30,6 @@ function Get-AbrWinOSHotfix {
                 $HotFixes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-HotFix }
                 if ($HotFixes) {
                     Section -Style Heading3 'Installed Hotfixes' {
-                        Paragraph 'The following table details the OS Hotfixes installed'
-                        Blankline
                         $HotFixReport = @()
                         Foreach ($HotFix in $HotFixes) {
                             try {

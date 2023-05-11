@@ -29,8 +29,6 @@ function Get-AbrWinHyperVNetworking {
             try {
                 try {
                     Section -Style Heading3 "Hyper-V MAC Pool settings" {
-                        Paragraph 'The following table details the Hyper-V MAC Pool'
-                        Blankline
                         $VmHostMacPool = [PSCustomObject]@{
                             'Mac Address Minimum' = Switch (($VmHost.MacAddressMinimum).Length) {
                                 0 {"-"}
@@ -130,9 +128,7 @@ function Get-AbrWinHyperVNetworking {
 
                             Foreach ($VmSwitch in $VmSwitches) {
                                 try {
-                                    Section -Style Heading4 ($VmSwitch.Name) {
-                                        Paragraph 'The following table details the Hyper-V vSwitch'
-                                        Blankline
+                                    Section -ExcludeFromTOC -Style NOTOCHeading4 ($VmSwitch.Name) {
                                         $VmSwitchReport = [PSCustomObject]@{
                                             'Switch Name' = $VmSwitch.Name
                                             'Switch Type' = $VmSwitch.SwitchType

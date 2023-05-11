@@ -30,8 +30,6 @@ function Get-AbrWinNetAdapter {
                 $HostAdapters = Invoke-Command -Session $TempPssSession { Get-NetAdapter }
                 if ($HostAdapters) {
                     Section -Style Heading3 'Network Adapters' {
-                        Paragraph 'The Following table details host network adapters'
-                        Blankline
                         $HostAdaptersReport = @()
                         ForEach ($HostAdapter in $HostAdapters) {
                             try {
