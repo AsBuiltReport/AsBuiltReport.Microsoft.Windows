@@ -1,5 +1,12 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.5.1] - 2023-05-15
+
+### Added
+
+- Added Hyper-V per VM configuration reporting @oolejniczak
+- Added Hyper-V Management OS Adapters table @rebelinux
+
 ## [0.5.0] - 2023-05-08
 
 ### Added
