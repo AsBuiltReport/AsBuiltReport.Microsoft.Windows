@@ -114,7 +114,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     $LocalAdmins = Invoke-Command -Session $TempPssSession { Get-LocalGroupMember -Name 'Administrators' -ErrorAction SilentlyContinue }
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
                         Section -Style Heading2 'Local Users and Groups' {
-                            Paragraph 'The following section details local users and groups configured'
+                            Paragraph 'The following section details local configured users and groups'
                             Blankline
                             #Local Users
                             Get-AbrWinLocalUser
@@ -189,8 +189,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinHyperVNuma
                                 # Hyper-V Networking
                                 Get-AbrWinHyperVNetworking
-                                # Hyper-V VM Information (Buggy as hell)
-                                #Get-AbrWinHyperVHostVM
+                                # Hyper-V VM Information
+                                Get-AbrWinHyperVHostVM
                             }
                         } else {
                             Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"

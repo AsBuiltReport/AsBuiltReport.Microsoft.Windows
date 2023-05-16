@@ -29,6 +29,7 @@ function Get-AbrWinHostHWSummary {
             try {
                 Section -Style Heading2 'Host Hardware Settings' {
                     Paragraph 'The following section details hardware settings for the host'
+                    BlankLine
                     $HostHardware = [PSCustomObject] @{
                         'Manufacturer' = $HostComputer.Manufacturer
                         'Model' = $HostComputer.Model

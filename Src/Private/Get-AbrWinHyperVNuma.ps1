@@ -30,8 +30,6 @@ function Get-AbrWinHyperVNuma {
                 $VmHostNumaNodes = Invoke-Command -Session $TempPssSession { Get-VMHostNumaNode }
                 if ($VmHostNumaNodes) {
                     Section -Style Heading3 "Hyper-V NUMA Boundaries" {
-                        Paragraph 'The following table details the NUMA nodes on the host'
-                        Blankline
                         [array]$VmHostNumaReport = @()
                         foreach ($Node in $VmHostNumaNodes) {
                             try {

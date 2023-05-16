@@ -29,8 +29,6 @@ function Get-AbrWinLocalUser {
             try {
                 if ($LocalUsers) {
                     Section -Style Heading3 'Local Users' {
-                        Paragraph 'The following table details local users'
-                        Blankline
                         $LocalUsersReport = @()
                         ForEach ($LocalUser in $LocalUsers) {
                             try {

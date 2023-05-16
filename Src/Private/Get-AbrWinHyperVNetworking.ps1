@@ -29,8 +29,6 @@ function Get-AbrWinHyperVNetworking {
             try {
                 try {
                     Section -Style Heading3 "Hyper-V MAC Pool settings" {
-                        Paragraph 'The following table details the Hyper-V MAC Pool'
-                        Blankline
                         $VmHostMacPool = [PSCustomObject]@{
                             'Mac Address Minimum' = Switch (($VmHost.MacAddressMinimum).Length) {
                                 0 {"-"}
@@ -57,9 +55,8 @@ function Get-AbrWinHyperVNetworking {
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
                 }
-                <# Buggy as hell
                 try {
-                    $VmOsAdapters = Get-VMNetworkAdapter -CimSession $TempCimSession -ManagementOS
+                    $VmOsAdapters = Invoke-Command -Session $TempPssSession { Get-VMNetworkAdapter -ManagementOS | Select-Object -Property * }
                     if ($VmOsAdapters) {
                         Section -Style Heading3 "Hyper-V Management OS Adapters" {
                             Paragraph 'The following table details the Management OS Virtual Adapters created on Virtual Switches'
@@ -67,12 +64,12 @@ function Get-AbrWinHyperVNetworking {
                             $VmOsAdapterReport = @()
                             Foreach ($VmOsAdapter in $VmOsAdapters) {
                                 try {
-                                    $AdapterVlan = Get-VMNetworkAdapterVlan -CimSession $TempCimSession -ManagementOS -VMNetworkAdapterName $VmOsAdapter.Name
+                                    $AdapterVlan = Invoke-Command -Session $TempPssSession { Get-VMNetworkAdapterVlan -ManagementOS -VMNetworkAdapterName ($using:VmOsAdapter).Name | Select-Object -Property * }
                                     $TempVmOsAdapterReport = [PSCustomObject]@{
                                         'Name' = $VmOsAdapter.Name
                                         'Switch Name' = $VmOsAdapter.SwitchName
                                         'Mac Address' = $VmOsAdapter.MacAddress
-                                        'IPv4 Address' = $VmOsAdapter.IPAddresses -Join ","
+                                        'IPv4 Address' = ConvertTo-EmptyToFiller $VmOsAdapter.IPAddresses
                                         'Adapter Mode' = $AdapterVlan.OperationMode
                                         'Vlan ID' = $AdapterVlan.AccessVlanId
                                     }
@@ -84,7 +81,7 @@ function Get-AbrWinHyperVNetworking {
                             }
                             $TableParams = @{
                                 Name = "VM Management OS Adapters"
-                                List = $false
+                                List = $true
                                 ColumnWidths = 50, 50
                             }
                             if ($Report.ShowTableCaptions) {
@@ -96,7 +93,7 @@ function Get-AbrWinHyperVNetworking {
                 }
                 catch {
                     Write-PscriboMessage -IsWarning $_.Exception.Message
-                }#>
+                }
                 try {
                     $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
                     if ($VmSwitches) {
@@ -110,7 +107,7 @@ function Get-AbrWinHyperVNetworking {
                                         'Switch Name' = $VmSwitch.Name
                                         'Switch Type' = $VmSwitch.SwitchType
                                         'Embedded Team' = ConvertTo-TextYN $VmSwitch.EmbeddedTeamingEnabled
-                                        'Interface Description' = $VmSwitch.NetAdapterInterfaceDescription
+                                        'Interface Description' = ConvertTo-EmptyToFiller $VmSwitch.NetAdapterInterfaceDescription
                                     }
                                     $VmSwitchesReport += $TempVmSwitchesReport
                                 }
@@ -131,9 +128,7 @@ function Get-AbrWinHyperVNetworking {
 
                             Foreach ($VmSwitch in $VmSwitches) {
                                 try {
-                                    Section -Style Heading4 ($VmSwitch.Name) {
-                                        Paragraph 'The following table details the Hyper-V vSwitch'
-                                        Blankline
+                                    Section -ExcludeFromTOC -Style NOTOCHeading4 ($VmSwitch.Name) {
                                         $VmSwitchReport = [PSCustomObject]@{
                                             'Switch Name' = $VmSwitch.Name
                                             'Switch Type' = $VmSwitch.SwitchType

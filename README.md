@@ -71,6 +71,7 @@ PowerShell 5.1 and the following PowerShell modules are required for generating 
 - [Hyper-V Module](https://docs.microsoft.com/en-us/powershell/module/hyper-v/?view=windowsserver2022-ps)
 - [DhcpServer Module](https://docs.microsoft.com/en-us/powershell/module/dhcpserver/?view=windowsserver2019-ps)
 - [DnsServer Module](https://docs.microsoft.com/en-us/powershell/module/dnsserver/?view=windowsserver2019-ps)
+- [FailoverClusters Module](https://learn.microsoft.com/en-us/powershell/module/failoverclusters/?view=windowsserver2022-ps)
 
 ### Linux & macOS
 
@@ -105,7 +106,7 @@ Install-WindowsFeature -Name RSAT-Clustering-PowerShell
 
 ```
 
-### PowerShell v5.x running on Windows client computer
+### PowerShell v5.x running on Windows client computer (Target)
 <!-- ********** Add installation for any additional PowerShell module(s) ********** -->
 ```powershell
 Install-Module AsBuiltReport.Microsoft.Windows
