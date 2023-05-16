@@ -30,8 +30,6 @@ function Get-AbrWinNetAdapterMTU {
                 $NetMtus = Invoke-Command -Session $TempPssSession { Get-NetAdapterAdvancedProperty | Where-Object { $_.DisplayName -eq 'Jumbo Packet' } }
                 if ($NetMtus) {
                     Section -Style Heading3 'Network Adapter MTU' {
-                        Paragraph 'The following table lists Network Adapter MTU settings'
-                        Blankline
                         $NetMtuReport = @()
                         ForEach ($NetMtu in $NetMtus) {
                             try {

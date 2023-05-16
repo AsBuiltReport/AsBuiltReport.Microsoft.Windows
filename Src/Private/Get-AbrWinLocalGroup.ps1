@@ -29,8 +29,6 @@ function Get-AbrWinLocalGroup {
             try {
                 if ($LocalGroups) {
                     Section -Style Heading3 'Local Groups' {
-                        Paragraph 'The following table details local groups configured'
-                        Blankline
                         $LocalGroupsReport = @()
                         ForEach ($LocalGroup in $LocalGroups) {
                             try {

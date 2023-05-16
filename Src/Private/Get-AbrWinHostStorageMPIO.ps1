@@ -40,7 +40,7 @@ function Get-AbrWinHostStorageMPIO
                             $MpioAutoClaim = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-MSDSMAutomaticClaimSettings | Select-Object -ExpandProperty Keys }
                             if ($MpioAutoClaim) {
                                 Section -Style Heading4 'Multipath I/O AutoClaim' {
-                                    Paragraph 'The Following table details the BUS types MPIO will automatically claim for'
+                                    Paragraph 'The following table details the BUS types MPIO will automatically claim for'
                                     Blankline
                                     $MpioAutoClaimReport = @()
                                     foreach ($key in $MpioAutoClaim) {

@@ -30,8 +30,6 @@ function Get-AbrWinOSDriver {
                 $HostDriversList = Invoke-Command -Session $TempPssSession { Get-WindowsDriver -Online }
                 if ($HostDriversList) {
                     Section -Style Heading3 'Drivers' {
-                        Paragraph 'The following section details host drivers'
-                        Blankline
                         Invoke-Command -Session $TempPssSession { Import-Module DISM }
                         $HostDriverReport = @()
                         ForEach ($HostDriver in $HostDriversList) {

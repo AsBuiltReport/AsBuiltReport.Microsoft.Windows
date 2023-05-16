@@ -29,8 +29,6 @@ function Get-AbrWinLocalAdmin {
             try {
                 if ($LocalAdmins) {
                     Section -Style Heading3 'Local Administrators' {
-                        Paragraph 'The following table lists Local Administrators'
-                        Blankline
                         $LocalAdminsReport = @()
                         ForEach ($LocalAdmin in $LocalAdmins) {
                             try {

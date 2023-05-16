@@ -30,8 +30,6 @@ function Get-AbrWinNetFirewall {
                 $NetFirewallProfile = Get-NetFirewallProfile -CimSession $TempCimSession
                 if ($NetFirewallProfile) {
                     Section -Style Heading2 'Windows Firewall' {
-                        Paragraph 'The Following table is a the Windowss Firewall Summary'
-                        Blankline
                         $NetFirewallProfileReport = @()
                         Foreach ($FirewallProfile in $NetFireWallProfile) {
                             try {

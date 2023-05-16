@@ -98,8 +98,6 @@ function Get-AbrWinHyperVHostVM {
                                     }
                                     try {
                                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Virtual Machine Guest Integration Service' {
-                                            Paragraph 'The following section details the status of Integration Services'
-                                            Blankline
                                             $VmIntegrationServiceSummary = @()
                                             $VMIntegrationService = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMIntegrationService -VMName ($using:Vm).Name}
                                             Foreach ($Service in $VMIntegrationService) {
@@ -134,8 +132,6 @@ function Get-AbrWinHyperVHostVM {
                                         $VmNetworkAdapters = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMNetworkAdapter -VMName ($using:Vm).Name }
                                         if ($VmNetworkAdapters) {
                                             Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapters' {
-                                                Paragraph 'The following table details the network adapter details'
-                                                BlankLine
                                                 $VmNetworkAdapterReport = @()
                                                 ForEach ($Adapter in $VmNetworkAdapters) {
                                                     try {
@@ -172,8 +168,6 @@ function Get-AbrWinHyperVHostVM {
                                         $VmAdapterVlan =  Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMNetworkAdapterVlan -VMName ($using:Vm).Name | Select-Object -Property * }
                                         if ($VmAdapterVlan) {
                                             Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapter VLANs' {
-                                                Paragraph 'The following section details the VLAN configuration of VM Network Adapters'
-                                                BlankLine
                                                 $VmAdapterVlanReport = @()
                                                 ForEach ($Adapter in $VmAdapterVlan) {
                                                     try {
@@ -210,8 +204,6 @@ function Get-AbrWinHyperVHostVM {
                                         $VmHardDisks =Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-VMHardDiskDrive -VMName ($using:Vm).Name }
                                         if ($VmHardDisks) {
                                             Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Hard Disks' {
-                                                Paragraph 'The following table details the VM hard disks'
-                                                BlankLine
                                                 $VmDiskReport = @()
                                                 foreach ($VmHardDisk in $VMHardDisks) {
                                                     try {

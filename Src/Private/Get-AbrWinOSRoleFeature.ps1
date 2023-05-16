@@ -30,8 +30,6 @@ function Get-AbrWinOSRoleFeature {
                 $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
                 if ($HostRolesAndFeatures) {
                     Section -Style Heading3 'Roles' {
-                        Paragraph 'The following settings details host roles installed'
-                        Blankline
                         [array]$HostRolesAndFeaturesReport = @()
                         ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                             if ( $HostRoleAndFeature.FeatureType -eq 'Role') {
@@ -60,8 +58,6 @@ function Get-AbrWinOSRoleFeature {
                             try {
                                 if ($HostRolesAndFeatures) {
                                     Section -Style Heading3 'Features and Role Services' {
-                                        Paragraph 'The following settings details host features and role services installed'
-                                        Blankline
                                         [array]$HostRolesAndFeaturesReport = @()
                                         ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                                             if ( $HostRoleAndFeature.FeatureType -eq 'Role Service' -or $HostRoleAndFeature.FeatureType -eq 'Feature') {
