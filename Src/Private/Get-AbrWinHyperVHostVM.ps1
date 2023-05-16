@@ -57,7 +57,7 @@ function Get-AbrWinHyperVHostVM {
                         $VmSummary | Sort-Object 'VM Name' | Table @TableParams
                         foreach ($Vm in $Vms) {
                             try {
-                                Section -ExcludeFromTOC -Style NOTOCHeading4 ($Vm.Name) {
+                                Section -Style Heading4 ($Vm.Name) {
                                     Paragraph 'The following sections detail the VM configuration settings'
                                     Blankline
                                     try {
