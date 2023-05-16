@@ -27,7 +27,7 @@ Author = 'Andrew Ramsay'
 # CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2022 Andrew Ramsay. All rights reserved.'
+Copyright = '(c) 2023 Andrew Ramsay. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'A PowerShell module to generate an as built report on the configuration of Microsoft Windows.'
