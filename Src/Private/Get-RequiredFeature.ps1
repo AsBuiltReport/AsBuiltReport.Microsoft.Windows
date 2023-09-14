@@ -91,7 +91,7 @@ function Get-RequiredFeature {
             }
         }
         else {
-            throw "Unable to validate if $Name is installed. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.AD"
+            throw "Unable to validate if $Name is installed. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
         }
     }
     end {}
