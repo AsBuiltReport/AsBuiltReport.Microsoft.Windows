@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -110,7 +110,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             if ($InfoLevel.Account -ge 1) {
                 try {
                     $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object {$_.PrincipalSource -ne "ActiveDirectory"} }
-                    $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup | Where-Object {$_.PrincipalSource -ne "ActiveDirectory" }}
+                    $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup | Where-Object {$_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name;  Description = $_.Description; Members = (Get-LocalGroupMember -Group $_.Name).Name } }}
                     $LocalAdmins = Invoke-Command -Session $TempPssSession { Get-LocalGroupMember -Name 'Administrators' -ErrorAction SilentlyContinue }
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
                         Section -Style Heading2 'Local Users and Groups' {

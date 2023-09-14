@@ -5,7 +5,7 @@ function Get-AbrWinLocalGroup {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -33,8 +33,9 @@ function Get-AbrWinLocalGroup {
                         ForEach ($LocalGroup in $LocalGroups) {
                             try {
                                 $TempLocalGroupsReport = [PSCustomObject]@{
-                                    'Group Name' = $LocalGroup.Name
+                                    'Group Name' = $LocalGroup.GroupName
                                     'Description' = $LocalGroup.Description
+				    'Members' = $LocalGroup.Members
                                 }
                                 $LocalGroupsReport += $TempLocalGroupsReport
                             }
@@ -45,7 +46,7 @@ function Get-AbrWinLocalGroup {
                         $TableParams = @{
                             Name = "Local Group Summary"
                             List = $false
-                            ColumnWidths = 40, 60
+                            ColumnWidths = 30, 40, 30
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
