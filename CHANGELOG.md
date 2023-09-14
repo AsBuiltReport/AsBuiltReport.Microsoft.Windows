@@ -1,5 +1,11 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
+## [0.5.2] - 2023-09-??
+
+### Added
+
+- Added Local Windows Group Members information @flynngw
+  
 ## [0.5.1] - 2023-05-16
 
 ### Added
