@@ -55,6 +55,10 @@ RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
             ModuleVersion = '1.3.0'
+        },
+        @{
+            ModuleName = 'dbatools';
+            ModuleVersion = '2.0.4'
         }
     )
 

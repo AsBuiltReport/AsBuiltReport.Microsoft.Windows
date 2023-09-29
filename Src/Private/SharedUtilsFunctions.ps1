@@ -128,7 +128,8 @@ function ConvertTo-EmptyToFiller {
             Position = 0,
             Mandatory)]
             [AllowEmptyString()]
-            [string]$TEXT
+            [AllowNull()]
+            $TEXT
         )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {

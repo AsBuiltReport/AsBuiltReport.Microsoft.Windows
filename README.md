@@ -72,6 +72,8 @@ PowerShell 5.1 and the following PowerShell modules are required for generating 
 - [DhcpServer Module](https://docs.microsoft.com/en-us/powershell/module/dhcpserver/?view=windowsserver2019-ps)
 - [DnsServer Module](https://docs.microsoft.com/en-us/powershell/module/dnsserver/?view=windowsserver2019-ps)
 - [FailoverClusters Module](https://learn.microsoft.com/en-us/powershell/module/failoverclusters/?view=windowsserver2022-ps)
+- [DBATools Module](https://dbatools.io/)
+
 
 ### Linux & macOS
 
@@ -97,13 +99,15 @@ Install-WindowsFeature -Name RSAT-DHCP
 # Hyper-V Server powershell modules
 Install-WindowsFeature -Name Hyper-V-PowerShell
 
-#IIS Server powershell modules
+# IIS Server powershell modules
 Install-WindowsFeature -Name web-mgmt-console
 Install-WindowsFeature -Name Web-Scripting-Tools
 
-#FailOver Cluster powershell modules
+# FailOver Cluster powershell modules
 Install-WindowsFeature -Name RSAT-Clustering-PowerShell
 
+# DBATools for SQL
+Install-Module dbatools
 ```
 
 ### PowerShell v5.x running on Windows client computer (Target)
@@ -126,6 +130,8 @@ Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerManagementTools
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-ManagementScriptingTools
 
+# DBATools for SQL
+Install-Module dbatools
 ```
 
 ### GitHub
