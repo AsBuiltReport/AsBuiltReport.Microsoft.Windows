@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterQuorum {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterQuorum -Cluster $using:Cluster | Select-Object -Property * } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterQuorum | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Quorum" {
                     $OutObj = @()
@@ -44,7 +44,7 @@ function Get-AbrWinFOClusterQuorum {
                     }
 
                     $TableParams = @{
-                        Name = "Quorum - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Quorum - $($Cluster)"
                         List = $false
                         ColumnWidths = 33, 34, 33
                     }

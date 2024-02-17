@@ -305,7 +305,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
                 if ($Status.Status -eq "Running") {
                     try {
-                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { (Get-Cluster).Name }
+                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Cluster }
                         if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status ) -and $Cluster) {
                             Section -Style Heading2 "Failover Cluster Configuration" {
                                 Paragraph 'The following table details the Failover Cluster Settings'

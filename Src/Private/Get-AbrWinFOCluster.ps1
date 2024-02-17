@@ -26,7 +26,7 @@ function Get-AbrWinFOCluster {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-Cluster -Name $using:Cluster | Select-Object -Property * }
+            $Settings = Invoke-Command -Session $TempPssSession { Get-Cluster | Select-Object -Property * }
             if ($Settings) {
                 $OutObj = @()
                 try {
@@ -44,7 +44,7 @@ function Get-AbrWinFOCluster {
                 }
 
                 $TableParams = @{
-                    Name = "FailOver Cluster Servers Settings - $($System.toUpper().split(".")[0])"
+                    Name = "FailOver Cluster Servers Settings - $($System.split(".")[0])"
                     List = $true
                     ColumnWidths = 40, 60
                 }

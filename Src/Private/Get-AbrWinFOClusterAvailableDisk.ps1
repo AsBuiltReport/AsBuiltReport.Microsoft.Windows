@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterAvailableDisk {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAvailableDisk -Cluster $using:Cluster } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAvailableDisk } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Available Disk" {
                     $OutObj = @()
@@ -44,7 +44,7 @@ function Get-AbrWinFOClusterAvailableDisk {
                     }
 
                     $TableParams = @{
-                        Name = "Available Disk - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Available Disk - $($Cluster)"
                         List = $false
                         ColumnWidths = 40, 30, 30
                     }

@@ -24,7 +24,7 @@ function Get-AbrWinFOClusterNode {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNode -Cluster $using:Cluster } | Sort-Object -Property Identity
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNode } | Sort-Object -Property Identity
             if ($Settings) {
                 Write-PScriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
                 Section -Style Heading3 'Nodes' {
@@ -67,7 +67,7 @@ function Get-AbrWinFOClusterNode {
                         Paragraph "The following table summarizes the configuration of the Failover Cluster Nodes."
                         BlankLine
                         $TableParams = @{
-                            Name = "Nodes - $($Cluster.toUpper().split(".")[0])"
+                            Name = "Nodes - $($Cluster)"
                             List = $false
                             Columns = 'Name', 'State', 'Type'
                             ColumnWidths = 40, 30, 30

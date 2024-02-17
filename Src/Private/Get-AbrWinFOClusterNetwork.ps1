@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterNetwork {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetwork -Cluster $using:Cluster } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetwork } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Networks" {
                     $OutObj = @()
@@ -50,7 +50,7 @@ function Get-AbrWinFOClusterNetwork {
                     }
 
                     $TableParams = @{
-                        Name = "Networks - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Networks - $($Cluster)"
                         List = $false
                         ColumnWidths = 30, 15, 20, 35
                     }

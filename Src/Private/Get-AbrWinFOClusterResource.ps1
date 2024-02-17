@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterResource {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterResource -Cluster $using:Cluster | Select-Object -Property * } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterResource | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Resource" {
                     $OutObj = @()
@@ -50,7 +50,7 @@ function Get-AbrWinFOClusterResource {
                     }
 
                     $TableParams = @{
-                        Name = "Resource - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Resource - $($Cluster)"
                         List = $false
                         ColumnWidths = 25, 25, 35, 15
                     }

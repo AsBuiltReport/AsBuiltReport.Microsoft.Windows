@@ -4,16 +4,17 @@
 
 ### Added
 
-- Added Local Windows Group Members information @flynngw
-- Added more HealthCheck conditions
+- Add Local Windows Group Members information @flynngw
+- Add more HealthCheck conditions
 
 ### Changed
 
-- Improved report readability
+- Improve report readability
 
 ### Fixed
 
 - Fix CodeQL security alerts
+- Fix FailOver Cluster section
 
 ## [0.5.1] - 2023-05-16
 

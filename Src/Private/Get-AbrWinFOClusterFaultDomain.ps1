@@ -35,8 +35,16 @@ function Get-AbrWinFOClusterFaultDomain {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
                                 'Type' = $Setting.Type
-                                'Parent Name' = $Setting.ParentName
-                                'Children Names' = $Setting.ChildrenNames
+                                'Parent Name' = Switch ([string]::IsNullOrEmpty($Setting.ParentName)) {
+                                    $true {"--"}
+                                    $false {$Setting.ParentName}
+                                    default {'Unknown'}
+                                }
+                                'Children Names' = Switch ([string]::IsNullOrEmpty($Setting.ChildrenNames)) {
+                                    $true {"--"}
+                                    $false {$Setting.ChildrenNames}
+                                    default {'Unknown'}
+                                }
                                 'Location' = ConvertTo-EmptyToFiller $Setting.Location
                             }
                             $OutObj += [pscustomobject]$inobj
@@ -46,7 +54,7 @@ function Get-AbrWinFOClusterFaultDomain {
                     }
 
                     $TableParams = @{
-                        Name = "Fault Domain - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Fault Domain - $($Cluster)"
                         List = $false
                         ColumnWidths = 20, 20, 20, 20, 20
                     }
