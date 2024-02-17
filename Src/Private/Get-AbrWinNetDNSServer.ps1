@@ -5,7 +5,7 @@ function Get-AbrWinNetDNSServer {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetDNSServer {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network DNS Server information."
+        Write-PScriboMessage "Collecting Network DNS Server information."
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetDNSServer {
                 if ($DnsServers) {
                     Section -Style Heading3 'DNS Servers' {
                         Paragraph 'The following table details the DNS Server Addresses Configured'
-                        Blankline
+                        BlankLine
                         $DnsServerReport = @()
                         ForEach ($DnsServer in $DnsServers) {
                             try {
@@ -40,9 +40,8 @@ function Get-AbrWinNetDNSServer {
                                     'Server Address' = $DnsServer.ServerAddresses -Join ","
                                 }
                                 $DnsServerReport += $TempDnsServerReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -56,9 +55,8 @@ function Get-AbrWinNetDNSServer {
                         $DnsServerReport | Sort-Object -Property 'Interface' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

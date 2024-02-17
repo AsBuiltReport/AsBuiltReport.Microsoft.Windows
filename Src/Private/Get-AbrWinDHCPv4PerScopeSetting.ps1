@@ -5,7 +5,7 @@ function Get-AbrWinDHCPv4PerScopeSetting {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinDHCPv4PerScopeSetting {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PscriboMessage "Collecting Host DHCP Server Scope information."
+        Write-PScriboMessage "Collecting Host DHCP Server Scope information."
     }
 
     process {
@@ -40,7 +40,7 @@ function Get-AbrWinDHCPv4PerScopeSetting {
                                     $OutObj = @()
                                     foreach ($Option in $DHCPScopeOptions) {
                                         try {
-                                            Write-PscriboMessage "Collecting DHCP Server Scope Server Option value $($Option.OptionId)"
+                                            Write-PScriboMessage "Collecting DHCP Server Scope Server Option value $($Option.OptionId)"
                                             $inObj = [ordered] @{
                                                 'Name' = $Option.Name
                                                 'Option Id' = $Option.OptionId
@@ -48,9 +48,8 @@ function Get-AbrWinDHCPv4PerScopeSetting {
                                                 'Policy Name' = ConvertTo-EmptyToFiller $Option.PolicyName
                                             }
                                             $OutObj += [pscustomobject]$inobj
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Item)"
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Item)"
                                         }
                                     }
 
@@ -65,16 +64,14 @@ function Get-AbrWinDHCPv4PerScopeSetting {
                                     $OutObj | Sort-Object -Property 'Option Id' | Table @TableParams
                                 }
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Section)"
+                        } catch {
+                            Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Section)"
                         }
                     }
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Section)"
+        } catch {
+            Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Section)"
         }
     }
 

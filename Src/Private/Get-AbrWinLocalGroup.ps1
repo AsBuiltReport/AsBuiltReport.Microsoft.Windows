@@ -5,7 +5,7 @@ function Get-AbrWinLocalGroup {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinLocalGroup {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PscriboMessage "Collecting Local Groups information."
+        Write-PScriboMessage "Collecting Local Groups information."
     }
 
     process {
@@ -33,19 +33,27 @@ function Get-AbrWinLocalGroup {
                         ForEach ($LocalGroup in $LocalGroups) {
                             try {
                                 $TempLocalGroupsReport = [PSCustomObject]@{
-                                    'Group Name' = $LocalGroup.Name
-                                    'Description' = $LocalGroup.Description
+                                    'Group Name' = $LocalGroup.GroupName
+                                    'Description' = Switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
+                                        $true { "--" }
+                                        $false { $LocalGroup.Description }
+                                        default { "Unknown" }
+                                    }
+                                    'Members' = Switch ([string]::IsNullOrEmpty($LocalGroup.Members)) {
+                                        $true { "--" }
+                                        $false { $LocalGroup.Members }
+                                        default { "Unknown" }
+                                    }
                                 }
                                 $LocalGroupsReport += $TempLocalGroupsReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
                             Name = "Local Group Summary"
                             List = $false
-                            ColumnWidths = 40, 60
+                            ColumnWidths = 30, 40, 30
                         }
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -53,9 +61,8 @@ function Get-AbrWinLocalGroup {
                         $LocalGroupsReport | Sort-Object -Property 'Group Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

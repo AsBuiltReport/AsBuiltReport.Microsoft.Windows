@@ -1,12 +1,11 @@
-function Get-AbrWinHostStorageMPIO
- {
+function Get-AbrWinHostStorageMPIO {
     <#
     .SYNOPSIS
     Used by As Built Report to retrieve Windows Server Host Storage MPIO information.
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -22,7 +21,7 @@ function Get-AbrWinHostStorageMPIO
 
     begin {
         Write-PScriboMessage "Storage InfoLevel set at $($InfoLevel.Storage)."
-        Write-PscriboMessage "Collecting Host Storage MPIO information."
+        Write-PScriboMessage "Collecting Host Storage MPIO information."
     }
 
     process {
@@ -33,15 +32,15 @@ function Get-AbrWinHostStorageMPIO
                     try {
                         Section -Style Heading3 'Host MPIO Settings' {
                             Paragraph 'The following section details host MPIO Settings'
-                            Blankline
+                            BlankLine
                             [string]$MpioLoadBalance = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-MSDSMGlobalDefaultLoadBalancePolicy }
                             Paragraph "The default load balancing policy is: $MpioLoadBalance"
-                            Blankline
+                            BlankLine
                             $MpioAutoClaim = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-MSDSMAutomaticClaimSettings | Select-Object -ExpandProperty Keys }
                             if ($MpioAutoClaim) {
                                 Section -Style Heading4 'Multipath I/O AutoClaim' {
                                     Paragraph 'The following table details the BUS types MPIO will automatically claim for'
-                                    Blankline
+                                    BlankLine
                                     $MpioAutoClaimReport = @()
                                     foreach ($key in $MpioAutoClaim) {
                                         try {
@@ -49,9 +48,8 @@ function Get-AbrWinHostStorageMPIO
                                             $Temp.BusType = $key
                                             $Temp.State = 'Enabled'
                                             $MpioAutoClaimReport += $Temp
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                     $TableParams = @{
@@ -70,7 +68,7 @@ function Get-AbrWinHostStorageMPIO
                                 if ($MpioAvailableHws) {
                                     Section -Style Heading4 'MPIO Detected Hardware' {
                                         Paragraph 'The following table details the hardware detected and claimed by MPIO'
-                                        Blankline
+                                        BlankLine
                                         $MpioAvailableHwReport = @()
                                         foreach ($MpioAvailableHw in $MpioAvailableHws) {
                                             try {
@@ -81,9 +79,8 @@ function Get-AbrWinHostStorageMPIO
                                                     'Multipathed' = ConvertTo-TextYN $MpioAvailableHw.IsMultipathed
                                                 }
                                                 $MpioAvailableHwReport += $TempMpioAvailableHwReport
-                                            }
-                                            catch {
-                                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                                            } catch {
+                                                Write-PScriboMessage -IsWarning $_.Exception.Message
                                             }
                                         }
                                         $TableParams = @{
@@ -97,19 +94,16 @@ function Get-AbrWinHostStorageMPIO
                                         $MpioAvailableHwReport | Table @TableParams
                                     }
                                 }
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

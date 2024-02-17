@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterPermission {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,16 +21,16 @@ function Get-AbrWinFOClusterPermission {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
     }
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAccess -Cluster $using:Cluster} | Sort-Object -Property Identity
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAccess } | Sort-Object -Property Identity
             if ($Settings) {
                 Section -Style Heading3 "Access Permissions" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Identity' = $Setting.IdentityReference
@@ -38,14 +38,13 @@ function Get-AbrWinFOClusterPermission {
                                 'Rights' = $Setting.ClusterRights
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
                     $TableParams = @{
-                        Name = "Access Permission - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Access Permission - $($Cluster)"
                         List = $false
                         ColumnWidths = 60, 20, 20
                     }
@@ -55,9 +54,8 @@ function Get-AbrWinFOClusterPermission {
                     $OutObj | Table @TableParams
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterFaultDomain {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrWinFOClusterFaultDomain {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Fault Domain information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Fault Domain information."
     }
 
     process {
@@ -30,24 +30,31 @@ function Get-AbrWinFOClusterFaultDomain {
             if ($Settings) {
                 Section -Style Heading3 "Fault Domain" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
                                 'Type' = $Setting.Type
-                                'Parent Name' = $Setting.ParentName
-                                'Children Names' = $Setting.ChildrenNames
+                                'Parent Name' = Switch ([string]::IsNullOrEmpty($Setting.ParentName)) {
+                                    $true {"--"}
+                                    $false {$Setting.ParentName}
+                                    default {'Unknown'}
+                                }
+                                'Children Names' = Switch ([string]::IsNullOrEmpty($Setting.ChildrenNames)) {
+                                    $true {"--"}
+                                    $false {$Setting.ChildrenNames}
+                                    default {'Unknown'}
+                                }
                                 'Location' = ConvertTo-EmptyToFiller $Setting.Location
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
                     $TableParams = @{
-                        Name = "Fault Domain - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Fault Domain - $($Cluster)"
                         List = $false
                         ColumnWidths = 20, 20, 20, 20, 20
                     }
@@ -57,9 +64,8 @@ function Get-AbrWinFOClusterFaultDomain {
                     $OutObj | Table @TableParams
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

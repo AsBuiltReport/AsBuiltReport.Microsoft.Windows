@@ -5,7 +5,7 @@ function Get-AbrWinNetAdapter {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetAdapter {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network Adapter information."
+        Write-PScriboMessage "Collecting Network Adapter information."
     }
 
     process {
@@ -40,9 +40,8 @@ function Get-AbrWinNetAdapter {
                                     'Link Speed' = $HostAdapter.LinkSpeed
                                 }
                                 $HostAdaptersReport += $TempHostAdaptersReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -56,9 +55,8 @@ function Get-AbrWinNetAdapter {
                         $HostAdaptersReport | Sort-Object -Property 'Adapter Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

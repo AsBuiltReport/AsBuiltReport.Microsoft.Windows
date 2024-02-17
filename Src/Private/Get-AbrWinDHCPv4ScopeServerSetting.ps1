@@ -5,7 +5,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PscriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage "Collecting Host DHCP Server information."
     }
 
     process {
@@ -33,7 +33,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                 Write-PScriboMessage "Discovered '$(($DHCPScopeOptions | Measure-Object).Count)' DHCP scopes server opions."
                 foreach ($Option in $DHCPScopeOptions) {
                     try {
-                        Write-PscriboMessage "Collecting DHCP Server Scope Server Option value $($Option.OptionId)"
+                        Write-PScriboMessage "Collecting DHCP Server Scope Server Option value $($Option.OptionId)"
                         $inObj = [ordered] @{
                             'Name' = $Option.Name
                             'Option Id' = $Option.OptionId
@@ -41,9 +41,8 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                             'Policy Name' = ConvertTo-EmptyToFiller $Option.PolicyName
                         }
                         $OutObj += [pscustomobject]$inobj
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (DHCP scopes server opions item)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (DHCP scopes server opions item)"
                     }
                 }
                 $TableParams = @{
@@ -64,7 +63,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                             $OutObj = @()
                             foreach ($Option in $DHCPScopeOptions) {
                                 try {
-                                    Write-PscriboMessage "Collecting DHCP Server Scope DNS Setting."
+                                    Write-PScriboMessage "Collecting DHCP Server Scope DNS Setting."
                                     $inObj = [ordered] @{
                                         'Dynamic Updates' = $Option.DynamicUpdates
                                         'Dns Suffix' = ConvertTo-EmptyToFiller $Option.DnsSuffix
@@ -74,9 +73,8 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                                         'Delete Dns RR On Lease Expiry' = ConvertTo-EmptyToFiller $Option.DeleteDnsRROnLeaseExpiry
                                     }
                                     $OutObj += [pscustomobject]$inobj
-                                }
-                                catch {
-                                    Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scope DNS Setting Item)"
+                                } catch {
+                                    Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope DNS Setting Item)"
                                 }
                             }
 
@@ -91,9 +89,8 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                             $OutObj | Table @TableParams
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scope DNS Setting Table)"
+                } catch {
+                    Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope DNS Setting Table)"
                 }
             }
         }

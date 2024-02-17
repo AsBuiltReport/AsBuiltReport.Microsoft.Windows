@@ -16,23 +16,23 @@ function ConvertTo-TextYN {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]
-            $TEXT
-        )
+        [AllowEmptyString()]
+        [string]
+        $TEXT
+    )
 
     switch ($TEXT) {
-            "" {"-"; break}
-            $Null {"-"; break}
-            "True" {"Yes"; break}
-            "False" {"No"; break}
-            default {$TEXT}
-        }
-    } # end
+        "" { "--"; break }
+        $Null { "--"; break }
+        "True" { "Yes"; break }
+        "False" { "No"; break }
+        default { $TEXT }
+    }
+} # end
 
 function ConvertTo-FileSizeString {
     <#
@@ -52,67 +52,36 @@ function ConvertTo-FileSizeString {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [int64]
-            $Size
-        )
+        [int64]
+        $Size
+    )
 
     switch ($Size) {
-        {$_ -gt 1TB}
-            {[string]::Format("{0:0.00} TB", $Size / 1TB); break}
-        {$_ -gt 1GB}
-            {[string]::Format("{0:0.00} GB", $Size / 1GB); break}
-        {$_ -gt 1MB}
-            {[string]::Format("{0:0.00} MB", $Size / 1MB); break}
-        {$_ -gt 1KB}
-            {[string]::Format("{0:0.00} KB", $Size / 1KB); break}
-        {$_ -gt 0}
-            {[string]::Format("{0} B", $Size); break}
-        {$_ -eq 0}
-            {"0 KB"; break}
+        { $_ -gt 1TB }
+        { [string]::Format("{0:0.00} TB", $Size / 1TB); break }
+        { $_ -gt 1GB }
+        { [string]::Format("{0:0.00} GB", $Size / 1GB); break }
+        { $_ -gt 1MB }
+        { [string]::Format("{0:0.00} MB", $Size / 1MB); break }
+        { $_ -gt 1KB }
+        { [string]::Format("{0:0.00} KB", $Size / 1KB); break }
+        { $_ -gt 0 }
+        { [string]::Format("{0} B", $Size); break }
+        { $_ -eq 0 }
+        { "0 KB"; break }
         default
-            {"0 KB"}
-        }
-    } # end >> function Format-FileSize
-
-function Invoke-DcDiag {
-    <#
-    .SYNOPSIS
-    Used by As Built Report to get the dcdiag tests for a Domain Controller.
-    .DESCRIPTION
-
-    .NOTES
-        Version:        0.4.0
-        Author:         Adam Bertram
-
-    .EXAMPLE
-
-    .LINK
-
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [string]$DomainController
-    )
-    $result = Invoke-Command -Session $TempPssSession {dcdiag /s:$using:DomainController}
-    $result | select-string -pattern '\. (.*) \b(passed|failed)\b test (.*)' | ForEach-Object {
-        $obj = @{
-            TestName = $_.Matches.Groups[3].Value
-            TestResult = $_.Matches.Groups[2].Value
-            Entity = $_.Matches.Groups[1].Value
-        }
-        [pscustomobject]$obj
+        { "0 KB" }
     }
-}# end
+} # end >> function Format-FileSize
 
 function ConvertTo-EmptyToFiller {
     <#
     .SYNOPSIS
-    Used by As Built Report to convert empty culumns to "-".
+    Used by As Built Report to convert empty culumns to "--".
     .DESCRIPTION
     .NOTES
         Version:        0.5.0
@@ -123,17 +92,17 @@ function ConvertTo-EmptyToFiller {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [AllowEmptyString()]
-            [string]$TEXT
-        )
+        [AllowEmptyString()]
+        [string]$TEXT
+    )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {
-        $true {"--"; break}
-        default {$TEXT}
+        $true { "--"; break }
+        default { $TEXT }
     }
 }
 
@@ -155,13 +124,13 @@ function Convert-IpAddressToMaskLength {
     [CmdletBinding()]
     [OutputType([String])]
     Param
-        (
+    (
         [Parameter (
             Position = 0,
             Mandatory)]
-            [string]
-            $SubnetMask
-        )
+        [string]
+        $SubnetMask
+    )
 
     [IPAddress] $MASK = $SubnetMask
     $octets = $MASK.IPAddressToString.Split('.')
@@ -197,7 +166,7 @@ function ConvertTo-ADObjectName {
     )
     $ADObject = @()
     foreach ($Object in $DN) {
-        $ADObject += Invoke-Command -Session $Session {Get-ADObject $using:Object | Select-Object -ExpandProperty Name}
+        $ADObject += Invoke-Command -Session $Session { Get-ADObject $using:Object | Select-Object -ExpandProperty Name }
     }
     return $ADObject;
 }# end

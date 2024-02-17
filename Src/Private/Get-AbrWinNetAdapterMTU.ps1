@@ -5,7 +5,7 @@ function Get-AbrWinNetAdapterMTU {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetAdapterMTU {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network Adapter Interfaces MTU information."
+        Write-PScriboMessage "Collecting Network Adapter Interfaces MTU information."
     }
 
     process {
@@ -38,9 +38,8 @@ function Get-AbrWinNetAdapterMTU {
                                     'MTU Size' = $NetMtu.DisplayValue
                                 }
                                 $NetMtuReport += $TempNetMtuReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -54,9 +53,8 @@ function Get-AbrWinNetAdapterMTU {
                         $NetMtuReport | Sort-Object -Property 'Adapter Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
