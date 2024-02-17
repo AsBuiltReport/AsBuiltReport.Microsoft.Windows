@@ -5,7 +5,7 @@ function Get-AbrWinOSService {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,22 +21,22 @@ function Get-AbrWinOSService {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PscriboMessage "Collecting Operating System Service information."
+        Write-PScriboMessage "Collecting Operating System Service information."
     }
 
     process {
         if ($InfoLevel.OperatingSystem -ge 1) {
             try {
-                $Available = Invoke-Command -Session $TempPssSession -ScriptBlock {Get-Service "W32Time" | Select-Object DisplayName, Name, Status}
+                $Available = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service "W32Time" | Select-Object DisplayName, Name, Status }
                 if ($Available) {
                     Section -Style Heading3 'Services' {
                         Paragraph 'The following table details status of important services'
-                        Blankline
-                        $Services = @('DNS','DFS Replication','Intersite Messaging','Kerberos Key Distribution Center','Active Directory Domain Services','W32Time','ADWS','DHCPServer','Dnscache','gpsvc','HvHost','vmcompute','vmms','iphlpsvc','MSiSCSI','Netlogon','RasMan','SessionEnv','TermService','RpcSs','RpcEptMapper','SamSs','LanmanServer','Schedule','lmhosts','UsoSvc','mpssvc','W3SVC','MSSQLSERVER','ClusSvc')
+                        BlankLine
+                        $Services = @('DNS', 'DFS Replication', 'Intersite Messaging', 'Kerberos Key Distribution Center', 'Active Directory Domain Services', 'W32Time', 'ADWS', 'DHCPServer', 'Dnscache', 'gpsvc', 'HvHost', 'vmcompute', 'vmms', 'iphlpsvc', 'MSiSCSI', 'Netlogon', 'RasMan', 'SessionEnv', 'TermService', 'RpcSs', 'RpcEptMapper', 'SamSs', 'LanmanServer', 'Schedule', 'lmhosts', 'UsoSvc', 'mpssvc', 'W3SVC', 'MSSQLSERVER', 'ClusSvc')
                         $ServicesReport = @()
                         Foreach ($Service in $Services) {
                             try {
-                                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock {Get-Service $using:Service -ErrorAction SilentlyContinue | Select-Object DisplayName, Name, Status}
+                                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service $using:Service -ErrorAction SilentlyContinue | Select-Object DisplayName, Name, Status }
                                 if ($Status) {
                                     $TempServicesReport = [PSCustomObject] @{
                                         'Display Name' = $Status.DisplayName
@@ -46,12 +46,12 @@ function Get-AbrWinOSService {
                                     $ServicesReport += $TempServicesReport
                                 }
                             } catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
 
                         if ($HealthCheck.OperatingSystem.Services) {
-                            $ServicesReport | Where-Object { $_.'Status' -notlike 'Running'} | Set-Style -Style Warning -Property 'Status'
+                            $ServicesReport | Where-Object { $_.'Status' -notlike 'Running' } | Set-Style -Style Warning -Property 'Status'
                         }
 
                         $TableParams = @{
@@ -65,9 +65,8 @@ function Get-AbrWinOSService {
                         $ServicesReport | Sort-Object -Property 'Display Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

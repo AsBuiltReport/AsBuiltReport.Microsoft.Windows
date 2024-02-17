@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterNode {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -24,9 +24,9 @@ function Get-AbrWinFOClusterNode {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNode -Cluster $using:Cluster} | Sort-Object -Property Identity
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNode -Cluster $using:Cluster } | Sort-Object -Property Identity
             if ($Settings) {
-                Write-PscriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
+                Write-PScriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
                 Section -Style Heading3 'Nodes' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
@@ -45,7 +45,7 @@ function Get-AbrWinFOClusterNode {
                     }
 
                     if ($HealthCheck.FailOverCluster.Nodes) {
-                        $OutObj | Where-Object { $_.'State' -ne 'UP'} | Set-Style -Style Warning -Property 'State'
+                        $OutObj | Where-Object { $_.'State' -ne 'UP' } | Set-Style -Style Warning -Property 'State'
                     }
 
                     if ($InfoLevel.FailOverCluster -ge 2) {
@@ -80,7 +80,7 @@ function Get-AbrWinFOClusterNode {
                 }
             }
         } catch {
-            Write-PscriboMessage -IsWarning "FailOver Cluster Nodes Section: $($_.Exception.Message)"
+            Write-PScriboMessage -IsWarning "FailOver Cluster Nodes Section: $($_.Exception.Message)"
         }
     }
 

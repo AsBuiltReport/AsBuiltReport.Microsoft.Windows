@@ -5,7 +5,7 @@ function Get-AbrWinApplication {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinApplication {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PscriboMessage "Collecting Application Inventory information."
+        Write-PScriboMessage "Collecting Application Inventory information."
     }
 
     process {
@@ -33,23 +33,22 @@ function Get-AbrWinApplication {
                 if ($AddRemove) {
                     Section -Style Heading3 'Installed Applications' {
                         Paragraph 'The following settings details applications listed in Add/Remove Programs'
-                        Blankline
+                        BlankLine
                         [array]$AddRemoveReport = @()
                         ForEach ($App in $AddRemove) {
-                                try {
+                            try {
                                 $TempAddRemoveReport = [PSCustomObject]@{
                                     'Application Name' = $App.DisplayName
                                     'Publisher' = $App.Publisher
                                     'Version' = $App.Version
                                     'Install Date' = Switch (($App.InstallDate).count) {
-                                        0 {"-"}
-                                        default {$App.InstallDate}
+                                        0 { "-" }
+                                        default { $App.InstallDate }
                                     }
                                 }
                                 $AddRemoveReport += $TempAddRemoveReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -63,9 +62,8 @@ function Get-AbrWinApplication {
                         $AddRemoveReport | Where-Object { $_.'Application Name' -notlike $null } | Sort-Object -Property 'Application Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

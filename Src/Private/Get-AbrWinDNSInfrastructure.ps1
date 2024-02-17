@@ -5,7 +5,7 @@ function Get-AbrWinDNSInfrastructure {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinDNSInfrastructure {
 
     begin {
         Write-PScriboMessage "DNS InfoLevel set at $($InfoLevel.DNS)."
-        Write-PscriboMessage "Collecting Host DNS Server information."
+        Write-PScriboMessage "Collecting Host DNS Server information."
     }
 
     process {
@@ -38,9 +38,8 @@ function Get-AbrWinDNSInfrastructure {
                         'All IPs' = $DNSSetting.AllIPAddress
                     }
                     $OutObj += [pscustomobject]$inobj
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning " $($_.Exception.Message) (Infrastructure Summary)"
+                } catch {
+                    Write-PScriboMessage -IsWarning " $($_.Exception.Message) (Infrastructure Summary)"
                 }
             }
 
@@ -62,7 +61,7 @@ function Get-AbrWinDNSInfrastructure {
                     if ($DNSIPSetting) {
                         Section -Style Heading3 "DNS IP Configuration" {
                             Paragraph "The following table details DNS Server IP Configuration Settings"
-                            Blankline
+                            BlankLine
                             $OutObj = @()
                             try {
                                 $inObj = [ordered] @{
@@ -75,7 +74,7 @@ function Get-AbrWinDNSInfrastructure {
                                 $OutObj = [pscustomobject]$inobj
 
                                 if ($HealthCheck.DNS.DP) {
-                                    $OutObj | Where-Object { $_.'DNS IP 1' -eq "127.0.0.1"} | Set-Style -Style Warning -Property 'DNS IP 1'
+                                    $OutObj | Where-Object { $_.'DNS IP 1' -eq "127.0.0.1" } | Set-Style -Style Warning -Property 'DNS IP 1'
                                 }
 
                                 $TableParams = @{
@@ -87,15 +86,13 @@ function Get-AbrWinDNSInfrastructure {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
                                 }
                                 $OutObj | Table @TableParams
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning "$($_.Exception.Message) (DNS IP Configuration Table)"
+                } catch {
+                    Write-PScriboMessage -IsWarning "$($_.Exception.Message) (DNS IP Configuration Table)"
                 }
             }
 
@@ -108,7 +105,7 @@ function Get-AbrWinDNSInfrastructure {
                     if ($DNSSetting) {
                         Section -Style Heading3 "Scavenging Options" {
                             Paragraph "The following table details scavenging configuration settings"
-                            Blankline
+                            BlankLine
                             $OutObj = @()
                             try {
                                 $inObj = [ordered] @{
@@ -116,14 +113,14 @@ function Get-AbrWinDNSInfrastructure {
                                     'Refresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.RefreshInterval
                                     'Scavenging Interval' = ConvertTo-EmptyToFiller $DNSSetting.ScavengingInterval
                                     'Last Scavenge Time' = Switch ($DNSSetting.LastScavengeTime) {
-                                        "" {"-"; break}
-                                        $Null {"-"; break}
-                                        default {ConvertTo-EmptyToFiller ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy"))}
+                                        "" { "-"; break }
+                                        $Null { "-"; break }
+                                        default { ConvertTo-EmptyToFiller ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
                                     }
                                     'Scavenging State' = Switch ($DNSSetting.ScavengingState) {
-                                        "True" {"Enabled"}
-                                        "False" {"Disabled"}
-                                        default {ConvertTo-EmptyToFiller $DNSSetting.ScavengingState}
+                                        "True" { "Enabled" }
+                                        "False" { "Disabled" }
+                                        default { ConvertTo-EmptyToFiller $DNSSetting.ScavengingState }
                                     }
                                 }
 
@@ -137,15 +134,13 @@ function Get-AbrWinDNSInfrastructure {
                                     $TableParams['Caption'] = "- $($TableParams.Name)"
                                 }
                                 $OutObj | Table @TableParams
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scavenging Item)"
+                            } catch {
+                                Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scavenging Item)"
                             }
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Scavenging Table)"
+                } catch {
+                    Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scavenging Table)"
                 }
             }
             #---------------------------------------------------------------------------------------------#
@@ -154,7 +149,7 @@ function Get-AbrWinDNSInfrastructure {
             try {
                 Section -Style Heading3 "Forwarder Options" {
                     Paragraph "The following table details forwarder configuration settings"
-                    Blankline
+                    BlankLine
                     $OutObj = @()
                     try {
                         $DNSSetting = Get-DnsServerForwarder -CimSession $TempCIMSession
@@ -175,18 +170,15 @@ function Get-AbrWinDNSInfrastructure {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $OutObj | Table @TableParams
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Item)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Item)"
                     }
                 }
+            } catch {
+                Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Table)"
             }
-            catch {
-                Write-PscriboMessage -IsWarning "$($_.Exception.Message) (Forwarder Table)"
-            }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (DNS Infrastructure Section)"
+        } catch {
+            Write-PScriboMessage -IsWarning "$($_.Exception.Message) (DNS Infrastructure Section)"
         }
     }
 

@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterNetwork {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,16 +21,16 @@ function Get-AbrWinFOClusterNetwork {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Networks information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Networks information."
     }
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetwork -Cluster $using:Cluster} | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetwork -Cluster $using:Cluster } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Networks" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
@@ -39,15 +39,14 @@ function Get-AbrWinFOClusterNetwork {
                                 'Address' = "$($Setting.Address)/$($Setting.AddressMask)"
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
 
                     if ($HealthCheck.FailOverCluster.Network) {
-                        $OutObj | Where-Object { $_.'State' -ne 'UP'} | Set-Style -Style Warning -Property 'State'
+                        $OutObj | Where-Object { $_.'State' -ne 'UP' } | Set-Style -Style Warning -Property 'State'
                     }
 
                     $TableParams = @{
@@ -63,9 +62,8 @@ function Get-AbrWinFOClusterNetwork {
                     Get-AbrWinFOClusterNetworkInterface
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

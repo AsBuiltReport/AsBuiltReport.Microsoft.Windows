@@ -5,7 +5,7 @@ function Get-AbrWinDHCPv4Statistic {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinDHCPv4Statistic {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PscriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage "Collecting Host DHCP Server information."
     }
 
     process {
@@ -39,18 +39,17 @@ function Get-AbrWinDHCPv4Statistic {
                             'Percentage Available' = ConvertTo-EmptyToFiller ([math]::Round($DhcpSv4Statistics.PercentageAvailable, 0))
                         }
                         $OutObj += [pscustomobject]$inobj
-                    }
-                    catch {
+                    } catch {
                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Service Statistics Item)"
                     }
                     if ($HealthCheck.DHCP.Statistics) {
-                        $OutObj | Where-Object { $_.'Percentage In Use' -gt 95} | Set-Style -Style Warning -Property 'Percentage Available','Percentage In Use'
+                        $OutObj | Where-Object { $_.'Percentage In Use' -gt 95 } | Set-Style -Style Warning -Property 'Percentage Available', 'Percentage In Use'
                     }
 
                     $TableParams = @{
                         Name = "DHCP Server Statistics - $($System.toUpper().split(".")[0])"
                         List = $false
-                        ColumnWidths = 17, 17, 17, 17 ,16, 16
+                        ColumnWidths = 17, 17, 17, 17 , 16, 16
                     }
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
@@ -58,8 +57,7 @@ function Get-AbrWinDHCPv4Statistic {
                     $OutObj | Sort-Object -Property 'DC Name' | Table @TableParams
                 }
             }
-        }
-        catch {
+        } catch {
             Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Service Statistics Table)"
         }
     }

@@ -5,7 +5,7 @@ function Get-AbrWinOSDriver {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinOSDriver {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PscriboMessage "Collecting Operating System Drivers information."
+        Write-PScriboMessage "Collecting Operating System Drivers information."
     }
 
     process {
@@ -42,7 +42,7 @@ function Get-AbrWinOSDriver {
                                 }
                                 $HostDriverReport += $TempDriver
                             } catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -56,9 +56,8 @@ function Get-AbrWinOSDriver {
                         $HostDriverReport | Sort-Object -Property 'Class Description' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

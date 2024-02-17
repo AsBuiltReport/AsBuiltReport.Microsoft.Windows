@@ -5,7 +5,7 @@ function Get-AbrWinHyperVSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinHyperVSummary {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PscriboMessage "Collecting Hyper-V Summary information."
+        Write-PScriboMessage "Collecting Hyper-V Summary information."
     }
 
     process {
@@ -53,9 +53,8 @@ function Get-AbrWinHyperVSummary {
                     }
                     $VmHostReport | Table @TableParams
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

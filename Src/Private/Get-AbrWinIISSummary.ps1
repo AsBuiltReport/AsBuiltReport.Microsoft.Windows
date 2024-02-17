@@ -5,7 +5,7 @@ function Get-AbrWinIISSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,14 +20,14 @@ function Get-AbrWinIISSummary {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PscriboMessage "Collecting IIS Summary information."
+        Write-PScriboMessage "Collecting IIS Summary information."
     }
 
     process {
         if ($InfoLevel.IIS -ge 1) {
             try {
                 $IISApplicationDefaults = Invoke-Command -Session $TempPssSession { (Get-IISServerManager).ApplicationDefaults }
-                $IISSiteDefaults = Invoke-Command -Session $TempPssSession { (Get-IISServerManager).SiteDefaults | Select-Object ServerAutoStart,@{name='Directory'; Expression={$_.Logfile.Directory}} }
+                $IISSiteDefaults = Invoke-Command -Session $TempPssSession { (Get-IISServerManager).SiteDefaults | Select-Object ServerAutoStart, @{name = 'Directory'; Expression = { $_.Logfile.Directory } } }
                 if ($IISApplicationDefaults -and $IISSiteDefaults) {
                     try {
                         $IISServerManagerReport = [PSCustomObject]@{
@@ -45,14 +45,12 @@ function Get-AbrWinIISSummary {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
                         $IISServerManagerReport | Table @TableParams
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

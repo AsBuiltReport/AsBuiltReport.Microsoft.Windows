@@ -5,7 +5,7 @@ function Get-AbrWinHostStorageISCSI {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinHostStorageISCSI {
 
     begin {
         Write-PScriboMessage "Storage InfoLevel set at $($InfoLevel.Storage)."
-        Write-PscriboMessage "Collecting Host Storage ISCSI information."
+        Write-PScriboMessage "Collecting Host Storage ISCSI information."
     }
 
     process {
@@ -31,32 +31,31 @@ function Get-AbrWinHostStorageISCSI {
                 if ($iSCSICheck.Status -eq 'Running') {
                     Section -Style Heading3 'Host iSCSI Settings' {
                         Paragraph 'The following section details the iSCSI configuration for the host'
-                        Blankline
+                        BlankLine
                         try {
                             $HostInitiator = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-InitiatorPort }
                             if ($HostInitiator) {
                                 Section -Style Heading4 'iSCSI Target Server' {
                                     Paragraph 'The following table details the hosts iSCI IQN'
-                                    Blankline
+                                    BlankLine
                                     $HostInitiatorReport = @()
                                     try {
                                         $TempHostInitiator = [PSCustomObject]@{
                                             'Node Address' = $HostInitiator.NodeAddress
                                             'Operational Status' = Switch ($HostInitiator.OperationalStatus) {
-                                                1 {'Unknown'}
-                                                2 {'Operational'}
-                                                3 {'User Offline'}
-                                                4 {'Bypassed'}
-                                                5 {'In diagnostics mode'}
-                                                6 {'Link Down'}
-                                                7 {'Port Error'}
-                                                8 {'Loopback'}
-                                                default {$HostInitiator.OperationalStatus}
+                                                1 { 'Unknown' }
+                                                2 { 'Operational' }
+                                                3 { 'User Offline' }
+                                                4 { 'Bypassed' }
+                                                5 { 'In diagnostics mode' }
+                                                6 { 'Link Down' }
+                                                7 { 'Port Error' }
+                                                8 { 'Loopback' }
+                                                default { $HostInitiator.OperationalStatus }
                                             }
                                         }
-                                    }
-                                    catch {
-                                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                                    } catch {
+                                        Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }
                                     $HostInitiatorReport += $TempHostInitiator
 
@@ -73,10 +72,10 @@ function Get-AbrWinHostStorageISCSI {
                             }
 
                             $HostIscsiTargetServers = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTargetPortal }
-                            if($HostIscsiTargetServers){
+                            if ($HostIscsiTargetServers) {
                                 Section -Style Heading4 'iSCSI Target Server' {
                                     Paragraph 'The following table details iSCSI Target Server details'
-                                    Blankline
+                                    BlankLine
                                     $HostIscsiTargetServerReport = @()
                                     ForEach ($HostIscsiTargetServer in $HostIscsiTargetServers) {
                                         try {
@@ -85,9 +84,8 @@ function Get-AbrWinHostStorageISCSI {
                                                 'Target Portal Port Number' = $HostIscsiTargetServer.TargetPortalPortNumber
                                             }
                                             $HostIscsiTargetServerReport += $TempHostIscsiTargetServerReport
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                     $TableParams = @{
@@ -101,16 +99,15 @@ function Get-AbrWinHostStorageISCSI {
                                     $HostIscsiTargetServerReport | Sort-Object -Property 'Target Portal Address' | Table @TableParams
                                 }
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                         try {
                             $HostIscsiTargetVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiTarget }
-                            if($HostIscsiTargetVolumes){
+                            if ($HostIscsiTargetVolumes) {
                                 Section -Style Heading4 'iSCIS Target Volumes' {
                                     Paragraph 'The following table details iSCSI target volumes'
-                                    Blankline
+                                    BlankLine
                                     $HostIscsiTargetVolumeReport = @()
                                     ForEach ($HostIscsiTargetVolume in $HostIscsiTargetVolumes) {
                                         try {
@@ -119,9 +116,8 @@ function Get-AbrWinHostStorageISCSI {
                                                 'Node Connected' = ConvertTo-TextYN $HostIscsiTargetVolume.IsConnected
                                             }
                                             $HostIscsiTargetVolumeReport += $TempHostIscsiTargetVolumeReport
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                     $TableParams = @{
@@ -135,16 +131,15 @@ function Get-AbrWinHostStorageISCSI {
                                     $HostIscsiTargetVolumeReport | Sort-Object -Property 'Node Address' | Table @TableParams
                                 }
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                         try {
                             $HostIscsiConnections = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-IscsiConnection }
-                            if($HostIscsiConnections){
+                            if ($HostIscsiConnections) {
                                 Section -Style Heading4 'iSCSI Connections' {
                                     Paragraph 'The following table details iSCSI Connections'
-                                    Blankline
+                                    BlankLine
                                     $HostIscsiConnectionsReport = @()
                                     ForEach ($HostIscsiConnection in $HostIscsiConnections) {
                                         try {
@@ -154,9 +149,8 @@ function Get-AbrWinHostStorageISCSI {
                                                 'Target Address' = $HostIscsiConnection.TargetAddress
                                             }
                                             $HostIscsiConnectionsReport += $TempHostIscsiConnectionsReport
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                     $TableParams = @{
@@ -170,15 +164,13 @@ function Get-AbrWinHostStorageISCSI {
                                     $HostIscsiConnectionsReport | Sort-Object -Property 'Connection Identifier' | Table @TableParams
                                 }
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

@@ -5,7 +5,7 @@ function Get-AbrWinSMBSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,13 +20,13 @@ function Get-AbrWinSMBSummary {
 
     begin {
         Write-PScriboMessage "SMB InfoLevel set at $($InfoLevel.SMB)."
-        Write-PscriboMessage "Collecting File Server Summary information."
+        Write-PScriboMessage "Collecting File Server Summary information."
     }
 
     process {
         if ($InfoLevel.SMB -ge 1) {
             try {
-                $SMBSummary = Get-SmbServerConfiguration -CimSession $TempCimSession | Select-Object AutoShareServer,EnableLeasing,EnableMultiChannel,EnableOplocks,KeepAliveTime,EnableSMB1Protocol,EnableSMB2Protocol
+                $SMBSummary = Get-SmbServerConfiguration -CimSession $TempCimSession | Select-Object AutoShareServer, EnableLeasing, EnableMultiChannel, EnableOplocks, KeepAliveTime, EnableSMB1Protocol, EnableSMB2Protocol
                 if ($SMBSummary) {
                     $SMBSummaryReport = [PSCustomObject]@{
                         'Auto Share Server' = ConvertTo-TextYN $SMBSummary.AutoShareServer
@@ -47,9 +47,8 @@ function Get-AbrWinSMBSummary {
                     }
                     $SMBSummaryReport | Table @TableParams
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

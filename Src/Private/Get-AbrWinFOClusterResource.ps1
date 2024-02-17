@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterResource {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrWinFOClusterResource {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Resource information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Resource information."
     }
 
     process {
@@ -30,7 +30,7 @@ function Get-AbrWinFOClusterResource {
             if ($Settings) {
                 Section -Style Heading3 "Resource" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
@@ -39,15 +39,14 @@ function Get-AbrWinFOClusterResource {
                                 'State' = $Setting.State
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
 
                     if ($HealthCheck.FailOverCluster.Network) {
-                        $OutObj | Where-Object { $_.'State' -notlike 'Online'} | Set-Style -Style Warning -Property 'State'
+                        $OutObj | Where-Object { $_.'State' -notlike 'Online' } | Set-Style -Style Warning -Property 'State'
                     }
 
                     $TableParams = @{
@@ -61,9 +60,8 @@ function Get-AbrWinFOClusterResource {
                     $OutObj | Table @TableParams
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

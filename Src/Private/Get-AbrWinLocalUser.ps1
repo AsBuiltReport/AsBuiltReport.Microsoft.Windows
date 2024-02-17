@@ -5,7 +5,7 @@ function Get-AbrWinLocalUser {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinLocalUser {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PscriboMessage "Collecting Local Users information."
+        Write-PScriboMessage "Collecting Local Users information."
     }
 
     process {
@@ -37,14 +37,13 @@ function Get-AbrWinLocalUser {
                                     'Description' = $LocalUser.Description
                                     'Account Enabled' = ConvertTo-TextYN $LocalUser.Enabled
                                     'Last Logon Date' = Switch (($LocalUser.LastLogon).count) {
-                                        0 {"-"}
-                                        default {$LocalUser.LastLogon.ToShortDateString()}
+                                        0 { "-" }
+                                        default { $LocalUser.LastLogon.ToShortDateString() }
                                     }
                                 }
                                 $LocalUsersReport += $TempLocalUsersReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -58,9 +57,8 @@ function Get-AbrWinLocalUser {
                         $LocalUsersReport | Sort-Object -Property 'User Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

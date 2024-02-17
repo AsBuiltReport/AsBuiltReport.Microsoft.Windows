@@ -35,7 +35,7 @@ function Get-AbrWinLocalGroup {
                                 $TempLocalGroupsReport = [PSCustomObject]@{
                                     'Group Name' = $LocalGroup.GroupName
                                     'Description' = $LocalGroup.Description
-				    'Members' = $LocalGroup.Members
+				                    'Members' = $LocalGroup.Members
                                 }
                                 $LocalGroupsReport += $TempLocalGroupsReport
                             }

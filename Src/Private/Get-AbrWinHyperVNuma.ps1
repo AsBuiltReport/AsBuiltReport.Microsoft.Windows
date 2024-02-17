@@ -5,7 +5,7 @@ function Get-AbrWinHyperVNuma {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -21,7 +21,7 @@ function Get-AbrWinHyperVNuma {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PscriboMessage "Collecting Hyper-V Numa information."
+        Write-PScriboMessage "Collecting Hyper-V Numa information."
     }
 
     process {
@@ -36,12 +36,11 @@ function Get-AbrWinHyperVNuma {
                                 $TempVmHostNumaReport = [PSCustomObject]@{
                                     'Numa Node Id' = $Node.NodeId
                                     'Memory Available' = "$([math]::Round(($Node.MemoryAvailable)/1024,0)) GB"
-                                    'Memory Total' =  "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
+                                    'Memory Total' = "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
                                 }
                                 $VmHostNumaReport += $TempVmHostNumaReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -55,9 +54,8 @@ function Get-AbrWinHyperVNuma {
                         $VmHostNumaReport | Sort-Object -Property 'Numa Node Id' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

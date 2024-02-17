@@ -5,7 +5,7 @@ function Get-AbrWinDHCPInfrastructure {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrWinDHCPInfrastructure {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PscriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage "Collecting Host DHCP Server information."
     }
 
     process {
@@ -38,31 +38,30 @@ function Get-AbrWinDHCPInfrastructure {
                         'Conflict Detection Attempts' = $Settings.ConflictDetectionAttempts
                         'Activate Policies' = ConvertTo-TextYN $Settings.ActivatePolicies
                         'Dynamic Bootp' = ConvertTo-TextYN $Settings.DynamicBootp
-                        'Database Path' =  ConvertTo-EmptyToFiller $Database.FileName
+                        'Database Path' = ConvertTo-EmptyToFiller $Database.FileName
                         'Database Backup Path' = ConvertTo-EmptyToFiller $Database.BackupPath
                         'Database Backup Interval' = switch ($Database.BackupInterval) {
-                            "" {"-"; break}
-                            $NULL {"-"; break}
-                            default {"$($Database.BackupInterval) min"}
+                            "" { "-"; break }
+                            $NULL { "-"; break }
+                            default { "$($Database.BackupInterval) min" }
                         }
-                        'Database Logging Enabled' =  Switch ($Database.LoggingEnabled) {
-                            ""  {"-"; break}
-                            $Null   {"-"; break}
-                            default {ConvertTo-TextYN $Database.LoggingEnabled}
+                        'Database Logging Enabled' = Switch ($Database.LoggingEnabled) {
+                            "" { "-"; break }
+                            $Null { "-"; break }
+                            default { ConvertTo-TextYN $Database.LoggingEnabled }
                         }
-                        'User Name' =  ConvertTo-EmptyToFiller $DNSCredential.UserName
+                        'User Name' = ConvertTo-EmptyToFiller $DNSCredential.UserName
                         'Domain Name' = ConvertTo-EmptyToFiller $DNSCredential.DomainName
                     }
                     $OutObj += [pscustomobject]$inobj
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
 
                 if ($HealthCheck.DHCP.BP) {
-                    $OutObj | Where-Object { $_.'Conflict Detection Attempts' -eq 0} | Set-Style -Style Warning -Property 'Conflict Detection Attempts'
-                    $OutObj | Where-Object { $_.'Authorized' -like 'No'} | Set-Style -Style Warning -Property 'Authorized'
-                    $OutObj | Where-Object { $_.'User Name' -like "-"} | Set-Style -Style Warning -Property 'User Name','Domain Name'
+                    $OutObj | Where-Object { $_.'Conflict Detection Attempts' -eq 0 } | Set-Style -Style Warning -Property 'Conflict Detection Attempts'
+                    $OutObj | Where-Object { $_.'Authorized' -like 'No' } | Set-Style -Style Warning -Property 'Authorized'
+                    $OutObj | Where-Object { $_.'User Name' -like "-" } | Set-Style -Style Warning -Property 'User Name', 'Domain Name'
 
                 }
 
@@ -76,9 +75,8 @@ function Get-AbrWinDHCPInfrastructure {
                 }
                 $OutObj | Table @TableParams
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 
