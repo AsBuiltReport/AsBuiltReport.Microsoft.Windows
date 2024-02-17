@@ -36,7 +36,11 @@ function Get-AbrWinOSHotfix {
                                 $TempHotFix = [PSCustomObject] @{
                                     'Hotfix ID' = $HotFix.HotFixID
                                     'Description' = $HotFix.Description
-                                    'Installation Date' = $HotFix.InstalledOn.ToShortDateString()
+                                    'Installation Date' = Switch ([string]::IsNullOrEmpty($HotFix.InstalledOn)) {
+                                        $true {'--'}
+                                        $false {$HotFix.InstalledOn.ToShortDateString()}
+                                        default {'Unknown'}
+                                    }
                                 }
                                 $HotfixReport += $TempHotFix
                             } catch {
