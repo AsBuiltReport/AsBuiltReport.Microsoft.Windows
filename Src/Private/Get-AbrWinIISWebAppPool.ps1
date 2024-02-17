@@ -5,7 +5,7 @@ function Get-AbrWinIISWebAppPool {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinIISWebAppPool {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PscriboMessage "Collecting IIS Sites information."
+        Write-PScriboMessage "Collecting IIS Sites information."
     }
 
     process {
@@ -30,7 +30,7 @@ function Get-AbrWinIISWebAppPool {
                 if ($IISWebAppPools) {
                     Section -Style Heading3 'Application Pools' {
                         Paragraph 'The following table lists IIS Application Pools'
-                        Blankline
+                        BlankLine
                         $IISWebAppPoolsReport = @()
                         foreach ($IISWebAppPool in $IISWebAppPools) {
                             try {
@@ -42,9 +42,8 @@ function Get-AbrWinIISWebAppPool {
                                     'Start Mode' = $IISWebAppPool.StartMode
                                 }
                                 $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
 
@@ -59,9 +58,8 @@ function Get-AbrWinIISWebAppPool {
                         $IISWebAppPoolsReport | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

@@ -39,10 +39,10 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             }
         }
     } Catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
-        }
+        Write-PScriboMessage -IsWarning $_.Exception.Message
+    }
 
-        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 
 
     if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -51,12 +51,12 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     }
 
     # Import Report Configuration
-    $Report = $ReportConfig.Report
-    $InfoLevel = $ReportConfig.InfoLevel
-    $Options = $ReportConfig.Options
+    $script:Report = $ReportConfig.Report
+    $script:InfoLevel = $ReportConfig.InfoLevel
+    $script:Options = $ReportConfig.Options
 
     # Used to set values to TitleCase where required
-    $TextInfo = (Get-Culture).TextInfo
+    $script:TextInfo = (Get-Culture).TextInfo
 
     #region foreach loop
     foreach ($System in $Target) {
@@ -66,8 +66,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             try {
                 $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
                 $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
-            }
-            catch {
+            } catch {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
                 throw
             }
@@ -79,7 +78,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             $script:HostCPU = Get-CimInstance -Class Win32_Processor -CimSession $TempCimSession
             $script:HostComputer = Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCimSession
             $script:HostBIOS = Get-CimInstance -Class Win32_Bios -CimSession $TempCimSession
-            $script:HostLicense =  Get-CimInstance -Query 'Select * from SoftwareLicensingProduct' -CimSession $TempCimSession | Where-Object { $_.LicenseStatus -eq 1 }
+            $script:HostLicense = Get-CimInstance -Query 'Select * from SoftwareLicensingProduct' -CimSession $TempCimSession | Where-Object { $_.LicenseStatus -eq 1 }
             #Host Hardware
             Get-AbrWinHostHWSummary
             #Host OS
@@ -87,7 +86,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 try {
                     Section -Style Heading2 'Host Operating System' {
                         Paragraph 'The following settings details host OS Settings'
-                        Blankline
+                        BlankLine
                         #Host OS Configuration
                         Get-AbrWinOSConfig
                         #Host Hotfixes
@@ -101,21 +100,20 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         # Host Service Status
                         Get-AbrWinOSService
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             #Local Users and Groups
             if ($InfoLevel.Account -ge 1) {
                 try {
-                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object {$_.PrincipalSource -ne "ActiveDirectory"} }
-                    $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup | Where-Object {$_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name;  Description = $_.Description; Members = (Get-LocalGroupMember -Group $_.Name).Name } }}
+                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
+                    $LocalGroups = Invoke-Command -Session $TempPssSession { Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMember -Group $_.Name).Name } } }
                     $LocalAdmins = Invoke-Command -Session $TempPssSession { Get-LocalGroupMember -Name 'Administrators' -ErrorAction SilentlyContinue }
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
                         Section -Style Heading2 'Local Users and Groups' {
                             Paragraph 'The following section details local configured users and groups'
-                            Blankline
+                            BlankLine
                             #Local Users
                             Get-AbrWinLocalUser
                             #Local Groups
@@ -124,9 +122,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Get-AbrWinLocalAdmin
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             #Host Firewall
@@ -136,7 +133,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 try {
                     Section -Style Heading2 'Host Networking' {
                         Paragraph 'The following section details Host Network Configuration'
-                        Blankline
+                        BlankLine
                         #Host Network Adapter
                         Get-AbrWinNetAdapter
                         #Host Network IP Address
@@ -150,9 +147,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         #Host Network Adapter MTU
                         Get-AbrWinNetAdapterMTU
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             #Host Storage
@@ -169,9 +165,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         #MPIO Setting
                         Get-AbrWinHostStorageMPIO
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             #HyperV Configuration
@@ -182,7 +177,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if (Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Status) {
                             Section -Style Heading2 "Hyper-V Configuration" {
                                 Paragraph 'The following table details the Hyper-V server settings'
-                                Blankline
+                                BlankLine
                                 # Hyper-V Configuration
                                 Get-AbrWinHyperVSummary
                                 # Hyper-V Numa Information
@@ -195,9 +190,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         } else {
                             Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No HyperV service detected. Disabling HyperV server section"
@@ -210,7 +204,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if (((Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Status)) -or ((Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Status))) {
                             Section -Style Heading2 "IIS Configuration" {
                                 Paragraph 'The following table details the IIS server settings'
-                                Blankline
+                                BlankLine
                                 # IIS Configuration
                                 Get-AbrWinIISSummary
                                 # IIS Web Application Pools
@@ -218,7 +212,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # IIS Web Site
                                 Get-AbrWinIISWebSite
                             }
-                        } else  {
+                        } else {
                             If ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
                                 Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service "IIS"
                                 Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service "IIS"
@@ -228,9 +222,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service "IIS"
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No W3SVC service detected. Disabling IIS server section"
@@ -238,11 +231,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             }
             if ($InfoLevel.SMB -ge 1) {
                 try {
-                    $Global:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object {$_.Special -like 'False'} }
+                    $script:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object { $_.Special -like 'False' } }
                     if ($SMBShares) {
                         Section -Style Heading2 "File Server Configuration" {
                             Paragraph 'The following table details the File Server settings'
-                            Blankline
+                    BlankLine
                             # SMB Server Configuration
                             Get-AbrWinSMBSummary
                             # SMB Server Network Interface
@@ -251,9 +244,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Get-AbrWinSMBShare
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             if ($InfoLevel.DHCP -ge 1 -and $OSType.Value -ne 'WorkStation') {
@@ -263,7 +255,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if (Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Status) {
                             Section -Style Heading2 "DHCP Server Configuration" {
                                 Paragraph 'The following table details the DHCP server configurations'
-                                Blankline
+                                BlankLine
                                 # DHCP Server Configuration
                                 Get-AbrWinDHCPInfrastructure
                                 # DHCP Server Stats
@@ -278,9 +270,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         } else {
                             Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service "DHCP Server"
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No DHCPServer service detected. Disabling Dhcp server section"
@@ -293,7 +284,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if (Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Status) {
                             Section -Style Heading2 "DNS Server Configuration" {
                                 Paragraph 'The following table details the DNS server settings'
-                                Blankline
+                                BlankLine
                                 # DNS Server Configuration
                                 Get-AbrWinDNSInfrastructure
                                 # DNS Zones Configuration
@@ -302,9 +293,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         } else {
                             Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service "DNS Server"
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No DNS Server service detected. Disabling DNS server section"
@@ -315,11 +305,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
                 if ($Status.Status -eq "Running") {
                     try {
-                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { (Get-Cluster).Name }
-                        if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status) -and $Cluster) {
+                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Cluster }
+                        if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status ) -and $Cluster) {
                             Section -Style Heading2 "Failover Cluster Configuration" {
                                 Paragraph 'The following table details the Failover Cluster Settings'
-                                Blankline
+                                BlankLine
                                 # Failover Cluster Server Configuration
                                 Get-AbrWinFOCluster
                                 # Cluster Access Permission
@@ -340,13 +330,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinFOClusterSharedVolume
 
                             }
-                        }
-                        else {
+                        } else {
                             Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service "FailOver Cluster"
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No FailOver Cluster service detected. Disabling FailOver Cluster section"

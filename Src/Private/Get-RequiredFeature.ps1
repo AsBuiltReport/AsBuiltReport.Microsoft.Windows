@@ -5,7 +5,7 @@ function Get-RequiredFeature {
     .DESCRIPTION
         Function to check if the required version of windows feature is installed
     .NOTES
-        Version:        0.1.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -47,7 +47,7 @@ function Get-RequiredFeature {
         if ($OSType -eq 'WorkStation') {
             if ($Feature) {
                 $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsOptionalFeature -FeatureName $Using:Name -Online }
-                if ($Status)  {
+                if ($Status) {
                     if ($RequiredFeature.State -eq "Enabled") {
                         return $true
                     } else {
@@ -60,8 +60,8 @@ function Get-RequiredFeature {
                     }
                 }
             } else {
-                $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsCapability -online -Name $Using:Name }
-                if ($Status)  {
+                $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsCapability -Online -Name $Using:Name }
+                if ($Status) {
                     if ($RequiredFeature.State -eq "Installed") {
                         return $true
                     } else {
@@ -74,10 +74,9 @@ function Get-RequiredFeature {
                     }
                 }
             }
-        }
-        elseif ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
+        } elseif ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
             $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsFeature -Name $Using:Name }
-            if ($Status)  {
+            if ($Status) {
                 if ($RequiredFeature.InstallState -eq 'Installed') {
                     return $true
                 } else {

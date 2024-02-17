@@ -5,7 +5,7 @@ function Get-AbrWinIISWebSite {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -74,7 +74,7 @@ function Get-AbrWinIISWebSite {
                                                     'Auto Start' = ConvertTo-TextYN $IISWebSite.serverAutoStart
                                                     'Enabled Protocols ' = $IISWebSite.enabledProtocols
                                                     'URL' = Switch (($SiteURL.ResponseUri).count) {
-                                                        0 {"-"}
+                                                        0 {"--"}
                                                         default {$SiteURL.ResponseUri}
                                                     }
                                                     'Path ' = $IISWebSite.physicalPath

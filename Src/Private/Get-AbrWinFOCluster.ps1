@@ -5,7 +5,7 @@ function Get-AbrWinFOCluster {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,7 +26,7 @@ function Get-AbrWinFOCluster {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-Cluster -Name $using:Cluster | Select-Object -Property * }
+            $Settings = Invoke-Command -Session $TempPssSession { Get-Cluster | Select-Object -Property * }
             if ($Settings) {
                 $OutObj = @()
                 try {
@@ -44,7 +44,7 @@ function Get-AbrWinFOCluster {
                 }
 
                 $TableParams = @{
-                    Name = "FailOver Cluster Servers Settings - $($System.toUpper().split(".")[0])"
+                    Name = "FailOver Cluster Servers Settings - $($System.split(".")[0])"
                     List = $true
                     ColumnWidths = 40, 60
                 }

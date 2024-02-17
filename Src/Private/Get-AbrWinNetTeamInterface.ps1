@@ -5,7 +5,7 @@ function Get-AbrWinNetTeamInterface {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetTeamInterface {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network Team Interfaces information."
+        Write-PScriboMessage "Collecting Network Team Interfaces information."
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetTeamInterface {
                 if ($NetworkTeamCheck) {
                     Section -Style Heading3 'Network Team Interfaces' {
                         Paragraph 'The following table details Network Team Interfaces'
-                        Blankline
+                        BlankLine
                         $NetTeams = Invoke-Command -Session $TempPssSession { Get-NetLbfoTeam }
                         $NetTeamReport = @()
                         ForEach ($NetTeam in $NetTeams) {
@@ -43,9 +43,8 @@ function Get-AbrWinNetTeamInterface {
                                     'Network Adapters' = $NetTeam.Members -Join ","
                                 }
                                 $NetTeamReport += $TempNetTeamReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -59,9 +58,8 @@ function Get-AbrWinNetTeamInterface {
                         $NetTeamReport | Sort-Object -Property 'Team Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

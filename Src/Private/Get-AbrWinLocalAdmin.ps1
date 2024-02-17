@@ -5,7 +5,7 @@ function Get-AbrWinLocalAdmin {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinLocalAdmin {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PscriboMessage "Collecting Local Administrator information."
+        Write-PScriboMessage "Collecting Local Administrator information."
     }
 
     process {
@@ -38,9 +38,8 @@ function Get-AbrWinLocalAdmin {
                                     'Account Source' = $LocalAdmin.PrincipalSource
                                 }
                                 $LocalAdminsReport += $TempLocalAdminsReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -54,9 +53,8 @@ function Get-AbrWinLocalAdmin {
                         $LocalAdminsReport | Sort-Object -Property 'Account Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

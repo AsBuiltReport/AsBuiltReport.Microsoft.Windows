@@ -5,7 +5,7 @@ function Get-AbrWinOSRoleFeature {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,13 +21,13 @@ function Get-AbrWinOSRoleFeature {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PscriboMessage "Collecting Role & Features information."
+        Write-PScriboMessage "Collecting Role & Features information."
     }
 
     process {
         if ($InfoLevel.OperatingSystem -ge 1 -and $OSType.Value -ne 'WorkStation') {
             try {
-                $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock{ Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
+                $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
                 if ($HostRolesAndFeatures) {
                     Section -Style Heading3 'Roles' {
                         [array]$HostRolesAndFeaturesReport = @()
@@ -41,7 +41,7 @@ function Get-AbrWinOSRoleFeature {
                                     }
                                     $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
                                 } catch {
-                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
                         }
@@ -69,7 +69,7 @@ function Get-AbrWinOSRoleFeature {
                                                     }
                                                     $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
                                                 } catch {
-                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                 }
                                             }
                                         }
@@ -84,16 +84,14 @@ function Get-AbrWinOSRoleFeature {
                                         $HostRolesAndFeaturesReport | Sort-Object -Property 'Name' | Table @TableParams
                                     }
                                 }
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

@@ -5,7 +5,7 @@ function Get-AbrWinHyperVNetworking {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinHyperVNetworking {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PscriboMessage "Collecting Hyper-V Networking information."
+        Write-PScriboMessage "Collecting Hyper-V Networking information."
     }
 
     process {
@@ -31,14 +31,14 @@ function Get-AbrWinHyperVNetworking {
                     Section -Style Heading3 "Hyper-V MAC Pool settings" {
                         $VmHostMacPool = [PSCustomObject]@{
                             'Mac Address Minimum' = Switch (($VmHost.MacAddressMinimum).Length) {
-                                0 {"-"}
-                                12 {$VmHost.MacAddressMinimum -replace '..(?!$)', '$&:'}
-                                default {$VmHost.MacAddressMinimum}
+                                0 { "--" }
+                                12 { $VmHost.MacAddressMinimum -replace '..(?!$)', '$&:' }
+                                default { $VmHost.MacAddressMinimum }
                             }
                             'Mac Address Maximum' = Switch (($VmHost.MacAddressMaximum).Length) {
-                                0 {"-"}
-                                12 {$VmHost.MacAddressMaximum -replace '..(?!$)', '$&:'}
-                                default {$VmHost.MacAddressMinimum}
+                                0 { "--" }
+                                12 { $VmHost.MacAddressMaximum -replace '..(?!$)', '$&:' }
+                                default { $VmHost.MacAddressMinimum }
                             }
                         }
                         $TableParams = @{
@@ -51,16 +51,15 @@ function Get-AbrWinHyperVNetworking {
                         }
                         $VmHostMacPool |  Table @TableParams
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
                 try {
                     $VmOsAdapters = Invoke-Command -Session $TempPssSession { Get-VMNetworkAdapter -ManagementOS | Select-Object -Property * }
                     if ($VmOsAdapters) {
                         Section -Style Heading3 "Hyper-V Management OS Adapters" {
                             Paragraph 'The following table details the Management OS Virtual Adapters created on Virtual Switches'
-                            Blankline
+                            BlankLine
                             $VmOsAdapterReport = @()
                             Foreach ($VmOsAdapter in $VmOsAdapters) {
                                 try {
@@ -74,9 +73,8 @@ function Get-AbrWinHyperVNetworking {
                                         'Vlan ID' = $AdapterVlan.AccessVlanId
                                     }
                                     $VmOsAdapterReport += $TempVmOsAdapterReport
-                                }
-                                catch {
-                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                } catch {
+                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
                             $TableParams = @{
@@ -90,16 +88,15 @@ function Get-AbrWinHyperVNetworking {
                             $VmOsAdapterReport | Sort-Object -Property 'Name' | Table @TableParams
                         }
                     }
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
                 try {
                     $VmSwitches = Invoke-Command -Session $TempPssSession { Get-VMSwitch }
                     if ($VmSwitches) {
                         Section -Style Heading3 "Hyper-V vSwitch Settings" {
                             Paragraph 'The following table provide a summary of Hyper-V configured vSwitches'
-                            Blankline
+                            BlankLine
                             $VmSwitchesReport = @()
                             ForEach ($VmSwitch in $VmSwitches) {
                                 try {
@@ -110,9 +107,8 @@ function Get-AbrWinHyperVNetworking {
                                         'Interface Description' = ConvertTo-EmptyToFiller $VmSwitch.NetAdapterInterfaceDescription
                                     }
                                     $VmSwitchesReport += $TempVmSwitchesReport
-                                }
-                                catch {
-                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                } catch {
+                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
 
@@ -153,20 +149,17 @@ function Get-AbrWinHyperVNetworking {
                                         }
                                         $VmSwitchReport | Table @TableParams
                                     }
-                                }
-                                catch {
-                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                } catch {
+                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
                             }
                         }
                     }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
-                }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
