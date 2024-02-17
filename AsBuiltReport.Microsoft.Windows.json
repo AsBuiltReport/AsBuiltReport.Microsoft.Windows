@@ -46,6 +46,12 @@
             "Nodes": true,
             "Network": true,
             "ClusterSharedVolume": true
+        },
+        "Storage": {
+            "BP": true
+        },
+        "SMB": {
+            "BP": true
         }
     }
 }
