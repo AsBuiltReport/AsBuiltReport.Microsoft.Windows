@@ -23,6 +23,7 @@
         "DHCP": 1,
         "DNS": 1,
         "FailOverCluster": 1
+        "SQLServer": 1
     },
     "HealthCheck": {
         "Networking": {
@@ -52,6 +53,9 @@
         },
         "SMB": {
             "BP": true
+        },
+        "SQLServer": {
+            "Firewall": true
         }
     }
 }

@@ -341,6 +341,31 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 }
             }
 
+            if ($InfoLevel.SQLServer -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQLSERVER' -ErrorAction SilentlyContinue }
+                if ($Status.Status -eq "Running") {
+                    try {
+                        $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
+                        if ($SQLServer) {
+                            Section -Style Heading2 "SQL Server Configuration" {
+                                Paragraph 'The following table details the SQL Server Settings'
+                                Blankline
+                                # Failover Cluster Server Configuration
+                                Get-AbrWinSQLBuild
+                            }
+                        }
+                        else {
+                            Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
+                        }
+                    }
+                    catch {
+                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No SQL Server service detected. Disabling SQL Server section"
+                }
+            }
+
         }
         Remove-PSSession $TempPssSession
         Remove-CimSession $TempCimSession
