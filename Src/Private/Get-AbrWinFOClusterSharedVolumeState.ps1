@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterSharedVolumeState {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolumeState -Cluster $using:Cluster | Select-Object -Property * } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolumeState | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading4 "Cluster Shared Volume State" {
                     $OutObj = @()
@@ -45,8 +45,12 @@ function Get-AbrWinFOClusterSharedVolumeState {
                         }
                     }
 
+                    if ($HealthCheck.FailOverCluster.ClusterSharedVolume) {
+                        $OutObj | Where-Object { $_.State.Value -eq 'Unavailable' } | Set-Style -Style Warning -Property 'State'
+                    }
+
                     $TableParams = @{
-                        Name = "Cluster Shared Volume State - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Cluster Shared Volume State - $($Cluster)"
                         List = $false
                         ColumnWidths = 20, 20, 20, 20, 20
                     }

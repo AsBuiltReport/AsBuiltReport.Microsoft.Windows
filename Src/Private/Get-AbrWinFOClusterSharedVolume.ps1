@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterSharedVolume {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolume -Cluster $using:Cluster | Select-Object -Property * } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolume | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Cluster Shared Volume" {
                     $OutObj = @()
@@ -35,7 +35,11 @@ function Get-AbrWinFOClusterSharedVolume {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
                                 'Owner Node' = $Setting.OwnerNode
-                                'Shared Volume' = $Setting.SharedVolumeInfo.FriendlyVolumeName
+                                'Shared Volume' = Switch ([string]::IsNullOrEmpty($Setting.SharedVolumeInfo.FriendlyVolumeName)) {
+                                    $true {"Unknown"}
+                                    $false {$Setting.SharedVolumeInfo.FriendlyVolumeName}
+                                    default {"--"}
+                                }
                                 'State' = $Setting.State
                             }
                             $OutObj += [pscustomobject]$inobj
@@ -50,7 +54,7 @@ function Get-AbrWinFOClusterSharedVolume {
                     }
 
                     $TableParams = @{
-                        Name = "Cluster Shared Volume - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Cluster Shared Volume - $($Cluster)"
                         List = $false
                         ColumnWidths = 25, 25, 35, 15
                     }

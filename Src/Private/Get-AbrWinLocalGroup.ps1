@@ -36,7 +36,7 @@ function Get-AbrWinLocalGroup {
                                     'Group Name' = $LocalGroup.GroupName
                                     'Description' = Switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
                                         $true { "--" }
-                                        $false { $LocalGroup.Members }
+                                        $false { $LocalGroup.Description }
                                         default { "Unknown" }
                                     }
                                     'Members' = Switch ([string]::IsNullOrEmpty($LocalGroup.Members)) {

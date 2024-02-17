@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterPermission {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAccess -Cluster $using:Cluster } | Sort-Object -Property Identity
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAccess } | Sort-Object -Property Identity
             if ($Settings) {
                 Section -Style Heading3 "Access Permissions" {
                     $OutObj = @()
@@ -44,7 +44,7 @@ function Get-AbrWinFOClusterPermission {
                     }
 
                     $TableParams = @{
-                        Name = "Access Permission - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Access Permission - $($Cluster)"
                         List = $false
                         ColumnWidths = 60, 20, 20
                     }

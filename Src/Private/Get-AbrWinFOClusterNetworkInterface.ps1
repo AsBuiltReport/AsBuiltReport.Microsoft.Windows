@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterNetworkInterface {
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetworkInterface -Cluster $using:Cluster } | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetworkInterface } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Interfaces" {
                     $OutObj = @()
@@ -50,7 +50,7 @@ function Get-AbrWinFOClusterNetworkInterface {
                     }
 
                     $TableParams = @{
-                        Name = "Interfaces - $($Cluster.toUpper().split(".")[0])"
+                        Name = "Interfaces - $($Cluster)"
                         List = $false
                         ColumnWidths = 30, 25, 30, 15
                     }
