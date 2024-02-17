@@ -41,13 +41,13 @@ function Get-AbrWinDHCPInfrastructure {
                         'Database Path' = ConvertTo-EmptyToFiller $Database.FileName
                         'Database Backup Path' = ConvertTo-EmptyToFiller $Database.BackupPath
                         'Database Backup Interval' = switch ($Database.BackupInterval) {
-                            "" { "-"; break }
-                            $NULL { "-"; break }
+                            "" { "--"; break }
+                            $NULL { "--"; break }
                             default { "$($Database.BackupInterval) min" }
                         }
                         'Database Logging Enabled' = Switch ($Database.LoggingEnabled) {
-                            "" { "-"; break }
-                            $Null { "-"; break }
+                            "" { "--"; break }
+                            $Null { "--"; break }
                             default { ConvertTo-TextYN $Database.LoggingEnabled }
                         }
                         'User Name' = ConvertTo-EmptyToFiller $DNSCredential.UserName
@@ -61,7 +61,7 @@ function Get-AbrWinDHCPInfrastructure {
                 if ($HealthCheck.DHCP.BP) {
                     $OutObj | Where-Object { $_.'Conflict Detection Attempts' -eq 0 } | Set-Style -Style Warning -Property 'Conflict Detection Attempts'
                     $OutObj | Where-Object { $_.'Authorized' -like 'No' } | Set-Style -Style Warning -Property 'Authorized'
-                    $OutObj | Where-Object { $_.'User Name' -like "-" } | Set-Style -Style Warning -Property 'User Name', 'Domain Name'
+                    $OutObj | Where-Object { $_.'User Name' -like "--" } | Set-Style -Style Warning -Property 'User Name', 'Domain Name'
 
                 }
 

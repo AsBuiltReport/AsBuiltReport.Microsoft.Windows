@@ -35,8 +35,8 @@ function Get-AbrWinHostStorageISCSI {
                         try {
                             $HostInitiator = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-InitiatorPort }
                             if ($HostInitiator) {
-                                Section -Style Heading4 'iSCSI Target Server' {
-                                    Paragraph 'The following table details the hosts iSCI IQN'
+                                Section -Style Heading4 'iSCSI Host Initiator' {
+                                    Paragraph 'The following table details the hosts iSCSI IQN'
                                     BlankLine
                                     $HostInitiatorReport = @()
                                     try {
@@ -59,8 +59,12 @@ function Get-AbrWinHostStorageISCSI {
                                     }
                                     $HostInitiatorReport += $TempHostInitiator
 
+                                    if ($HealthCheck.Storage.BP) {
+                                        $HostInitiatorReport | Where-Object { $_.'Operational Status' -ne 'Operational' } | Set-Style -Style Warning -Property 'Operational Status'
+                                    }
+
                                     $TableParams = @{
-                                        Name = "Host IQN"
+                                        Name = "iSCSI Host Initiator"
                                         List = $false
                                         ColumnWidths = 60, 40
                                     }
@@ -120,6 +124,11 @@ function Get-AbrWinHostStorageISCSI {
                                             Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
+
+                                    if ($HealthCheck.Storage.BP) {
+                                        $HostIscsiTargetVolumeReport | Where-Object { $_.'Node Connected' -ne 'Yes' } | Set-Style -Style Warning -Property 'Node Connected'
+                                    }
+
                                     $TableParams = @{
                                         Name = "iSCIS Target Volumes"
                                         List = $false

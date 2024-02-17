@@ -27,7 +27,7 @@ function Get-AbrWinHyperVSummary {
     process {
         if ($InfoLevel.HyperV -ge 1) {
             try {
-                $Global:VmHost = Invoke-Command -Session $TempPssSession { Get-VMHost }
+                $script:VmHost = Invoke-Command -Session $TempPssSession { Get-VMHost }
                 if ($VmHost) {
                     $VmHostReport = [PSCustomObject]@{
                         'Logical Processor Count' = $VmHost.LogicalProcessorCount

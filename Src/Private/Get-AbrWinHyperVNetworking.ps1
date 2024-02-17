@@ -31,12 +31,12 @@ function Get-AbrWinHyperVNetworking {
                     Section -Style Heading3 "Hyper-V MAC Pool settings" {
                         $VmHostMacPool = [PSCustomObject]@{
                             'Mac Address Minimum' = Switch (($VmHost.MacAddressMinimum).Length) {
-                                0 { "-" }
+                                0 { "--" }
                                 12 { $VmHost.MacAddressMinimum -replace '..(?!$)', '$&:' }
                                 default { $VmHost.MacAddressMinimum }
                             }
                             'Mac Address Maximum' = Switch (($VmHost.MacAddressMaximum).Length) {
-                                0 { "-" }
+                                0 { "--" }
                                 12 { $VmHost.MacAddressMaximum -replace '..(?!$)', '$&:' }
                                 default { $VmHost.MacAddressMinimum }
                             }

@@ -37,6 +37,11 @@ function Get-AbrWinSMBSummary {
                         'SMB1 Protocol' = ConvertTo-TextYN $SMBSummary.EnableSMB1Protocol
                         'SMB2 Protocol' = ConvertTo-TextYN $SMBSummary.EnableSMB2Protocol
                     }
+
+                    if ($HealthCheck.SMB.BP) {
+                        $SMBSummaryReport | Where-Object { $_.'SMB1 Protocol' -eq 'Yes' } | Set-Style -Style Warning -Property 'SMB1 Protocol'
+                    }
+
                     $TableParams = @{
                         Name = "SMB Server Settings"
                         List = $true

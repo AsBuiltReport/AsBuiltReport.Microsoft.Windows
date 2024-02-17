@@ -38,9 +38,8 @@ function Get-AbrWinHostHWSummary {
                         'BIOS Version' = $HostBIOS.Version
                         'Processor Manufacturer' = $HostCPU[0].Manufacturer
                         'Processor Model' = $HostCPU[0].Name
-                        'Number of Processors' = $HostCPU.Length
-                        'Number of CPU Cores' = $HostCPU[0].NumberOfCores
-                        'Number of Logical Cores' = $HostCPU[0].NumberOfLogicalProcessors
+                        'Number of CPU Cores' = ($HostCPU.NumberOfCores | Measure-Object -Sum).Sum
+                        'Number of Logical Cores' = ($HostCPU.NumberOfLogicalProcessors | Measure-Object -Sum).Sum
                         'Physical Memory' = "$([Math]::Round($HostComputer.TotalPhysicalMemory / 1Gb)) GB"
                     }
                     $TableParams = @{

@@ -27,7 +27,7 @@ function Get-AbrWinHyperVHostVM {
     process {
         if ($InfoLevel.HyperV -ge 1) {
             #$Vms = Get-VM -CimSession $TempCimSession
-            $global:Vms = Invoke-Command -Session $TempPssSession { Get-VM }
+            $script:Vms = Invoke-Command -Session $TempPssSession { Get-VM }
             if ($Vms) {
                 try {
                     Section -Style Heading3 'Hyper-V VMs' {

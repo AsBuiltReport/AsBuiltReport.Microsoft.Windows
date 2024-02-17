@@ -36,12 +36,20 @@ function Get-AbrWinOSConfig {
                     'Windows Install Type' = $HostInfo.WindowsInstallationType
                     'AD Domain' = $HostInfo.CsDomain
                     'Windows Installation Date' = switch (($HostInfo.OsInstallDate).count) {
-                        0 { '-' }
+                        0 { "--" }
                         default { $HostInfo.OsInstallDate.ToShortDateString() }
                     }
                     'Time Zone' = $HostInfo.TimeZone
-                    'License Type' = $HostLicense.ProductKeyChannel
-                    'Partial Product Key' = $HostLicense.PartialProductKey
+                    'License Type' = Switch ([string]::IsNullOrEmpty($HostLicense.ProductKeyChannel)) {
+                        $true { "--" }
+                        $false { $HostLicense.ProductKeyChannel }
+                        default { "Unknown" }
+                    }
+                    'Partial Product Key' = Switch ([string]::IsNullOrEmpty($HostLicense.PartialProductKey)) {
+                        $true { "--" }
+                        $false { $HostLicense.PartialProductKey }
+                        default { "Unknown" }
+                    }
                 }
                 $TableParams = @{
                     Name = "OS Settings"

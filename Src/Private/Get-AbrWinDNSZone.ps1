@@ -196,8 +196,8 @@ function Get-AbrWinDNSZone {
                                                 'Refresh Interval' = ConvertTo-EmptyToFiller $Settings.RefreshInterval
                                                 'NoRefresh Interval' = ConvertTo-EmptyToFiller $Settings.NoRefreshInterval
                                                 'Available For Scavenge' = Switch ($Settings.AvailForScavengeTime) {
-                                                    "" { "-"; break }
-                                                    $Null { "-"; break }
+                                                    "" { "--"; break }
+                                                    $Null { "--"; break }
                                                     default { (ConvertTo-EmptyToFiller ($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")); break }
                                                 }
                                             }

@@ -40,9 +40,13 @@ function Get-AbrWinApplication {
                                 $TempAddRemoveReport = [PSCustomObject]@{
                                     'Application Name' = $App.DisplayName
                                     'Publisher' = $App.Publisher
-                                    'Version' = $App.Version
+                                    'Version' = Switch ([string]::IsNullOrEmpty($App.Version)) {
+                                        $true { "--" }
+                                        $false { $App.Version }
+                                        default { "Unknown" }
+                                    }
                                     'Install Date' = Switch (($App.InstallDate).count) {
-                                        0 { "-" }
+                                        0 { "--" }
                                         default { $App.InstallDate }
                                     }
                                 }

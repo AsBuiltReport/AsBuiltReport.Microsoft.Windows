@@ -51,12 +51,12 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     }
 
     # Import Report Configuration
-    $Report = $ReportConfig.Report
-    $InfoLevel = $ReportConfig.InfoLevel
-    $Options = $ReportConfig.Options
+    $script:Report = $ReportConfig.Report
+    $script:InfoLevel = $ReportConfig.InfoLevel
+    $script:Options = $ReportConfig.Options
 
     # Used to set values to TitleCase where required
-    $TextInfo = (Get-Culture).TextInfo
+    $script:TextInfo = (Get-Culture).TextInfo
 
     #region foreach loop
     foreach ($System in $Target) {
@@ -231,11 +231,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             }
             if ($InfoLevel.SMB -ge 1) {
                 try {
-                    $Global:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object { $_.Special -like 'False' } }
+                    $script:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object { $_.Special -like 'False' } }
                     if ($SMBShares) {
                         Section -Style Heading2 "File Server Configuration" {
                             Paragraph 'The following table details the File Server settings'
-                            BlankLine
+                    BlankLine
                             # SMB Server Configuration
                             Get-AbrWinSMBSummary
                             # SMB Server Network Interface

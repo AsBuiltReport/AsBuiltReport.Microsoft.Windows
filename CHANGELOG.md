@@ -5,7 +5,16 @@
 ### Added
 
 - Added Local Windows Group Members information @flynngw
-  
+- Added more HealthCheck conditions
+
+### Changed
+
+- Improved report readability
+
+### Fixed
+
+- Fix CodeQL security alerts
+
 ## [0.5.1] - 2023-05-16
 
 ### Added

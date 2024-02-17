@@ -153,14 +153,13 @@ function Get-AbrWinDHCPv4Scope {
                                 foreach ($DHCPv4Binding in $DHCPv4Bindings) {
                                     try {
                                         Write-PScriboMessage "Collecting DHCP Server $($DHCPv4Binding.InterfaceAlias) binding."
-                                        $SubnetMask = Convert-IpAddressToMaskLength $DHCPv4Binding.SubnetMask
                                         $inObj = [ordered] @{
                                             'Interface Alias' = $DHCPv4Binding.InterfaceAlias
                                             'IP Address' = $DHCPv4Binding.IPAddress
                                             'Subnet Mask' = $DHCPv4Binding.SubnetMask
                                             'State' = Switch ($DHCPv4Binding.BindingState) {
-                                                "" { "-"; break }
-                                                $Null { "-"; break }
+                                                "" { "--"; break }
+                                                $Null { "--"; break }
                                                 "True" { "Enabled" }
                                                 "False" { "Disabled" }
                                                 default { $DHCPv4Binding.BindingState }

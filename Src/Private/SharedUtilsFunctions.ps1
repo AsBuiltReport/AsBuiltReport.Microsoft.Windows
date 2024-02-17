@@ -26,8 +26,8 @@ function ConvertTo-TextYN {
     )
 
     switch ($TEXT) {
-        "" { "-"; break }
-        $Null { "-"; break }
+        "" { "--"; break }
+        $Null { "--"; break }
         "True" { "Yes"; break }
         "False" { "No"; break }
         default { $TEXT }
@@ -78,41 +78,10 @@ function ConvertTo-FileSizeString {
     }
 } # end >> function Format-FileSize
 
-function Invoke-DcDiag {
-    <#
-    .SYNOPSIS
-    Used by As Built Report to get the dcdiag tests for a Domain Controller.
-    .DESCRIPTION
-
-    .NOTES
-        Version:        0.4.0
-        Author:         Adam Bertram
-
-    .EXAMPLE
-
-    .LINK
-
-    #>
-    param(
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [string]$DomainController
-    )
-    $result = Invoke-Command -Session $TempPssSession { dcdiag /s:$using:DomainController }
-    $result | Select-String -Pattern '\. (.*) \b(passed|failed)\b test (.*)' | ForEach-Object {
-        $obj = @{
-            TestName = $_.Matches.Groups[3].Value
-            TestResult = $_.Matches.Groups[2].Value
-            Entity = $_.Matches.Groups[1].Value
-        }
-        [pscustomobject]$obj
-    }
-}# end
-
 function ConvertTo-EmptyToFiller {
     <#
     .SYNOPSIS
-    Used by As Built Report to convert empty culumns to "-".
+    Used by As Built Report to convert empty culumns to "--".
     .DESCRIPTION
     .NOTES
         Version:        0.5.0

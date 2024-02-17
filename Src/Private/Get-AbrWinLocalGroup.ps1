@@ -21,7 +21,7 @@ function Get-AbrWinLocalGroup {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PscriboMessage "Collecting Local Groups information."
+        Write-PScriboMessage "Collecting Local Groups information."
     }
 
     process {
@@ -34,13 +34,20 @@ function Get-AbrWinLocalGroup {
                             try {
                                 $TempLocalGroupsReport = [PSCustomObject]@{
                                     'Group Name' = $LocalGroup.GroupName
-                                    'Description' = $LocalGroup.Description
-				                    'Members' = $LocalGroup.Members
+                                    'Description' = Switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
+                                        $true { "--" }
+                                        $false { $LocalGroup.Members }
+                                        default { "Unknown" }
+                                    }
+                                    'Members' = Switch ([string]::IsNullOrEmpty($LocalGroup.Members)) {
+                                        $true { "--" }
+                                        $false { $LocalGroup.Members }
+                                        default { "Unknown" }
+                                    }
                                 }
                                 $LocalGroupsReport += $TempLocalGroupsReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -54,9 +61,8 @@ function Get-AbrWinLocalGroup {
                         $LocalGroupsReport | Sort-Object -Property 'Group Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
