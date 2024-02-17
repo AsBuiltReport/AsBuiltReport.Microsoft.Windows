@@ -1,6 +1,6 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
-## [0.5.2] - 2023-09-??
+## [0.5.2] - 2024-02-18
 
 ### Added
 
