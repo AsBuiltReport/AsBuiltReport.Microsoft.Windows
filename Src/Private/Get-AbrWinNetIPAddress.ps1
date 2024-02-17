@@ -5,7 +5,7 @@ function Get-AbrWinNetIPAddress {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetIPAddress {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network IP Address information."
+        Write-PScriboMessage "Collecting Network IP Address information."
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetIPAddress {
                 if ($NetIPs) {
                     Section -Style Heading3 'IP Addresses' {
                         Paragraph 'The following table details IP Addresses assigned to hosts'
-                        Blankline
+                        BlankLine
                         $NetIpsReport = @()
                         ForEach ($NetIp in $NetIps) {
                             try {
@@ -40,12 +40,15 @@ function Get-AbrWinNetIPAddress {
                                     'Interface Description' = $NetIp.InterfaceDescription
                                     'IPv4 Addresses' = $NetIp.IPv4Address.IPAddress -Join ","
                                     'Subnet Mask' = $NetIp.IPv4Address[0].PrefixLength
-                                    'IPv4 Gateway' = $NetIp.IPv4DefaultGateway.NextHop
+                                    'IPv4 Gateway' = Switch ([string]::IsNullOrEmpty($NetIp.IPv4DefaultGateway.NextHop)) {
+                                        $true { "--" }
+                                        $false { $NetIp.IPv4DefaultGateway.NextHop }
+                                        default { "Unknown" }
+                                    }
                                 }
                                 $NetIpsReport += $TempNetIpsReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -59,9 +62,8 @@ function Get-AbrWinNetIPAddress {
                         $NetIpsReport | Sort-Object -Property 'Interface Name' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

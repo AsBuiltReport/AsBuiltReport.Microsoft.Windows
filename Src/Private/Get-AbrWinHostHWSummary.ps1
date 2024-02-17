@@ -5,7 +5,7 @@ function Get-AbrWinHostHWSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinHostHWSummary {
 
     begin {
         Write-PScriboMessage "Hardware InfoLevel set at $($InfoLevel.Hardware)."
-        Write-PscriboMessage "Collecting Host Inventory information."
+        Write-PScriboMessage "Collecting Host Inventory information."
     }
 
     process {
@@ -38,9 +38,8 @@ function Get-AbrWinHostHWSummary {
                         'BIOS Version' = $HostBIOS.Version
                         'Processor Manufacturer' = $HostCPU[0].Manufacturer
                         'Processor Model' = $HostCPU[0].Name
-                        'Number of Processors' = $HostCPU.Length
-                        'Number of CPU Cores' = $HostCPU[0].NumberOfCores
-                        'Number of Logical Cores' = $HostCPU[0].NumberOfLogicalProcessors
+                        'Number of CPU Cores' = ($HostCPU.NumberOfCores | Measure-Object -Sum).Sum
+                        'Number of Logical Cores' = ($HostCPU.NumberOfLogicalProcessors | Measure-Object -Sum).Sum
                         'Physical Memory' = "$([Math]::Round($HostComputer.TotalPhysicalMemory / 1Gb)) GB"
                     }
                     $TableParams = @{
@@ -53,9 +52,8 @@ function Get-AbrWinHostHWSummary {
                     }
                     $HostHardware | Table @TableParams
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

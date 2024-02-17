@@ -5,7 +5,7 @@ function Get-AbrWinDHCPv4Scope {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.3.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinDHCPv4Scope {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PscriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage "Collecting Host DHCP Server information."
     }
 
     process {
@@ -34,22 +34,21 @@ function Get-AbrWinDHCPv4Scope {
                     $OutObj = @()
                     foreach ($Scope in $DHCPScopes) {
                         try {
-                            Write-PscriboMessage "Collecting DHCP Server $($Scope.ScopeId) Scope"
+                            Write-PScriboMessage "Collecting DHCP Server $($Scope.ScopeId) Scope"
                             $SubnetMask = Convert-IpAddressToMaskLength $Scope.SubnetMask
                             $inObj = [ordered] @{
                                 'Scope Id' = "$($Scope.ScopeId)/$($SubnetMask)"
                                 'Scope Name' = $Scope.Name
                                 'Scope Range' = "$($Scope.StartRange) - $($Scope.EndRange)"
                                 'Lease Duration' = Switch ($Scope.LeaseDuration) {
-                                    "10675199.02:48:05.4775807" {"Unlimited"}
-                                    default {$Scope.LeaseDuration}
+                                    "10675199.02:48:05.4775807" { "Unlimited" }
+                                    default { $Scope.LeaseDuration }
                                 }
                                 'State' = $Scope.State
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
@@ -69,7 +68,7 @@ function Get-AbrWinDHCPv4Scope {
                                 $OutObj = @()
                                 foreach ($DHCPStatistic in $DHCPStatistics) {
                                     try {
-                                        Write-PscriboMessage "Collecting DHCP Server $($DHCPStatistic.ScopeId) scope statistics"
+                                        Write-PScriboMessage "Collecting DHCP Server $($DHCPStatistic.ScopeId) scope statistics"
                                         $inObj = [ordered] @{
                                             'Scope Id' = $DHCPStatistic.ScopeId
                                             'Free IP' = $DHCPStatistic.Free
@@ -78,14 +77,13 @@ function Get-AbrWinDHCPv4Scope {
                                             'Reserved IP' = $DHCPStatistic.Reserved
                                         }
                                         $OutObj += [pscustomobject]$inobj
-                                    }
-                                    catch {
-                                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Statistics Item)"
+                                    } catch {
+                                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Statistics Item)"
                                     }
                                 }
 
                                 if ($HealthCheck.DHCP.Statistics) {
-                                    $OutObj | Where-Object { $_.'Percentage In Use' -gt '95'} | Set-Style -Style Warning -Property 'Percentage In Use'
+                                    $OutObj | Where-Object { $_.'Percentage In Use' -gt '95' } | Set-Style -Style Warning -Property 'Percentage In Use'
                                 }
 
                                 $TableParams = @{
@@ -99,9 +97,8 @@ function Get-AbrWinDHCPv4Scope {
                                 $OutObj | Sort-Object -Property 'Scope Id' | Table @TableParams
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Statistics Table)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Statistics Table)"
                     }
                     try {
                         $DHCPv4Failovers = Get-DhcpServerv4Failover -CimSession $TempCIMSession
@@ -110,7 +107,7 @@ function Get-AbrWinDHCPv4Scope {
                                 $OutObj = @()
                                 foreach ($DHCPv4Failover in $DHCPv4Failovers) {
                                     try {
-                                        Write-PscriboMessage "Collecting DHCP Server $($DHCPv4Failover.ScopeId) scope failover setting"
+                                        Write-PScriboMessage "Collecting DHCP Server $($DHCPv4Failover.ScopeId) scope failover setting"
                                         $inObj = [ordered] @{
                                             'Partner DHCP Server' = $DHCPv4Failover.PartnerServer
                                             'Mode' = $DHCPv4Failover.Mode
@@ -125,13 +122,12 @@ function Get-AbrWinDHCPv4Scope {
                                             'Authetication Enable' = ConvertTo-TextYN $DHCPv4Failover.EnableAuth
                                         }
                                         $OutObj = [pscustomobject]$inobj
-                                    }
-                                    catch {
-                                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Failover Item)"
+                                    } catch {
+                                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Failover Item)"
                                     }
                                     if ($HealthCheck.DHCP.BP) {
-                                        $OutObj | Where-Object { $_.'Authetication Enable' -eq 'No'} | Set-Style -Style Warning -Property 'Authetication Enable'
-                                        $OutObj | Where-Object { $_.'State' -ne 'Normal'} | Set-Style -Style Warning -Property 'State'
+                                        $OutObj | Where-Object { $_.'Authetication Enable' -eq 'No' } | Set-Style -Style Warning -Property 'Authetication Enable'
+                                        $OutObj | Where-Object { $_.'State' -ne 'Normal' } | Set-Style -Style Warning -Property 'State'
                                     }
 
                                     $TableParams = @{
@@ -146,9 +142,8 @@ function Get-AbrWinDHCPv4Scope {
                                 }
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Failover Table)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Failover Table)"
                     }
                     try {
                         $DHCPv4Bindings = Get-DhcpServerv4Binding -CimSession $TempCIMSession
@@ -157,24 +152,22 @@ function Get-AbrWinDHCPv4Scope {
                                 $OutObj = @()
                                 foreach ($DHCPv4Binding in $DHCPv4Bindings) {
                                     try {
-                                        Write-PscriboMessage "Collecting DHCP Server $($DHCPv4Binding.InterfaceAlias) binding."
-                                        $SubnetMask = Convert-IpAddressToMaskLength $DHCPv4Binding.SubnetMask
+                                        Write-PScriboMessage "Collecting DHCP Server $($DHCPv4Binding.InterfaceAlias) binding."
                                         $inObj = [ordered] @{
                                             'Interface Alias' = $DHCPv4Binding.InterfaceAlias
                                             'IP Address' = $DHCPv4Binding.IPAddress
                                             'Subnet Mask' = $DHCPv4Binding.SubnetMask
                                             'State' = Switch ($DHCPv4Binding.BindingState) {
-                                                ""  {"-"; break}
-                                                $Null  {"-"; break}
-                                                "True"  {"Enabled"}
-                                                "False"  {"Disabled"}
-                                                default {$DHCPv4Binding.BindingState}
+                                                "" { "--"; break }
+                                                $Null { "--"; break }
+                                                "True" { "Enabled" }
+                                                "False" { "Disabled" }
+                                                default { $DHCPv4Binding.BindingState }
                                             }
                                         }
                                         $OutObj += [pscustomobject]$inobj
-                                    }
-                                    catch {
-                                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Network Interface binding Item)"
+                                    } catch {
+                                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Network Interface binding Item)"
                                     }
                                 }
                                 $TableParams = @{
@@ -188,15 +181,13 @@ function Get-AbrWinDHCPv4Scope {
                                 $OutObj | Table @TableParams
                             }
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Network Interface binding Table)"
+                    } catch {
+                        Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Network Interface binding Table)"
                     }
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Summary)"
+        } catch {
+            Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Summary)"
         }
     }
     end {}

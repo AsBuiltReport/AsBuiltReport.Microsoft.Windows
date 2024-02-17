@@ -1,11 +1,20 @@
 # :arrows_counterclockwise: Microsoft Windows As Built Report Changelog
 
-## [0.5.2] - 2023-09-??
+## [0.5.2] - 2024-02-18
 
 ### Added
 
 - Added Local Windows Group Members information @flynngw
-  
+- Added more HealthCheck conditions
+
+### Changed
+
+- Improved report readability
+
+### Fixed
+
+- Fix CodeQL security alerts
+
 ## [0.5.1] - 2023-05-16
 
 ### Added

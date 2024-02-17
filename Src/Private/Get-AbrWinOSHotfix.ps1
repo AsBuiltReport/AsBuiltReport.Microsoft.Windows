@@ -5,7 +5,7 @@ function Get-AbrWinOSHotfix {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.4.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinOSHotfix {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PscriboMessage "Collecting Operating System HotFix information."
+        Write-PScriboMessage "Collecting Operating System HotFix information."
     }
 
     process {
@@ -40,7 +40,7 @@ function Get-AbrWinOSHotfix {
                                 }
                                 $HotfixReport += $TempHotFix
                             } catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -54,13 +54,12 @@ function Get-AbrWinOSHotfix {
                         $HotFixReport | Sort-Object -Property 'Hotfix ID' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
             try {
                 $UpdObj = @()
-                $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock {(New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsHidden=0 and IsInstalled=0").Updates | Select-Object Title,KBArticleIDs}
+                $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock { (New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsHidden=0 and IsInstalled=0").Updates | Select-Object Title, KBArticleIDs }
                 $UpdObj += if ($Updates) {
                     $OutObj = @()
                     foreach ($Update in $Updates) {
@@ -74,9 +73,8 @@ function Get-AbrWinOSHotfix {
                             if ($HealthCheck.OperatingSystem.Updates) {
                                 $OutObj | Set-Style -Style Warning
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
                     $TableParams = @{
@@ -96,9 +94,8 @@ function Get-AbrWinOSHotfix {
                         $UpdObj
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

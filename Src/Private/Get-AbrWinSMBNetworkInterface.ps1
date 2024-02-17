@@ -5,7 +5,7 @@ function Get-AbrWinSMBNetworkInterface {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinSMBNetworkInterface {
 
     begin {
         Write-PScriboMessage "SMB InfoLevel set at $($InfoLevel.SMB)."
-        Write-PscriboMessage "Collecting File Server Network Interface information."
+        Write-PScriboMessage "Collecting File Server Network Interface information."
     }
 
     process {
@@ -30,23 +30,22 @@ function Get-AbrWinSMBNetworkInterface {
                 if ($SMBNICs) {
                     Section -Style Heading3 "SMB Network Interface" {
                         Paragraph "The following table provide a summary of the SMB protocol network interface information"
-                        Blankline
+                        BlankLine
                         $SMBNICReport = @()
                         foreach ($SMBNIC in $SMBNICs) {
                             try {
                                 $TempSMBNicReport = [PSCustomObject]@{
                                     'Name' = Switch (($SMBNIC.InterfaceIndex).count) {
-                                        0 {"Unknown"}
-                                        default {Invoke-Command -Session $TempPssSession { (Get-NetAdapter -InterfaceIndex ($using:SMBNIC).InterfaceIndex).Name}}
+                                        0 { "Unknown" }
+                                        default { Invoke-Command -Session $TempPssSession { (Get-NetAdapter -InterfaceIndex ($using:SMBNIC).InterfaceIndex).Name } }
                                     }
                                     'RSS Capable' = ConvertTo-TextYN $SMBNIC.RssCapable
-                                    'RDMA Capable' =  ConvertTo-TextYN $SMBNIC.RdmaCapable
+                                    'RDMA Capable' = ConvertTo-TextYN $SMBNIC.RdmaCapable
                                     'IP Address' = ConvertTo-TextYN $SMBNIC.IpAddress
                                 }
                                 $SMBNICReport += $TempSMBNicReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
 
@@ -61,9 +60,8 @@ function Get-AbrWinSMBNetworkInterface {
                         $SMBNICReport | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

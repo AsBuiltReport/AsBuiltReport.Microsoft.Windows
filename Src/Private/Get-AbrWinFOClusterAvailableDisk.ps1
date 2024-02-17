@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterAvailableDisk {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,16 +21,16 @@ function Get-AbrWinFOClusterAvailableDisk {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Available Disk information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Available Disk information."
     }
 
     process {
         try {
-            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAvailableDisk -Cluster $using:Cluster} | Sort-Object -Property Name
+            $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAvailableDisk -Cluster $using:Cluster } | Sort-Object -Property Name
             if ($Settings) {
                 Section -Style Heading3 "Available Disk" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
@@ -38,9 +38,8 @@ function Get-AbrWinFOClusterAvailableDisk {
                                 'Size' = ConvertTo-FileSizeString $Setting.Size
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
@@ -55,9 +54,8 @@ function Get-AbrWinFOClusterAvailableDisk {
                     $OutObj | Table @TableParams
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

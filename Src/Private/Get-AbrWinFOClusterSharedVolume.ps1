@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterSharedVolume {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.0
+        Version:        0.5.2
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -21,7 +21,7 @@ function Get-AbrWinFOClusterSharedVolume {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Shared Volume information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Shared Volume information."
     }
 
     process {
@@ -30,7 +30,7 @@ function Get-AbrWinFOClusterSharedVolume {
             if ($Settings) {
                 Section -Style Heading3 "Cluster Shared Volume" {
                     $OutObj = @()
-                    foreach  ($Setting in $Settings) {
+                    foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
@@ -39,15 +39,14 @@ function Get-AbrWinFOClusterSharedVolume {
                                 'State' = $Setting.State
                             }
                             $OutObj += [pscustomobject]$inobj
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
 
 
                     if ($HealthCheck.FailOverCluster.ClusterSharedVolume) {
-                        $OutObj | Where-Object { $_.'State' -notlike 'Online'} | Set-Style -Style Warning -Property 'State'
+                        $OutObj | Where-Object { $_.'State' -notlike 'Online' } | Set-Style -Style Warning -Property 'State'
                     }
 
                     $TableParams = @{
@@ -63,9 +62,8 @@ function Get-AbrWinFOClusterSharedVolume {
                     Get-AbrWinFOClusterSharedVolumeState
                 }
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

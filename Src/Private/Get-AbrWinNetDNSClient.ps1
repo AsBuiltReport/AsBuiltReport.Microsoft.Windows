@@ -5,7 +5,7 @@ function Get-AbrWinNetDNSClient {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinNetDNSClient {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Network DNS Client information."
+        Write-PScriboMessage "Collecting Network DNS Client information."
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetDNSClient {
                 if ($DnsClient) {
                     Section -Style Heading3 'DNS Client' {
                         Paragraph 'The following table details the DNS Seach Domains'
-                        Blankline
+                        BlankLine
                         $DnsClientReport = [PSCustomObject]@{
                             'DNS Suffix' = $DnsClient.SuffixSearchList -Join ","
                             'Use Suffix Search List' = ConvertTo-TextYN $DnsClient.UseSuffixSearchList
@@ -49,9 +49,8 @@ function Get-AbrWinNetDNSClient {
                         $DnsClientReport | Sort-Object -Property 'DNS Suffix' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

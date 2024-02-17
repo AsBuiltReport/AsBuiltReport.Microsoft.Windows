@@ -5,7 +5,7 @@ function Get-AbrWinHostStorage {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.2.0
+        Version:        0.5.2
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,7 +21,7 @@ function Get-AbrWinHostStorage {
 
     begin {
         Write-PScriboMessage "Storage InfoLevel set at $($InfoLevel.Storage)."
-        Write-PscriboMessage "Collecting Host Storage information."
+        Write-PScriboMessage "Collecting Host Storage information."
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinHostStorage {
                 if ($HostDisks) {
                     Section -Style Heading3 'Local Disks' {
                         Paragraph 'The following table details physical disks installed in the host'
-                        Blankline
+                        BlankLine
                         $LocalDiskReport = @()
                         ForEach ($Disk in $HostDisks) {
                             try {
@@ -43,9 +43,8 @@ function Get-AbrWinHostStorage {
                                     'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
                                 $LocalDiskReport += $TempLocalDiskReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -59,9 +58,8 @@ function Get-AbrWinHostStorage {
                         $LocalDiskReport | Sort-Object -Property 'Disk Number' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
             #Report any SAN Disks if they exist
             try {
@@ -69,7 +67,7 @@ function Get-AbrWinHostStorage {
                 if ($SanDisks) {
                     Section -Style Heading3 'SAN Disks' {
                         Paragraph 'The following section details SAN disks connected to the host'
-                        Blankline
+                        BlankLine
                         $SanDiskReport = @()
                         ForEach ($Disk in $SanDisks) {
                             try {
@@ -81,9 +79,8 @@ function Get-AbrWinHostStorage {
                                     'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
                                 $SanDiskReport += $TempSanDiskReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -97,9 +94,8 @@ function Get-AbrWinHostStorage {
                         $SanDiskReport | Sort-Object -Property 'Disk Number' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
