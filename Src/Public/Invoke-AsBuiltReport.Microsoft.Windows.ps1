@@ -352,6 +352,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 BlankLine
                                 # Failover Cluster Server Configuration
                                 Get-AbrWinSQLBuild
+                                Get-AbrWinSQLDatabase
                             }
                         } else {
                             Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
