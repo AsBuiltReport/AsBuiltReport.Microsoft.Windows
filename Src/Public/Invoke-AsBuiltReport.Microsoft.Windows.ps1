@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.3
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -363,13 +363,20 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 }
                                 # SQL Server Database Information
                                 Get-AbrWinSQLDatabase
-                                Section -Style Heading3 "Server Objects" {
-                                    Paragraph 'The following table details the SQL Server server objects settings'
-                                    BlankLine
-                                    # SQL Server Backup Devices Information
-                                    Get-AbrWinSQLBackupDevice
+                                # SQL Server Server Objects Information
+                                $BackupDevices = Get-AbrWinSQLBackupDevice
+                                if ($BackupDevices) {
+                                    Section -Style Heading3 "Server Objects" {
+                                        Paragraph 'The following table details the SQL Server server objects settings'
+                                        BlankLine
+                                        # SQL Server Backup Devices Information
+                                        $BackupDevices
+                                    }
                                 }
                             }
+                            # Disconnect SQL Instance
+                            Write-PScriboMessage "Disconnecting SQL Instance $($Options.Instance)"
+                            $SQLServer | Disconnect-DbaInstance | Out-Null
                         } else {
                             Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
                         }
