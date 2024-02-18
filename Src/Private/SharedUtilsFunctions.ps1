@@ -99,7 +99,7 @@ function ConvertTo-EmptyToFiller {
         [AllowEmptyString()]
         [string]$TEXT
     )
-    
+
     switch ([string]::IsNullOrEmpty($TEXT)) {
         $true { "--"; break }
         default { $TEXT }
