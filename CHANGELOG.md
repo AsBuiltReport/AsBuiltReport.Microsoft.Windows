@@ -9,7 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add Initial SQL Server support
+- Add SQL Server support
+  - General Information
+  - Security
+    - Login
+    - Roles
+  - Databases
+    - User
+    - System
+  - Server Objects
+    - Backup Devices
 
 ## [0.5.2] - 2024-02-18
 

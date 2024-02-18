@@ -185,6 +185,10 @@ The **Report** schema provides configuration of the Microsoft Windows report inf
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
+| Sub-Schema | Setting             | Default     | Description                                |
+| ---------- | ------------------- | ----------- | ------------------------------------------ |
+| Instance   | SQL Server Instance | MSSQLSERVER | Set the sql server instance to connect to. |
+
 ### InfoLevel
 
 The **InfoLevel** schema allows configuration of each section of the report at a granular level. The following sections can be set.

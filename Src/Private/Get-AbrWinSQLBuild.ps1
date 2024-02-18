@@ -1,7 +1,7 @@
 function Get-AbrWinSQLBuild {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve Windows SQL Server build information.
+    Used by As Built Report to retrieve Windows SQL Server Properties information.
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
@@ -21,32 +21,51 @@ function Get-AbrWinSQLBuild {
 
     begin {
         Write-PScriboMessage "SQL Server InfoLevel set at $($InfoLevel.SQLServer)."
-        Write-PscriboMessage "Collecting SQL Server build information."
+        Write-PScriboMessage "Collecting SQL Server Properties information."
     }
 
     process {
         if ($InfoLevel.SQLServer -ge 1) {
             try {
+                $Properties = Get-DbaInstanceProperty -SqlInstance $SQLServer | ForEach-Object { @{$_.Name = $_.Value } }
                 $Build = Get-DbaBuild -SqlInstance $SQLServer
-                if ($Build) {
-                    Section -Style Heading3 'Build' {
-                        Paragraph 'The following table details sql server build information'
-                        Blankline
+                if ($Properties) {
+                    Section -Style Heading3 'General Information' {
+                        Paragraph 'The following table details sql server Properties information'
+                        BlankLine
                         [array]$SQLServerObjt = @()
                         $TempSQLServerObjt = [PSCustomObject]@{
                             'Instance Name' = $Build.SqlInstance
-                            'Build' = $Build.Build
-                            'Level' = $Build.NameLevel
-                            'Service Pack' = $Build.SPLevel
+                            'Fully Qualified Net Name' = $Properties.FullyQualifiedNetName
+                            'Supported Until' = $Build.SupportedUntil.ToShortDateString()
+                            'Edition' = $Properties.Edition
+                            'Level' = "Microsoft SQL Server $($Build.NameLevel)"
+                            'Build' = $Properties.VersionString
+                            'Service Pack' = $Properties.ProductLevel
                             'Comulative Update' = ConvertTo-EmptyToFiller $Build.CULevel
                             'KB Level' = $Build.KBLevel
-                            'Supported Until' = $Build.SupportedUntil.ToShortDateString()
+                            'Case Sensitive' = ConvertTo-TextYN $Properties.IsCaseSensitive
+                            'Full Text Installed' = ConvertTo-TextYN $Properties.IsFullTextInstalled
+                            'XTP Supported' = ConvertTo-TextYN $Properties.IsXTPSupported
+                            'Clustered' = ConvertTo-TextYN $Properties.IsClustered
+                            'Single User' = ConvertTo-TextYN $Properties.IsSingleUser
+                            'Language' = $Properties.Language
+                            'Collation' = $Properties.Collation
+                            'Sql CharSet Name' = $Properties.SqlCharSetName
+                            'Root Directory' = $Properties.RootDirectory
+                            'Master DB Path' = $Properties.MasterDBPath
+                            'Master DB Log Path' = $Properties.MasterDBLogPath
+                            'Backup Directory' = $Properties.BackupDirectory
+                            'Default File' = $Properties.DefaultFile
+                            'Default Log' = $Properties.DefaultLog
+                            'Login Mode' = $Properties.LoginMode
+                            'Mail Profile' = ConvertTo-EmptyToFiller $Properties.MailProfile
                             'Warning' = ConvertTo-EmptyToFiller $Build.Warning
                         }
                         $SQLServerObjt += $TempSQLServerObjt
 
                         $TableParams = @{
-                            Name = "SQL Server Build"
+                            Name = "General Information"
                             List = $True
                             ColumnWidths = 40, 60
                         }
@@ -56,9 +75,8 @@ function Get-AbrWinSQLBuild {
                         $SQLServerObjt | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

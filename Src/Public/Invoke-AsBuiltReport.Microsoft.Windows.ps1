@@ -348,11 +348,27 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
                         if ($SQLServer) {
                             Section -Style Heading2 "SQL Server Configuration" {
-                                Paragraph 'The following table details the SQL Server Settings'
+                                Paragraph 'The following table details the SQL Server settings'
                                 BlankLine
-                                # Failover Cluster Server Configuration
+                                # SQL Server Build Information
                                 Get-AbrWinSQLBuild
+                                # SQL Server Security Information
+                                Section -Style Heading3 "Security" {
+                                    Paragraph 'The following table details the SQL Server security settings'
+                                    BlankLine
+                                    # SQL Server Roles Information
+                                    Get-AbrWinSQLRole
+                                    # SQL Server Logins Information
+                                    Get-AbrWinSQLLogin
+                                }
+                                # SQL Server Database Information
                                 Get-AbrWinSQLDatabase
+                                Section -Style Heading3 "Server Objects" {
+                                    Paragraph 'The following table details the SQL Server server objects settings'
+                                    BlankLine
+                                    # SQL Server Backup Devices Information
+                                    Get-AbrWinSQLBackupDevice
+                                }
                             }
                         } else {
                             Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"

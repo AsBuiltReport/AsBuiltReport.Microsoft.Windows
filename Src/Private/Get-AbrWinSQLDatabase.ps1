@@ -1,7 +1,7 @@
 function Get-AbrWinSQLDatabase {
     <#
     .SYNOPSIS
-    Used by As Built Report to retrieve Windows SQL Server build information.
+    Used by As Built Report to retrieve Windows SQL Server database information.
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
@@ -39,144 +39,152 @@ function Get-AbrWinSQLDatabase {
                 'Version160' = 'SQL Server 2022'
 
             }
-            Write-PScriboMessage "Collecting SQL Server databases information."
-            $SQLDBs = Get-DbaDatabase -SqlInstance $SQLServer -ExcludeUser | Sort-Object -Property Name
-            if ($SQLDBs) {
-                Write-PScriboMessage "Collecting SQL Server system databases information."
-                Section -Style Heading4 'System Databases' {
-                    $SQLDBInfo = @()
-                    foreach ($SQLDB in $SQLDBs) {
-                        try {
-                            $InObj = [Ordered]@{
-                                'Name' = $SQLDB.Name
-                                'Status' = $SQLDB.Status
-                                'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
-                                'Recovery Model' = $SQLDB.RecoveryModel
-                                'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
-                                    $true { '--' }
-                                    $false { "$($SQLDB.SizeMB) MB" }
-                                    default { 'Unknown' }
+            try {
+                Write-PScriboMessage "Collecting SQL Server databases information."
+                $SQLDBs = Get-DbaDatabase -SqlInstance $SQLServer -ExcludeUser | Sort-Object -Property Name
+                if ($SQLDBs) {
+                    Write-PScriboMessage "Collecting SQL Server system databases information."
+                    Section -Style Heading4 'System Databases' {
+                        $SQLDBInfo = @()
+                        foreach ($SQLDB in $SQLDBs) {
+                            try {
+                                $InObj = [Ordered]@{
+                                    'Name' = $SQLDB.Name
+                                    'Status' = $SQLDB.Status
+                                    'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
+                                    'Recovery Model' = $SQLDB.RecoveryModel
+                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
+                                        $true { '--' }
+                                        $false { "$($SQLDB.SizeMB) MB" }
+                                        default { 'Unknown' }
+                                    }
+                                    'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
+                                    'Collation' = $SQLDB.Collation
+                                    'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
+                                    'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
+                                        '01/01/0001 00:00:00' { "Never" }
+                                        $null { '--' }
+                                        default { $SQLDB.LastFullBackup }
+                                    }
+                                    'Last Log Backup' = Switch ($SQLDB.LastLogBackup) {
+                                        '01/01/0001 00:00:00' { "Never" }
+                                        $null { '--' }
+                                        default { $SQLDB.LastLogBackup }
+                                    }
+                                    'Owner' = $SQLDB.Owner
                                 }
-                                'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
-                                'Collation' = $SQLDB.Collation
-                                'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
-                                'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
-                                    '01/01/0001 00:00:00' { "Never" }
-                                    $null { '--' }
-                                    default { $SQLDB.LastFullBackup }
-                                }
-                                'Last Log Backup' = Switch ($SQLDB.LastLogBackup) {
-                                    '01/01/0001 00:00:00' { "Never" }
-                                    $null { '--' }
-                                    default { $SQLDB.LastLogBackup }
-                                }
-                                'Owner' = $SQLDB.Owner
+                                $SQLDBInfo += [PSCustomObject]$InObj
+                            } catch {
+                                Write-PScriboMessage -IsWarning "SQL Server System Database table: $($_.Exception.Message)"
                             }
-                            $SQLDBInfo += [PSCustomObject]$InObj
-                        } catch {
-                            Write-PScriboMessage -IsWarning "SQL Server System Database Section: $($_.Exception.Message)"
                         }
-                    }
 
-                    if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the system databases within the sql server."
-                        foreach ($SQLDB in $SQLDBInfo) {
-                            Section -Style NOTOCHeading5 -ExcludeFromTOC "$($SQLDB.Name)" {
-                                $TableParams = @{
-                                    Name = "System Database - $($SQLDB.Name)"
-                                    List = $true
-                                    ColumnWidths = 50, 50
+                        if ($InfoLevel.SQLServer -ge 2) {
+                            Paragraph "The following sections detail the configuration of the system databases within $($SQLServer.Name)."
+                            foreach ($SQLDB in $SQLDBInfo) {
+                                Section -Style NOTOCHeading5 -ExcludeFromTOC "$($SQLDB.Name)" {
+                                    $TableParams = @{
+                                        Name = "System Database - $($SQLDB.Name)"
+                                        List = $true
+                                        ColumnWidths = 50, 50
+                                    }
+                                    if ($Report.ShowTableCaptions) {
+                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                    }
+                                    $SQLDB | Table @TableParams
                                 }
-                                if ($Report.ShowTableCaptions) {
-                                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                                }
-                                $SQLDB | Table @TableParams
                             }
+                        } else {
+                            Paragraph "The following table summarises the configuration of the system databases within $($SQLServer.Name)."
+                            BlankLine
+                            $TableParams = @{
+                                Name = "System Databases"
+                                List = $false
+                                Columns = 'Name', 'Owner', 'Status', 'Recovery Model', 'Size'
+                                ColumnWidths = 32, 32, 12, 12, 12
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $SQLDBInfo | Table @TableParams
                         }
-                    } else {
-                        Paragraph "The following table summarises the configuration of the system databases within $($SQLDB.Name)."
-                        BlankLine
-                        $TableParams = @{
-                            Name = "System Databases"
-                            List = $false
-                            Columns = 'Name', 'Owner', 'Status', 'Recovery Model', 'Size'
-                            ColumnWidths = 32, 32, 12, 12, 12
-                        }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $SQLDBInfo | Table @TableParams
                     }
                 }
+            } catch {
+                Write-PScriboMessage -IsWarning "SQL Server System Database Section: $($_.Exception.Message)"
             }
-            $SQLDBs = Get-DbaDatabase -SqlInstance $SQLServer -ExcludeSystem | Sort-Object -Property Name
-            if ($SQLDBs) {
-                Write-PScriboMessage "Collecting SQL Server user databases information."
-                Section -Style Heading4 'User Databases' {
-                    $SQLDBInfo = @()
-                    foreach ($SQLDB in $SQLDBs) {
-                        try {
-                            $InObj = [Ordered]@{
-                                'Name' = $SQLDB.Name
-                                'Status' = $SQLDB.Status
-                                'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
-                                'Recovery Model' = $SQLDB.RecoveryModel
-                                'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
-                                    $true { '--' }
-                                    $false { "$($SQLDB.SizeMB) MB" }
-                                    default { 'Unknown' }
+            try {
+                $SQLDBs = Get-DbaDatabase -SqlInstance $SQLServer -ExcludeSystem | Sort-Object -Property Name
+                if ($SQLDBs) {
+                    Write-PScriboMessage "Collecting SQL Server user databases information."
+                    Section -Style Heading4 'User Databases' {
+                        $SQLDBInfo = @()
+                        foreach ($SQLDB in $SQLDBs) {
+                            try {
+                                $InObj = [Ordered]@{
+                                    'Name' = $SQLDB.Name
+                                    'Status' = $SQLDB.Status
+                                    'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
+                                    'Recovery Model' = $SQLDB.RecoveryModel
+                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
+                                        $true { '--' }
+                                        $false { "$($SQLDB.SizeMB) MB" }
+                                        default { 'Unknown' }
+                                    }
+                                    'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
+                                    'Collation' = $SQLDB.Collation
+                                    'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
+                                    'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
+                                        '01/01/0001 00:00:00' { "Never" }
+                                        $null { '--' }
+                                        default { $SQLDB.LastFullBackup }
+                                    }
+                                    'Last Log Backup' = Switch ($SQLDB.LastLogBackup) {
+                                        '01/01/0001 00:00:00' { "Never" }
+                                        $null { '--' }
+                                        default { $SQLDB.LastLogBackup }
+                                    }
+                                    'Owner' = $SQLDB.Owner
                                 }
-                                'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
-                                'Collation' = $SQLDB.Collation
-                                'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
-                                'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
-                                    '01/01/0001 00:00:00' { "Never" }
-                                    $null { '--' }
-                                    default { $SQLDB.LastFullBackup }
-                                }
-                                'Last Log Backup' = Switch ($SQLDB.LastLogBackup) {
-                                    '01/01/0001 00:00:00' { "Never" }
-                                    $null { '--' }
-                                    default { $SQLDB.LastLogBackup }
-                                }
-                                'Owner' = $SQLDB.Owner
+                                $SQLDBInfo += [PSCustomObject]$InObj
+                            } catch {
+                                Write-PScriboMessage -IsWarning "SQL Server User Database table: $($_.Exception.Message)"
                             }
-                            $SQLDBInfo += [PSCustomObject]$InObj
-                        } catch {
-                            Write-PScriboMessage -IsWarning "SQL Server User Database Section: $($_.Exception.Message)"
                         }
-                    }
 
-                    if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the user databases within the sql server."
-                        foreach ($SQLDB in $SQLDBInfo) {
-                            Section -Style NOTOCHeading5 -ExcludeFromTOC "$($SQLDB.Name)" {
-                                $TableParams = @{
-                                    Name = "User Database - $($SQLDB.Name)"
-                                    List = $true
-                                    ColumnWidths = 50, 50
+                        if ($InfoLevel.SQLServer -ge 2) {
+                            Paragraph "The following sections detail the configuration of the user databases within $($SQLServer.Name)."
+                            foreach ($SQLDB in $SQLDBInfo) {
+                                Section -Style NOTOCHeading5 -ExcludeFromTOC "$($SQLDB.Name)" {
+                                    $TableParams = @{
+                                        Name = "User Database - $($SQLDB.Name)"
+                                        List = $true
+                                        ColumnWidths = 50, 50
+                                    }
+                                    if ($Report.ShowTableCaptions) {
+                                        $TableParams['Caption'] = "- $($TableParams.Name)"
+                                    }
+                                    $SQLDB | Table @TableParams
                                 }
-                                if ($Report.ShowTableCaptions) {
-                                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                                }
-                                $SQLDB | Table @TableParams
                             }
+                        } else {
+                            Paragraph "The following table summarises the configuration of the databases within $($SQLServer.Name)."
+                            BlankLine
+                            $TableParams = @{
+                                Name = "User Databases"
+                                List = $false
+                                Columns = 'Name', 'Owner', 'Status', 'Recovery Model', 'Size'
+                                ColumnWidths = 32, 32, 12, 12, 12
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $SQLDBInfo | Table @TableParams
                         }
-                    } else {
-                        Paragraph "The following table summarises the configuration of the databases within $($SQLDB.Name)."
-                        BlankLine
-                        $TableParams = @{
-                            Name = "User Databases"
-                            List = $false
-                            Columns = 'Name', 'Owner', 'Status', 'Recovery Model', 'Size'
-                            ColumnWidths = 32, 32, 12, 12, 12
-                        }
-                        if ($Report.ShowTableCaptions) {
-                            $TableParams['Caption'] = "- $($TableParams.Name)"
-                        }
-                        $SQLDBInfo | Table @TableParams
                     }
                 }
+            } catch {
+                Write-PScriboMessage -IsWarning "SQL Server User Database Section: $($_.Exception.Message)"
             }
         }
     }
