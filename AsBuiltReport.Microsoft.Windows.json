@@ -8,7 +8,9 @@
         "ShowHeaderFooter": true,
         "ShowTableCaptions": true
     },
-    "Options": {},
+    "Options": {
+        "Instance": "MSSQLSERVER"
+    },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
         "_comment_": "0 = Disabled, 1 = Enabled, 2 = Adv Summary, 3 = Detailed, 4 = Adv Detailed, 5 = Comprehensive",
@@ -22,7 +24,8 @@
         "SMB": 1,
         "DHCP": 1,
         "DNS": 1,
-        "FailOverCluster": 1
+        "FailOverCluster": 1,
+        "SQLServer": 1
     },
     "HealthCheck": {
         "Networking": {
@@ -52,6 +55,9 @@
         },
         "SMB": {
             "BP": true
+        },
+        "SQLServer": {
+            "Firewall": true
         }
     }
 }

@@ -88,8 +88,9 @@ function Get-RequiredFeature {
                     Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Install-WindowsFeature -Name '$($Name)'' to install the required modules."
                 }
             }
-        } else {
-            throw "Unable to validate if $Name is installed. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.AD"
+        }
+        else {
+            throw "Unable to validate if $Name is installed. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
         }
     }
     end {}

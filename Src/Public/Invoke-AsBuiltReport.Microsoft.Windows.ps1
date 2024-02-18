@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.3
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -235,7 +235,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     if ($SMBShares) {
                         Section -Style Heading2 "File Server Configuration" {
                             Paragraph 'The following table details the File Server settings'
-                    BlankLine
+                            BlankLine
                             # SMB Server Configuration
                             Get-AbrWinSMBSummary
                             # SMB Server Network Interface
@@ -338,6 +338,53 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     }
                 } else {
                     Write-PScriboMessage "No FailOver Cluster service detected. Disabling FailOver Cluster section"
+                }
+            }
+
+            if ($InfoLevel.SQLServer -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQLSERVER' -ErrorAction SilentlyContinue }
+                if ($Status.Status -eq "Running") {
+                    try {
+                        $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
+                        if ($SQLServer) {
+                            Section -Style Heading2 "SQL Server Configuration" {
+                                Paragraph 'The following table details the SQL Server settings'
+                                BlankLine
+                                # SQL Server Build Information
+                                Get-AbrWinSQLBuild
+                                # SQL Server Security Information
+                                Section -Style Heading3 "Security" {
+                                    Paragraph 'The following table details the SQL Server security settings'
+                                    BlankLine
+                                    # SQL Server Roles Information
+                                    Get-AbrWinSQLRole
+                                    # SQL Server Logins Information
+                                    Get-AbrWinSQLLogin
+                                }
+                                # SQL Server Database Information
+                                Get-AbrWinSQLDatabase
+                                # SQL Server Server Objects Information
+                                $BackupDevices = Get-AbrWinSQLBackupDevice
+                                if ($BackupDevices) {
+                                    Section -Style Heading3 "Server Objects" {
+                                        Paragraph 'The following table details the SQL Server server objects settings'
+                                        BlankLine
+                                        # SQL Server Backup Devices Information
+                                        $BackupDevices
+                                    }
+                                }
+                            }
+                            # Disconnect SQL Instance
+                            Write-PScriboMessage "Disconnecting SQL Instance $($Options.Instance)"
+                            $SQLServer | Disconnect-DbaInstance | Out-Null
+                        } else {
+                            Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage "No SQL Server service detected. Disabling SQL Server section"
                 }
             }
 
