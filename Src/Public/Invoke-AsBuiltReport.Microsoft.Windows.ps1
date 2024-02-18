@@ -235,7 +235,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     if ($SMBShares) {
                         Section -Style Heading2 "File Server Configuration" {
                             Paragraph 'The following table details the File Server settings'
-                    BlankLine
+                            BlankLine
                             # SMB Server Configuration
                             Get-AbrWinSMBSummary
                             # SMB Server Network Interface
@@ -349,17 +349,15 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if ($SQLServer) {
                             Section -Style Heading2 "SQL Server Configuration" {
                                 Paragraph 'The following table details the SQL Server Settings'
-                                Blankline
+                                BlankLine
                                 # Failover Cluster Server Configuration
                                 Get-AbrWinSQLBuild
                             }
-                        }
-                        else {
+                        } else {
                             Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
                         }
-                    }
-                    catch {
-                        Write-PscriboMessage -IsWarning $_.Exception.Message
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
                     Write-PScriboMessage "No SQL Server service detected. Disabling SQL Server section"
