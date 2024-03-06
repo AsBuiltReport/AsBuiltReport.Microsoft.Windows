@@ -380,10 +380,10 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 }
                             }
                             # Disconnect SQL Instance
-                            Write-PScriboMessage "Disconnecting SQL Instance $($Options.Instance)"
+                            Write-PScriboMessage "Disconnecting SQL Instance"
                             $SQLServer | Disconnect-DbaInstance | Out-Null
                         } else {
-                            Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance $($Options.Instance)"
+                            Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance"
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
