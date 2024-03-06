@@ -185,9 +185,22 @@ The **Report** schema provides configuration of the Microsoft Windows report inf
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
-| Sub-Schema | Setting             | Default     | Description                                |
-| ---------- | ------------------- | ----------- | ------------------------------------------ |
-| Instance   | SQL Server Instance | MSSQLSERVER | Set the sql server instance to connect to. |
+| Sub-Schema        | Setting      | Default | Description                              |
+| ----------------- | ------------ | ------- | ---------------------------------------- |
+| SQLLogin          | true / false | false   | Enable sql server login authentication . |
+| SQLUserName       | User defined | empty   | Sql server login Username .              |
+| SQLSecurePassword | User defined | empty   | Sql server login SecureString Password . |
+
+#### Generating a SecureString
+
+```powershell
+PS C:\> "SecurePassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
+01000000d08c9ddf0115d1118c7a00c04fc297eb01000000b3605317d738c346801fbff6596b0d130000
+PS C:\>
+```
+Copy/Paste the output text to the variable SQLSecurePassword
+
+##### Note: Storing any credential in a file can pose a security risk. Use this option at your own risk!
 
 ### InfoLevel
 

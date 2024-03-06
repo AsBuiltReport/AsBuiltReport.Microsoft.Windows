@@ -22,20 +22,20 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
         [PSCredential] $Credential
     )
 
-    Write-PScriboMessage -IsWarning "Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
-    Write-PScriboMessage -IsWarning "Do not forget to update your report configuration file after each new release."
-    Write-PScriboMessage -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
-    Write-PScriboMessage -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Do not forget to update your report configuration file after each new release."
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
+    Write-PScriboMessage -Plugin "Module" -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
 
     Try {
         $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
 
         if ($InstalledVersion) {
-            Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($InstalledVersion.ToString()) is currently installed."
+            Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Microsoft.Windows $($InstalledVersion.ToString()) is currently installed."
             $LatestVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
             if ($LatestVersion -gt $InstalledVersion) {
-                Write-PScriboMessage -IsWarning "AsBuiltReport.Microsoft.Windows $($LatestVersion.ToString()) is available."
-                Write-PScriboMessage -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
+                Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Microsoft.Windows $($LatestVersion.ToString()) is available."
+                Write-PScriboMessage -Plugin "Module" -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
             }
         }
     } Catch {
@@ -342,13 +342,18 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             }
 
             if ($InfoLevel.SQLServer -ge 1 -and $OSType.Value -ne 'WorkStation') {
-                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQLSERVER' -ErrorAction SilentlyContinue }
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQL*' -ErrorAction SilentlyContinue }
                 if ($Status.Status -eq "Running") {
                     try {
-                        $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
+                        if ($Options.SQLLogin) {
+                            $SQLCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Options.SQLUserName, (ConvertTo-SecureString -Force $Options.SQLSecurePassword)
+                            $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $SQLCredential
+                        } else {
+                            $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
+                        }
                         if ($SQLServer) {
                             Section -Style Heading2 "SQL Server Configuration" {
-                                Paragraph 'The following table details the SQL Server settings'
+                                Paragraph "The following table details the SQL Server configuration from $($SQLServer.Name)."
                                 BlankLine
                                 # SQL Server Build Information
                                 Get-AbrWinSQLBuild

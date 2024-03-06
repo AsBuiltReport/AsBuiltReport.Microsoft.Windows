@@ -9,7 +9,9 @@
         "ShowTableCaptions": true
     },
     "Options": {
-        "Instance": "MSSQLSERVER"
+        "SQLLogin": false,
+        "SQLUserName": "",
+        "SQLSecurePassword": ""
     },
     "InfoLevel": {
         "_comment_": "Please refer to the AsBuiltReport project contributing guide for information about how to define InfoLevels.",
@@ -57,7 +59,7 @@
             "BP": true
         },
         "SQLServer": {
-            "Firewall": true
+            "BP": true
         }
     }
 }

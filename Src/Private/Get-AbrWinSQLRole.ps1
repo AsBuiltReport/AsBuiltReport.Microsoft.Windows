@@ -50,7 +50,7 @@ function Get-AbrWinSQLRole {
                     }
 
                     if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the security roles $($SQLServer.Name)."
+                        Paragraph "The following sections detail the configuration of the security roles."
                         foreach ($Item in $ItemInfo) {
                             Section -Style NOTOCHeading5 -ExcludeFromTOC "$($Item.Name)" {
                                 $TableParams = @{
@@ -65,7 +65,7 @@ function Get-AbrWinSQLRole {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the security role within $($SQLServer.Name)."
+                        Paragraph "The following table summarises the configuration of the security role."
                         BlankLine
                         $TableParams = @{
                             Name = "Roles"

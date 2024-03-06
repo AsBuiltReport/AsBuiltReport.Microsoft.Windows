@@ -45,7 +45,7 @@ function Get-AbrWinSQLBackupDevice {
                     }
 
                     if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the backup device $($SQLServer.Name)."
+                        Paragraph "The following sections detail the configuration of the backup device."
                         foreach ($Item in $ItemInfo) {
                             Section -Style NOTOCHeading5 -ExcludeFromTOC "$($Item.Name)" {
                                 $TableParams = @{
@@ -60,7 +60,7 @@ function Get-AbrWinSQLBackupDevice {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the backup device within $($SQLServer.Name)."
+                        Paragraph "The following table summarises the configuration of the backup device."
                         BlankLine
                         $TableParams = @{
                             Name = "Backup Devices"
