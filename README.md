@@ -72,6 +72,8 @@ PowerShell 5.1 and the following PowerShell modules are required for generating 
 - [DhcpServer Module](https://docs.microsoft.com/en-us/powershell/module/dhcpserver/?view=windowsserver2019-ps)
 - [DnsServer Module](https://docs.microsoft.com/en-us/powershell/module/dnsserver/?view=windowsserver2019-ps)
 - [FailoverClusters Module](https://learn.microsoft.com/en-us/powershell/module/failoverclusters/?view=windowsserver2022-ps)
+- [DBATools Module](https://dbatools.io/)
+
 
 ### Linux & macOS
 
@@ -97,13 +99,15 @@ Install-WindowsFeature -Name RSAT-DHCP
 # Hyper-V Server powershell modules
 Install-WindowsFeature -Name Hyper-V-PowerShell
 
-#IIS Server powershell modules
+# IIS Server powershell modules
 Install-WindowsFeature -Name web-mgmt-console
 Install-WindowsFeature -Name Web-Scripting-Tools
 
-#FailOver Cluster powershell modules
+# FailOver Cluster powershell modules
 Install-WindowsFeature -Name RSAT-Clustering-PowerShell
 
+# DBATools for SQL
+Install-Module dbatools
 ```
 
 ### PowerShell v5.x running on Windows client computer (Target)
@@ -126,6 +130,8 @@ Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerManagementTools
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-ManagementScriptingTools
 
+# DBATools for SQL
+Install-Module dbatools
 ```
 
 ### GitHub
@@ -179,6 +185,23 @@ The **Report** schema provides configuration of the Microsoft Windows report inf
 
 The **Options** schema allows certain options within the report to be toggled on or off.
 
+| Sub-Schema        | Setting      | Default | Description                              |
+| ----------------- | ------------ | ------- | ---------------------------------------- |
+| SQLLogin          | true / false | false   | Enable sql server login authentication . |
+| SQLUserName       | User defined | empty   | Sql server login Username .              |
+| SQLSecurePassword | User defined | empty   | Sql server login SecureString Password . |
+
+#### Generating a SecureString
+
+```powershell
+PS C:\> "SecurePassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString
+01000000d08c9ddf0115d1118c7a00c04fc297eb01000000b3605317d738c346801fbff6596b0d130000
+PS C:\>
+```
+Copy/Paste the output text to the variable SQLSecurePassword
+
+##### Note: Storing any credential in a file can pose a security risk. Use this option at your own risk!
+
 ### InfoLevel
 
 The **InfoLevel** schema allows configuration of each section of the report at a granular level. The following sections can be set.
@@ -204,6 +227,7 @@ The table below outlines the default and maximum **InfoLevel** settings for each
 | DHCP            |        1        |        2        |
 | DNS             |        1        |        2        |
 | FailOverCluster |        1        |        2        |
+| SQLServer       |        1        |        2        |
 
 ### Healthcheck
 

@@ -12,7 +12,7 @@
     RootModule = 'AsBuiltReport.Microsoft.Windows.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.5.2'
+    ModuleVersion = '0.5.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -55,6 +55,10 @@
         @{
             ModuleName = 'AsBuiltReport.Core';
             ModuleVersion = '1.3.0'
+        },
+        @{
+            ModuleName = 'dbatools';
+            ModuleVersion = '2.1.7'
         }
     )
 

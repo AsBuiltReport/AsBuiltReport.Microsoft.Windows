@@ -13,6 +13,10 @@ jobs:
         shell: pwsh
         run: |
           Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+      - name: Install DBAtools module
+        shell: pwsh
+        run: |
+          Install-Module -Name dbatools -Repository PSGallery -Force
       - name: Install AsBuiltReport.Core module
         shell: pwsh
         run: |
