@@ -53,7 +53,7 @@ function Get-AbrWinSQLDatabase {
                                     'Status' = $SQLDB.Status
                                     'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
                                     'Recovery Model' = $SQLDB.RecoveryModel
-                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
+                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeMB)) {
                                         $true { '--' }
                                         $false { "$($SQLDB.SizeMB) MB" }
                                         default { 'Unknown' }
@@ -80,7 +80,7 @@ function Get-AbrWinSQLDatabase {
                         }
 
                         if ($InfoLevel.SQLServer -ge 2) {
-                            Paragraph "The following sections detail the configuration of the system databases within $($SQLServer.Name)."
+                            Paragraph "The following sections detail the configuration of the system databases."
                             foreach ($SQLDB in $SQLDBInfo) {
                                 Section -Style NOTOCHeading5 -ExcludeFromTOC "$($SQLDB.Name)" {
                                     $TableParams = @{
@@ -95,7 +95,7 @@ function Get-AbrWinSQLDatabase {
                                 }
                             }
                         } else {
-                            Paragraph "The following table summarises the configuration of the system databases within $($SQLServer.Name)."
+                            Paragraph "The following table summarises the configuration of the system databases."
                             BlankLine
                             $TableParams = @{
                                 Name = "System Databases"
@@ -126,7 +126,7 @@ function Get-AbrWinSQLDatabase {
                                     'Status' = $SQLDB.Status
                                     'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
                                     'Recovery Model' = $SQLDB.RecoveryModel
-                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeM)) {
+                                    'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeMB)) {
                                         $true { '--' }
                                         $false { "$($SQLDB.SizeMB) MB" }
                                         default { 'Unknown' }

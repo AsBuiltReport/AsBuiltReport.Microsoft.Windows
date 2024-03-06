@@ -31,7 +31,7 @@ function Get-AbrWinSQLLogin {
                 Section -Style Heading4 'Logins' {
                     $ItemInfo = @()
                     foreach ($Item in $SQLLogins) {
-                        $ServerRoles = try {Get-DbaServerRoleMember -SqlInstance $SQLServer -Login $Item.Name} catch {Out-Null}
+                        $ServerRoles = try { Get-DbaServerRoleMember -SqlInstance $SQLServer -Login $Item.Name } catch { Out-Null }
                         try {
                             $InObj = [Ordered]@{
                                 'Name' = $Item.Name
@@ -69,7 +69,7 @@ function Get-AbrWinSQLLogin {
                     }
 
                     if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the security login $($SQLServer.Name)."
+                        Paragraph "The following sections detail the configuration of the security login."
                         foreach ($Item in $ItemInfo) {
                             Section -Style NOTOCHeading5 -ExcludeFromTOC "$($Item.Name)" {
                                 $TableParams = @{
@@ -84,7 +84,7 @@ function Get-AbrWinSQLLogin {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the security login within $($SQLServer.Name)."
+                        Paragraph "The following table summarises the configuration of the security login."
                         BlankLine
                         $TableParams = @{
                             Name = "Logins"

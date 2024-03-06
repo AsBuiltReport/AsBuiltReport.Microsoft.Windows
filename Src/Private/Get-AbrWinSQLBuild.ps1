@@ -28,7 +28,7 @@ function Get-AbrWinSQLBuild {
         if ($InfoLevel.SQLServer -ge 1) {
             try {
                 $Properties = Get-DbaInstanceProperty -SqlInstance $SQLServer | ForEach-Object { @{$_.Name = $_.Value } }
-                $Build = Get-DbaBuild -SqlInstance $SQLServer
+                $Build = Get-DbaBuild -SqlInstance $SQLServer -WarningAction SilentlyContinue
                 if ($Properties) {
                     Section -Style Heading3 'General Information' {
                         Paragraph 'The following table details sql server Properties information'
