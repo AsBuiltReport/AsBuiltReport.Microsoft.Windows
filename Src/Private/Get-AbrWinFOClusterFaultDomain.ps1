@@ -36,14 +36,14 @@ function Get-AbrWinFOClusterFaultDomain {
                                 'Name' = $Setting.Name
                                 'Type' = $Setting.Type
                                 'Parent Name' = Switch ([string]::IsNullOrEmpty($Setting.ParentName)) {
-                                    $true {"--"}
-                                    $false {$Setting.ParentName}
-                                    default {'Unknown'}
+                                    $true { "--" }
+                                    $false { $Setting.ParentName }
+                                    default { 'Unknown' }
                                 }
                                 'Children Names' = Switch ([string]::IsNullOrEmpty($Setting.ChildrenNames)) {
-                                    $true {"--"}
-                                    $false {$Setting.ChildrenNames}
-                                    default {'Unknown'}
+                                    $true { "--" }
+                                    $false { $Setting.ChildrenNames }
+                                    default { 'Unknown' }
                                 }
                                 'Location' = ConvertTo-EmptyToFiller $Setting.Location
                             }

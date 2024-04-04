@@ -30,7 +30,7 @@ function Get-AbrWinNetDNSClient {
                 $DnsClient = Invoke-Command -Session $TempPssSession { Get-DnsClientGlobalSetting }
                 if ($DnsClient) {
                     Section -Style Heading3 'DNS Client' {
-                        Paragraph 'The following table details the DNS Seach Domains'
+                        Paragraph 'The following table details the DNS Search Domains'
                         BlankLine
                         $DnsClientReport = [PSCustomObject]@{
                             'DNS Suffix' = $DnsClient.SuffixSearchList -Join ","
@@ -39,7 +39,7 @@ function Get-AbrWinNetDNSClient {
                             'Devolution Level' = $DnsClient.DevolutionLevel
                         }
                         $TableParams = @{
-                            Name = "DNS Seach Domain"
+                            Name = "DNS Search Domain"
                             List = $false
                             ColumnWidths = 40, 20, 20, 20
                         }
