@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix #25
+- Fix [#25](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/25)
+- Fix [#26](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/26)
 
 ## [0.5.3] - 2024-03-06
 
