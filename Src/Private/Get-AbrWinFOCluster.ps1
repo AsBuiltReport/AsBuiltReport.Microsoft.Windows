@@ -21,7 +21,7 @@ function Get-AbrWinFOCluster {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PscriboMessage "Collecting Host FailOver Cluster Server information."
+        Write-PScriboMessage "Collecting Host FailOver Cluster Server information."
     }
 
     process {
@@ -38,9 +38,8 @@ function Get-AbrWinFOCluster {
                         'Description' = ConvertTo-EmptyToFiller $Settings.Description
                     }
                     $OutObj += [pscustomobject]$inobj
-                }
-                catch {
-                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
 
                 $TableParams = @{
@@ -53,9 +52,8 @@ function Get-AbrWinFOCluster {
                 }
                 $OutObj | Table @TableParams
             }
-        }
-        catch {
-            Write-PscriboMessage -IsWarning $_.Exception.Message
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
     }
 

@@ -5,7 +5,7 @@ function Get-AbrWinApplication {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.4
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -40,14 +40,15 @@ function Get-AbrWinApplication {
                                 $TempAddRemoveReport = [PSCustomObject]@{
                                     'Application Name' = $App.DisplayName
                                     'Publisher' = $App.Publisher
-                                    'Version' = Switch ([string]::IsNullOrEmpty($App.Version)) {
+                                    'Version' = Switch ([string]::IsNullOrEmpty($App.DisplayVersion)) {
                                         $true { "--" }
-                                        $false { $App.Version }
+                                        $false { $App.DisplayVersion }
                                         default { "Unknown" }
                                     }
-                                    'Install Date' = Switch (($App.InstallDate).count) {
-                                        0 { "--" }
-                                        default { $App.InstallDate }
+                                    'Install Date' = Switch ([string]::IsNullOrEmpty($App.InstallDate)) {
+                                        $true { "--" }
+                                        $false {$App.InstallDate}
+                                        default { 'Unknown' }
                                     }
                                 }
                                 $AddRemoveReport += $TempAddRemoveReport
