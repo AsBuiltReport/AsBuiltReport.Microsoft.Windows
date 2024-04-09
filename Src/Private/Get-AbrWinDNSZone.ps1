@@ -5,7 +5,7 @@ function Get-AbrWinDNSZone {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.4
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -195,10 +195,10 @@ function Get-AbrWinDNSZone {
                                                 'Aging Enabled' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Settings.AgingEnabled)
                                                 'Refresh Interval' = ConvertTo-EmptyToFiller $Settings.RefreshInterval
                                                 'NoRefresh Interval' = ConvertTo-EmptyToFiller $Settings.NoRefreshInterval
-                                                'Available For Scavenge' = Switch ($Settings.AvailForScavengeTime) {
-                                                    "" { "--"; break }
-                                                    $Null { "--"; break }
-                                                    default { (ConvertTo-EmptyToFiller ($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")); break }
+                                                'Available For Scavenge' = Switch ([string]::IsNullOrEmpty($Settings.AvailForScavengeTime)) {
+                                                    $true { "--" }
+                                                    $false { (ConvertTo-EmptyToFiller ($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")) }
+                                                    default { 'Unknown' }
                                                 }
                                             }
                                             $OutObj += [pscustomobject]$inobj

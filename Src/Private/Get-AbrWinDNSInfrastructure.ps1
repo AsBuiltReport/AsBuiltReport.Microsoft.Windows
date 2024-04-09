@@ -5,7 +5,7 @@ function Get-AbrWinDNSInfrastructure {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.4
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -112,10 +112,10 @@ function Get-AbrWinDNSInfrastructure {
                                     'NoRefresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.NoRefreshInterval
                                     'Refresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.RefreshInterval
                                     'Scavenging Interval' = ConvertTo-EmptyToFiller $DNSSetting.ScavengingInterval
-                                    'Last Scavenge Time' = Switch ($DNSSetting.LastScavengeTime) {
-                                        "" { "--"; break }
-                                        $Null { "--"; break }
-                                        default { ConvertTo-EmptyToFiller ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
+                                    'Last Scavenge Time' = Switch ([string]::IsNullOrEmpty($DNSSetting.LastScavengeTime)) {
+                                        $true { "--" }
+                                        $false { ConvertTo-EmptyToFiller ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
+                                        default { 'Unknown' }
                                     }
                                     'Scavenging State' = Switch ($DNSSetting.ScavengingState) {
                                         "True" { "Enabled" }
