@@ -31,7 +31,7 @@ function Get-AbrWinSQLBuild {
                 $Build = Get-DbaBuild -SqlInstance $SQLServer -WarningAction SilentlyContinue
                 if ($Properties) {
                     Section -Style Heading3 'General Information' {
-                        Paragraph 'The following table details sql server Properties information'
+                        Paragraph 'The following table details sql server properties information'
                         BlankLine
                         [array]$SQLServerObjt = @()
                         $TempSQLServerObjt = [PSCustomObject]@{

@@ -27,7 +27,7 @@ function Get-AbrWinHostStorageVolume {
     process {
         if ($InfoLevel.Storage -ge 1) {
             try {
-                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock {  Get-Volume | Where-Object {$_.DriveType -ne "CD-ROM" -and $NUll -ne $_.DriveLetter} }
+                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock {  Get-Volume | Where-Object {$_.DriveType -ne "CD-ROM" -and $_.DriveLetter} }
                 if ($HostVolumes) {
                     Section -Style Heading3 'Host Volumes' {
                         Paragraph 'The following section details local volumes on the host'

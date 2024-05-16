@@ -1,7 +1,7 @@
 function Get-AbrWinDNSZone {
     <#
     .SYNOPSIS
-     Used by As Built Report to retrieve Microsoft Windows Domain Name System Zone information.
+        Used by As Built Report to retrieve Microsoft Windows Domain Name System Zone information.
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
