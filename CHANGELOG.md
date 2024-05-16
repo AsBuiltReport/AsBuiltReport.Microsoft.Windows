@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.4] - 2024-05-16
 
+### Changed
+
+- Increase AsBuiltReport.Core module version (v1.4.0)
+
 ### Fixed
 
 - Fix [#25](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/25)
