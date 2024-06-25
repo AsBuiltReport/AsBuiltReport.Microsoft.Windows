@@ -5,7 +5,7 @@ function Get-AbrWinHostStorageVolume {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.5
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -21,17 +21,17 @@ function Get-AbrWinHostStorageVolume {
 
     begin {
         Write-PScriboMessage "Storage InfoLevel set at $($InfoLevel.Storage)."
-        Write-PscriboMessage "Collecting Host Storage Volume information."
+        Write-PScriboMessage "Collecting Host Storage Volume information."
     }
 
     process {
         if ($InfoLevel.Storage -ge 1) {
             try {
-                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock {  Get-Volume | Where-Object {$_.DriveType -ne "CD-ROM" -and $_.DriveLetter} }
+                $HostVolumes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Volume | Where-Object { $_.DriveType -ne "CD-ROM" -and $_.DriveLetter } }
                 if ($HostVolumes) {
                     Section -Style Heading3 'Host Volumes' {
                         Paragraph 'The following section details local volumes on the host'
-                        Blankline
+                        BlankLine
                         $HostVolumeReport = @()
                         ForEach ($HostVolume in $HostVolumes) {
                             try {
@@ -44,9 +44,8 @@ function Get-AbrWinHostStorageVolume {
                                     'Health Status' = $HostVolume.HealthStatus
                                 }
                                 $HostVolumeReport += $TempHostVolumeReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
                         $TableParams = @{
@@ -60,9 +59,8 @@ function Get-AbrWinHostStorageVolume {
                         $HostVolumeReport | Sort-Object -Property 'Drive Letter' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }
