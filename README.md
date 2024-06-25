@@ -40,8 +40,6 @@ Please refer to the AsBuiltReport [website](https://www.asbuiltreport.com) for m
 
 Sample Microsoft Windows As Built report HTML file: [Sample Microsoft Windows As-Built Report.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/dev/Samples/Sample%20Microsoft%20Windows%20As%20Built%20Report.html "Sample Microsoft Windows As-Built Report")
 
-Sample Microsoft Windows As Built report PDF file: [Sample Microsoft Windows As Built Report.pdf](https://raw.githubusercontent.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/dev/Samples/Sample%20Microsoft%20Windows%20As%20Built%20Report.pdf)
-
 # :beginner: Getting Started
 
 Below are the instructions on how to install, configure and generate a Microsoft Windows As Built report.
@@ -50,7 +48,7 @@ Below are the instructions on how to install, configure and generate a Microsoft
 <!-- ********** Update supported Windows versions ********** -->
 The Microsoft Windows As Built Report supports the following Windows Server versions;
 
-- 2012, 2016, 2019 & 2022
+- 2016, 2019 & 2022
 
 ### PowerShell
 
@@ -257,3 +255,5 @@ PS C:\> New-AsBuiltReport -Report Microsoft.Windows -Target 'win-server-01v.cont
 
 - Issues with WinRM when using the IP address instead of the "Fully Qualified Domain Name".
 - The report provides the ability to extract the configuration of the DNS/DHCP/Hyper-V/IIS/FailOver-Cluster services. In order to obtain this information it is required that the servers running these services have the corresponding powershell modules installed.
+- Issues when running the report against Windows Server 2012 and 2012 R2.
+  - Error: "Exception calling Save with 1 argument(s): hexadecimal value 0x00, is an invalid character."

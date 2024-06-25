@@ -27,7 +27,7 @@ function Get-AbrWinOSConfig {
     process {
         if ($InfoLevel.OperatingSystem -ge 1) {
             Section -Style Heading3 'OS Configuration' {
-                Paragraph 'The following section details hos OS configuration'
+                Paragraph 'The following section details host OS configuration'
                 BlankLine
                 $HostOSReport = [PSCustomObject] @{
                     'Windows Product Name' = $HostInfo.WindowsProductName
