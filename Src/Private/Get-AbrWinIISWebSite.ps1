@@ -5,7 +5,7 @@ function Get-AbrWinIISWebSite {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.5
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -20,7 +20,7 @@ function Get-AbrWinIISWebSite {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PscriboMessage "Collecting IIS Sites information."
+        Write-PScriboMessage "Collecting IIS Sites information."
     }
 
     process {
@@ -30,7 +30,7 @@ function Get-AbrWinIISWebSite {
                 if ($IISWebSites) {
                     Section -Style Heading3 'Sites Summary' {
                         Paragraph 'The following table provide a summary of IIS Web Sites'
-                        Blankline
+                        BlankLine
                         $IISWebSitesrReport = @()
                         foreach ($IISWebSite in $IISWebSites) {
                             try {
@@ -41,9 +41,8 @@ function Get-AbrWinIISWebSite {
                                     'Application Pool' = $IISWebSite.applicationPool
                                 }
                                 $IISWebSitesrReport += $TempIISWebSitesrReport
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
 
@@ -61,21 +60,21 @@ function Get-AbrWinIISWebSite {
                             if ($IISWebSites) {
                                 Section -Style Heading4 'Sites Configuration' {
                                     Paragraph 'The following section details IIS Web Sites configuration'
-                                    Blankline
+                                    BlankLine
                                     $IISWebSitesrReport = @()
                                     foreach ($IISWebSite in $IISWebSites) {
                                         try {
                                             Section -Style Heading5 "$($IISWebSite.Name)" {
                                                 Paragraph "The following table details $($IISWebSite.Name) settings"
-                                                Blankline
-                                                $SiteURL = Invoke-Command -Session $TempPssSession { Get-WebURL -PSPath "IIS:\Sites\$(($using:IISWebSite).Name)"}
+                                                BlankLine
+                                                $SiteURL = Invoke-Command -Session $TempPssSession { Get-WebURL -PSPath "IIS:\Sites\$(($using:IISWebSite).Name)" }
                                                 $TempIISWebSitesrReport = [PSCustomObject]@{
                                                     'Name' = $IISWebSite.Name
                                                     'Auto Start' = ConvertTo-TextYN $IISWebSite.serverAutoStart
                                                     'Enabled Protocols ' = $IISWebSite.enabledProtocols
                                                     'URL' = Switch (($SiteURL.ResponseUri).count) {
-                                                        0 {"--"}
-                                                        default {$SiteURL.ResponseUri}
+                                                        0 { "--" }
+                                                        default { $SiteURL.ResponseUri }
                                                     }
                                                     'Path ' = $IISWebSite.physicalPath
                                                     'Log Path' = $IISWebSite.logFile.directory
@@ -97,7 +96,7 @@ function Get-AbrWinIISWebSite {
                                                     if ($IISWebApps) {
                                                         Section -Style Heading5 "Web Applications" {
                                                             Paragraph "The following table details $($IISWebSite.Name) Web Application"
-                                                            Blankline
+                                                            BlankLine
                                                             $IISWebAppsReport = @()
                                                             foreach ($IISWebApp in $IISWebApps) {
                                                                 try {
@@ -107,9 +106,8 @@ function Get-AbrWinIISWebSite {
                                                                         'Physical Path ' = $IISWebApp.PhysicalPath
                                                                     }
                                                                     $IISWebAppsReport += $TempIISWebAppsReport
-                                                                }
-                                                                catch {
-                                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                                } catch {
+                                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                                 }
                                                             }
 
@@ -124,27 +122,23 @@ function Get-AbrWinIISWebSite {
                                                             $IISWebAppsReport | Table @TableParams
                                                         }
                                                     }
-                                                }
-                                                catch {
-                                                    Write-PscriboMessage -IsWarning $_.Exception.Message
+                                                } catch {
+                                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                                 }
                                             }
-                                        }
-                                        catch {
-                                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                                        } catch {
+                                            Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
                                 }
                             }
-                        }
-                        catch {
-                            Write-PscriboMessage -IsWarning $_.Exception.Message
+                        } catch {
+                            Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

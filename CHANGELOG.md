@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.5] - Unreleased
+
+### Changed
+
+- Increase dbatools module version (v2.1.18)
+- Increase Eomm/why-don-t-you-tweet (v2.0)
+
+### Fixed
+
+- Fix DNS Zone table not displaying 'Available For Scavenge' and 'Last Scavenge Time' correctly
+- Fix DHCP Infrastructure table not displaying 'Database Logging Enabled' and 'Database Backup Interval' correctly
+
 ## [0.5.4] - 2024-05-16
 
 ### Changed

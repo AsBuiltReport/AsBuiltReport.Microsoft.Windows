@@ -35,7 +35,7 @@ function Get-AbrWinLocalAdmin {
                                 $TempLocalAdminsReport = [PSCustomObject]@{
                                     'Account Name' = $LocalAdmin.Name
                                     'Account Type' = $LocalAdmin.ObjectClass
-                                    'Account Source' = $LocalAdmin.PrincipalSource
+                                    'Account Source' = ConvertTo-EmptyToFiller $LocalAdmin.PrincipalSource
                                 }
                                 $LocalAdminsReport += $TempLocalAdminsReport
                             } catch {

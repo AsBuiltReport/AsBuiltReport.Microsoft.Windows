@@ -5,7 +5,7 @@ function Get-AbrWinOSHotfix {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.5
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -37,9 +37,9 @@ function Get-AbrWinOSHotfix {
                                     'Hotfix ID' = $HotFix.HotFixID
                                     'Description' = $HotFix.Description
                                     'Installation Date' = Switch ([string]::IsNullOrEmpty($HotFix.InstalledOn)) {
-                                        $true {'--'}
-                                        $false {$HotFix.InstalledOn.ToShortDateString()}
-                                        default {'Unknown'}
+                                        $true { '--' }
+                                        $false { $HotFix.InstalledOn.ToShortDateString() }
+                                        default { 'Unknown' }
                                     }
                                 }
                                 $HotfixReport += $TempHotFix

@@ -5,7 +5,7 @@ function Get-AbrWinFOClusterSharedVolume {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.5
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -36,9 +36,9 @@ function Get-AbrWinFOClusterSharedVolume {
                                 'Name' = $Setting.Name
                                 'Owner Node' = $Setting.OwnerNode
                                 'Shared Volume' = Switch ([string]::IsNullOrEmpty($Setting.SharedVolumeInfo.FriendlyVolumeName)) {
-                                    $true {"Unknown"}
-                                    $false {$Setting.SharedVolumeInfo.FriendlyVolumeName}
-                                    default {"--"}
+                                    $true { "Unknown" }
+                                    $false { $Setting.SharedVolumeInfo.FriendlyVolumeName }
+                                    default { "--" }
                                 }
                                 'State' = $Setting.State
                             }
