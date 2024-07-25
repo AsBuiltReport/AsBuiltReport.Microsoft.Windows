@@ -38,7 +38,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 Write-PScriboMessage -Plugin "Module" -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
             }
         }
-    } Catch {
+    }
+    Catch {
         Write-PScriboMessage -IsWarning $_.Exception.Message
     }
 
@@ -66,7 +67,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             try {
                 $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
                 $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
-            } catch {
+            }
+            catch {
                 Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
                 throw
             }
@@ -100,55 +102,57 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         # Host Service Status
                         Get-AbrWinOSService
                     }
-                } catch {
+                }
+                catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
             #Local Users and Groups
             if ($InfoLevel.Account -ge 1) {
                 try {
-					# Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
-					$AsBuiltWinModuleFolder = (Get-InstalledModule -Name "AsBuiltReport.Microsoft.Windows" -AllVersions | Sort-Object Version -Descending | Select-Object -First 1).InstalledLocation
-					$SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
-					# Dot-source the script from the latest version
-					. $SharedFunctionPath 
-					# Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
-					$SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
-					# Get Local Users
-		                    	$LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
+                    # Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
+                    $AsBuiltWinModuleFolder = (Get-InstalledModule -Name "AsBuiltReport.Microsoft.Windows" -AllVersions | Sort-Object Version -Descending | Select-Object -First 1).InstalledLocation
+                    $SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
+                    # Dot-source the script from the latest version
+                    . $SharedFunctionPath 
+                    # Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
+                    $SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
+                    # Get Local Users
+                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
 					
-					# Get Local Groups and their members
-					$LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
-						param ($ScriptContent)
+                    # Get Local Groups and their members
+                    $LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
+                        param ($ScriptContent)
 			
-						# Create and dot-source the script block so the remote computer can use our shared functions
-						. ([scriptblock]::Create($ScriptContent))
+                        # Create and dot-source the script block so the remote computer can use our shared functions
+                        . ([scriptblock]::Create($ScriptContent))
 			
-						$Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } } 
-						Write-Output $Result
-					} -ArgumentList $SharedFunctions	
+                        $Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } } 
+                        Write-Output $Result
+                    } -ArgumentList $SharedFunctions	
 					
-					# Get Local Administrators members
-					$LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
-					# Remove empty or null elements
-					$LocalAdmins = $LocalAdmins | Where-Object { $_ }
+                    # Get Local Administrators members
+                    $LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
+                    # Remove empty or null elements
+                    $LocalAdmins = $LocalAdmins | Where-Object { $_ }
 					
-					Write-Host "Local Admins -----"
-					$LocalAdmins
+                    Write-Host "Local Admins -----"
+                    $LocalAdmins
 
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
-						Section -Style Heading2 'Local Users and Groups' {
-							Paragraph 'The following section details local configured users and groups'
-							BlankLine
-							#Local Users
-							Get-AbrWinLocalUser
-							#Local Groups
-							Get-AbrWinLocalGroup
-							#Local Administrators
-							Get-AbrWinLocalAdmin
-						}
+                        Section -Style Heading2 'Local Users and Groups' {
+                            Paragraph 'The following section details local configured users and groups'
+                            BlankLine
+                            #Local Users
+                            Get-AbrWinLocalUser
+                            #Local Groups
+                            Get-AbrWinLocalGroup
+                            #Local Administrators
+                            Get-AbrWinLocalAdmin
+                        }
                     }
-                } catch {
+                }
+                catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
@@ -173,7 +177,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         #Host Network Adapter MTU
                         Get-AbrWinNetAdapterMTU
                     }
-                } catch {
+                }
+                catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
@@ -191,7 +196,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         #MPIO Setting
                         Get-AbrWinHostStorageMPIO
                     }
-                } catch {
+                }
+                catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
@@ -213,13 +219,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # Hyper-V VM Information
                                 Get-AbrWinHyperVHostVM
                             }
-                        } else {
+                        }
+                        else {
                             Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No HyperV service detected. Disabling HyperV server section"
                 }
             }
@@ -238,20 +247,24 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # IIS Web Site
                                 Get-AbrWinIISWebSite
                             }
-                        } else {
+                        }
+                        else {
                             If ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
                                 Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service "IIS"
                                 Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service "IIS"
-                            } else {
+                            }
+                            else {
                                 Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Service "IIS"
                                 Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Service "IIS"
                                 Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service "IIS"
                             }
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No W3SVC service detected. Disabling IIS server section"
                 }
             }
@@ -270,7 +283,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Get-AbrWinSMBShare
                         }
                     }
-                } catch {
+                }
+                catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }
             }
@@ -293,13 +307,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # DHCP Server Per Scope Info
                                 Get-AbrWinDHCPv4PerScopeSetting
                             }
-                        } else {
+                        }
+                        else {
                             Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service "DHCP Server"
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No DHCPServer service detected. Disabling Dhcp server section"
                 }
             }
@@ -316,13 +333,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # DNS Zones Configuration
                                 Get-AbrWinDNSZone
                             }
-                        } else {
+                        }
+                        else {
                             Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service "DNS Server"
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No DNS Server service detected. Disabling DNS server section"
                 }
             }
@@ -356,13 +376,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinFOClusterSharedVolume
 
                             }
-                        } else {
+                        }
+                        else {
                             Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service "FailOver Cluster"
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No FailOver Cluster service detected. Disabling FailOver Cluster section"
                 }
             }
@@ -374,7 +397,8 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         if ($Options.SQLLogin) {
                             $SQLCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Options.SQLUserName, (ConvertTo-SecureString -Force $Options.SQLSecurePassword)
                             $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $SQLCredential
-                        } else {
+                        }
+                        else {
                             $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
                         }
                         if ($SQLServer) {
@@ -408,13 +432,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             # Disconnect SQL Instance
                             Write-PScriboMessage "Disconnecting SQL Instance"
                             $SQLServer | Disconnect-DbaInstance | Out-Null
-                        } else {
+                        }
+                        else {
                             Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance"
                         }
-                    } catch {
+                    }
+                    catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
-                } else {
+                }
+                else {
                     Write-PScriboMessage "No SQL Server service detected. Disabling SQL Server section"
                 }
             }
