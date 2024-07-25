@@ -107,46 +107,46 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             #Local Users and Groups
             if ($InfoLevel.Account -ge 1) {
                 try {
-			# Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
-			$AsBuiltWinModuleFolder = (Get-InstalledModule -Name "AsBuiltReport.Microsoft.Windows" -AllVersions | Sort-Object Version -Descending | Select-Object -First 1).InstalledLocation
-			$SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
-			# Dot-source the script from the latest version
-			. $SharedFunctionPath 
-			# Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
-			$SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
-			# Get Local Users
-                    	$LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
+					# Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
+					$AsBuiltWinModuleFolder = (Get-InstalledModule -Name "AsBuiltReport.Microsoft.Windows" -AllVersions | Sort-Object Version -Descending | Select-Object -First 1).InstalledLocation
+					$SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
+					# Dot-source the script from the latest version
+					. $SharedFunctionPath 
+					# Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
+					$SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
+					# Get Local Users
+		                    	$LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
+					
+					# Get Local Groups and their members
+					$LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
+						param ($ScriptContent)
 			
-			# Get Local Groups and their members
-			$LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
-				param ($ScriptContent)
-	
-				# Create and dot-source the script block so the remote computer can use our shared functions
-				. ([scriptblock]::Create($ScriptContent))
-	
-				$Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } } 
-				Write-Output $Result
-			} -ArgumentList $SharedFunctions	
+						# Create and dot-source the script block so the remote computer can use our shared functions
+						. ([scriptblock]::Create($ScriptContent))
 			
-			# Get Local Administrators members
-			$LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
-			# Remove empty or null elements
-			$LocalAdmins = $LocalAdmins | Where-Object { $_ }
-			
-			Write-Host "Local Admins -----"
-			$LocalAdmins
+						$Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } } 
+						Write-Output $Result
+					} -ArgumentList $SharedFunctions	
+					
+					# Get Local Administrators members
+					$LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
+					# Remove empty or null elements
+					$LocalAdmins = $LocalAdmins | Where-Object { $_ }
+					
+					Write-Host "Local Admins -----"
+					$LocalAdmins
 
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
-                        Section -Style Heading2 'Local Users and Groups' {
-                            Paragraph 'The following section details local configured users and groups'
-                            BlankLine
-                            #Local Users
-                            Get-AbrWinLocalUser
-                            #Local Groups
-                            Get-AbrWinLocalGroup
-                            #Local Administrators
-                            Get-AbrWinLocalAdmin
-                        }
+						Section -Style Heading2 'Local Users and Groups' {
+							Paragraph 'The following section details local configured users and groups'
+							BlankLine
+							#Local Users
+							Get-AbrWinLocalUser
+							#Local Groups
+							Get-AbrWinLocalGroup
+							#Local Administrators
+							Get-AbrWinLocalAdmin
+						}
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
