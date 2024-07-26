@@ -111,7 +111,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             if ($InfoLevel.Account -ge 1) {
                 try {
                     # Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
-                    $AsBuiltWinModuleFolder = (Get-InstalledModule -Name "AsBuiltReport.Microsoft.Windows" -AllVersions | Sort-Object Version -Descending | Select-Object -First 1).InstalledLocation
+                    $AsBuiltWinModuleFolder = (Get-Module -ListAvailable -Name "AsBuiltReport.Microsoft.Windows" | Sort-Object Version -Descending | Select-Object -First 1).Path | Split-Path
                     $SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
                     # Dot-source the script from the latest version
                     . $SharedFunctionPath 
