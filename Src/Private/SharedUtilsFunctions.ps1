@@ -184,7 +184,7 @@ Function Get-LocalGroupMembership {
     
     .NOTES
         Version:        0.5.4
-        Author:         Boe Prox, Updated by Graham Flynn
+        Author:         Boe Prox (Updated by Graham Flynn (26/07/2024)
         Changes:        Updated to ouput PrincipalSource and ObjectClass so output is similar to Microsoft's Get-LocalGroupMember for compatibility
 
     .PARAMETER Computername
@@ -267,12 +267,12 @@ Function Get-LocalGroupMembership {
         $PSBoundParameters.GetEnumerator() | ForEach {
             Write-Verbose $_
         }
-        #region Extra Configurations
+        # region Extra Configurations
         Write-Verbose ("Depth: {0}" -f $Depth)
-        #endregion Extra Configurations
-        #Define hash table for Get-RunspaceData function
+        # endregion Extra Configurations
+        # Define hash table for Get-RunspaceData function
         $runspacehash = @{}
-        #Function to perform runspace job cleanup
+        # Function to perform runspace job cleanup
         Function Get-RunspaceData {
             [cmdletbinding()]
             param(
@@ -294,7 +294,7 @@ Function Get-LocalGroupMembership {
                 If ($more -AND $PSBoundParameters['Wait']) {
                     Start-Sleep -Milliseconds 100
                 }   
-                #Clean out unused runspace jobs
+                # Clean out unused runspace jobs
                 $temphash = $runspaces.clone()
                 $temphash | Where {
                     $_.runspace -eq $Null
@@ -305,7 +305,7 @@ Function Get-LocalGroupMembership {
             } while ($more -AND $PSBoundParameters['Wait'])
         }
 
-        #region ScriptBlock
+        # region ScriptBlock
         $scriptBlock = {
             Param ($Computer, $Group, $Depth, $NetBIOSDomain, $ObjNT, $Translate)            
             $Script:Depth = $Depth
@@ -330,7 +330,7 @@ Function Get-LocalGroupMembership {
                         # Check if this member is a group.
                         $isGroup = ($Member.InvokeGet("Class") -eq "group")
 
-                        #Remove the domain from the computername to fix the type comparison when supplied with FQDN
+                        # Remove the domain from the computername to fix the type comparison when supplied with FQDN
                         IF ($Computer.Contains('.')) {
                             $Computer = $computer.Substring(0, $computer.IndexOf('.'))
                         }
@@ -363,7 +363,7 @@ Function Get-LocalGroupMembership {
                         }
                         If ($isGroup) {
                             # Check if this group is local or domain.
-                            #$host.ui.WriteVerboseLine("(RS)Checking if Counter: {0} is less than Depth: {1}" -f $Counter, $Depth)
+                            # $host.ui.WriteVerboseLine("(RS)Checking if Counter: {0} is less than Depth: {1}" -f $Counter, $Depth)
                             If ($Counter -lt $Depth) {
                                 If ($Type -eq 'Local') {
                                     If ($Groups[$Name] -notcontains 'Local') {
@@ -450,7 +450,7 @@ Function Get-LocalGroupMembership {
                     $host.ui.WriteWarningLine(("GDGM{0}" -f $_.Exception.Message))
                 }
             }
-            #region Get Local Group Members
+            # region Get Local Group Members
             $Script:Groups = @{}
             $Script:Counter = 0
             # Bind to the group object with the WinNT provider.
@@ -458,9 +458,9 @@ Function Get-LocalGroupMembership {
             Write-Verbose ("Checking {0} membership for {1}" -f $Group, $Computer)
             $Groups[$Group] += , 'Local'
             Get-LocalGroupMember -LocalGroup $ADSIGroup
-            #endregion Get Local Group Members
+            # endregion Get Local Group Members
         }
-        #endregion ScriptBlock
+        # endregion ScriptBlock
         Write-Verbose ("Checking to see if connected to a domain")
         Try {
             $Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
@@ -478,9 +478,10 @@ Function Get-LocalGroupMembership {
             $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
             [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)  
         }
-        Catch { Write-Warning ("{0}" -f $_.Exception.Message) }         
+        Catch { # Write-Warning ("{0}" -f $_.Exception.Message) 
+        }         
         
-        #region Runspace Creation
+        # region Runspace Creation
         Write-Verbose ("Creating runspace pool and session states")
         $sessionstate = [system.management.automation.runspaces.initialsessionstate]::CreateDefault()
         $runspacepool = [runspacefactory]::CreateRunspacePool(1, $Throttle, $sessionstate, $Host)
@@ -488,23 +489,23 @@ Function Get-LocalGroupMembership {
         
         Write-Verbose ("Creating empty collection to hold runspace jobs")
         $Script:runspaces = New-Object System.Collections.ArrayList        
-        #endregion Runspace Creation
+        # endregion Runspace Creation
     }
 
     Process {
         ForEach ($Computer in $Computername) {
-            #Create the powershell instance and supply the scriptblock with the other parameters 
+            # Create the powershell instance and supply the scriptblock with the other parameters 
             $powershell = [powershell]::Create().AddScript($scriptBlock).AddArgument($computer).AddArgument($Group).AddArgument($Depth).AddArgument($NetBIOSDomain).AddArgument($ObjNT).AddArgument($Translate)
            
-            #Add the runspace into the powershell instance
+            # Add the runspace into the powershell instance
             $powershell.RunspacePool = $runspacepool
            
-            #Create a temporary collection for each runspace
+            # Create a temporary collection for each runspace
             $temp = "" | Select-Object PowerShell, Runspace, Computer
             $Temp.Computer = $Computer
             $temp.PowerShell = $powershell
            
-            #Save the handle output when calling BeginInvoke() that will be used later to end the runspace
+            # Save the handle output when calling BeginInvoke() that will be used later to end the runspace
             $temp.Runspace = $powershell.BeginInvoke()
             Write-Verbose ("Adding {0} collection" -f $temp.Computer)
             $runspaces.Add($temp) | Out-Null
@@ -518,10 +519,10 @@ Function Get-LocalGroupMembership {
         $runspacehash.Wait = $true
         Get-RunspaceData @runspacehash
     
-        #region Cleanup Runspace
+        # region Cleanup Runspace
         Write-Verbose ("Closing the runspace pool")
         $runspacepool.close()  
         $runspacepool.Dispose() 
-        #endregion Cleanup Runspace    
+        # endregion Cleanup Runspace    
     }
 }

@@ -135,9 +135,6 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                     $LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
                     # Remove empty or null elements
                     $LocalAdmins = $LocalAdmins | Where-Object { $_ }
-					
-                    Write-Host "Local Admins -----"
-                    $LocalAdmins
 
                     if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
                         Section -Style Heading2 'Local Users and Groups' {
