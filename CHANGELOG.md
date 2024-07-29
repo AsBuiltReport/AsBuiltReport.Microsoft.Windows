@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix DNS Zone table not displaying 'Available For Scavenge' and 'Last Scavenge Time' correctly
 - Fix DHCP Infrastructure table not displaying 'Database Logging Enabled' and 'Database Backup Interval' correctly
+- Fix [#31](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/31)
 
 ## [0.5.4] - 2024-05-16
 
