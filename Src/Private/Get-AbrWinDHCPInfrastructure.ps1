@@ -5,7 +5,7 @@ function Get-AbrWinDHCPInfrastructure {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.4
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -40,15 +40,15 @@ function Get-AbrWinDHCPInfrastructure {
                         'Dynamic Bootp' = ConvertTo-TextYN $Settings.DynamicBootp
                         'Database Path' = ConvertTo-EmptyToFiller $Database.FileName
                         'Database Backup Path' = ConvertTo-EmptyToFiller $Database.BackupPath
-                        'Database Backup Interval' = switch ($Database.BackupInterval) {
-                            "" { "--"; break }
-                            $NULL { "--"; break }
-                            default { "$($Database.BackupInterval) min" }
+                        'Database Backup Interval' = switch ([string]::IsNullOrEmpty($Database.BackupInterval)) {
+                            $true { "--" }
+                            $false { "$($Database.BackupInterval) min" }
+                            default { 'Unknown' }
                         }
-                        'Database Logging Enabled' = Switch ($Database.LoggingEnabled) {
-                            "" { "--"; break }
-                            $Null { "--"; break }
-                            default { ConvertTo-TextYN $Database.LoggingEnabled }
+                        'Database Logging Enabled' = Switch ([string]::IsNullOrEmpty($Database.LoggingEnabled)) {
+                            $true { "--" }
+                            $false { ConvertTo-TextYN $Database.LoggingEnabled }
+                            default { 'Unknown' }
                         }
                         'User Name' = ConvertTo-EmptyToFiller $DNSCredential.UserName
                         'Domain Name' = ConvertTo-EmptyToFiller $DNSCredential.DomainName

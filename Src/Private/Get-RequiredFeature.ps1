@@ -5,7 +5,7 @@ function Get-RequiredFeature {
     .DESCRIPTION
         Function to check if the required version of windows feature is installed
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.5
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -88,8 +88,7 @@ function Get-RequiredFeature {
                     Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Install-WindowsFeature -Name '$($Name)'' to install the required modules."
                 }
             }
-        }
-        else {
+        } else {
             throw "Unable to validate if $Name is installed. https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
         }
     }
