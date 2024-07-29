@@ -181,7 +181,7 @@ Function Get-LocalGroupMembership {
         remote system or systems. Recursion is unlimited unless specified by the -Depth parameter.
 
         Alias: glgm
-    
+
     .NOTES
         Version:        0.5.4
         Author:         Boe Prox (Updated by Graham Flynn (26/07/2024)
@@ -196,7 +196,7 @@ Function Get-LocalGroupMembership {
         Default value is 'Administrators'
 
     .PARAMETER Depth
-        Limit the recursive depth of a query. 
+        Limit the recursive depth of a query.
         Default value is 2147483647.
 
     .PARAMETER Throttle
@@ -222,15 +222,15 @@ Function Get-LocalGroupMembership {
         Administrator     Domain Admins       False     User        Domain            DC1              2
         Sysops Admins     Administrators      True      Group       Domain            DC1              1
         Org Admins        Sysops Admins       True      Group       Domain            DC1              2
-        Enterprise Admins Sysops Admins       True      Group       Domain            DC1              2       
-        
+        Enterprise Admins Sysops Admins       True      Group       Domain            DC1              2
+
         Description
         -----------
-        Gets all of the members of the 'Administrators' group on the local system.        
-        
+        Gets all of the members of the 'Administrators' group on the local system.
+
     .EXAMPLE
         Get-LocalGroupMembership -Group 'Administrators' -Depth 1
-        
+
         Name              ParentGroup    isGroup    ObjectClass PrincipalSource   Computername Depth
         ----              -----------    -------    ----        ------------      -----
         Administrator     Administrators   False    User        Local             DC1              1
@@ -240,15 +240,15 @@ Function Get-LocalGroupMembership {
         proxb             Administrators   False    User        Domain            DC1              1
         Enterprise Admins Administrators   True     Group       Domain            DC1              1
         Domain Admins     Administrators   True     Group       Domain            DC1              1
-        Sysops Admins     Administrators   True     Group       Domain            DC1              1   
-        
+        Sysops Admins     Administrators   True     Group       Domain            DC1              1
+
         Description
         -----------
         Gets the members of 'Administrators' with only 1 level of recursion.
 
     .LINK
         Original Script: https://github.com/proxb/PowerShell_Scripts/blob/master/Get-LocalGroupMembership.ps1
-        
+
     #>
     [cmdletbinding()]
     Param (
@@ -264,7 +264,7 @@ Function Get-LocalGroupMembership {
         [int]$Throttle = 10
     )
     Begin {
-        $PSBoundParameters.GetEnumerator() | ForEach {
+        $PSBoundParameters.GetEnumerator() | ForEach-Object {
             Write-Verbose $_
         }
         # region Extra Configurations
@@ -279,35 +279,34 @@ Function Get-LocalGroupMembership {
                 [switch]$Wait
             )
             Do {
-                $more = $false         
+                $more = $false
                 Foreach ($runspace in $runspaces) {
                     If ($runspace.Runspace.isCompleted) {
                         $runspace.powershell.EndInvoke($runspace.Runspace)
                         $runspace.powershell.dispose()
                         $runspace.Runspace = $null
-                        $runspace.powershell = $null                 
-                    }
-                    ElseIf ($runspace.Runspace -ne $null) {
+                        $runspace.powershell = $null
+                    } ElseIf ($runspace.Runspace -ne $null) {
                         $more = $true
                     }
                 }
                 If ($more -AND $PSBoundParameters['Wait']) {
                     Start-Sleep -Milliseconds 100
-                }   
+                }
                 # Clean out unused runspace jobs
                 $temphash = $runspaces.clone()
-                $temphash | Where {
+                $temphash | Where-Object {
                     $_.runspace -eq $Null
-                } | ForEach {
+                } | ForEach-Object {
                     Write-Verbose ("Removing {0}" -f $_.computer)
                     $Runspaces.remove($_)
-                }             
+                }
             } while ($more -AND $PSBoundParameters['Wait'])
         }
 
         # region ScriptBlock
         $scriptBlock = {
-            Param ($Computer, $Group, $Depth, $NetBIOSDomain, $ObjNT, $Translate)            
+            Param ($Computer, $Group, $Depth, $NetBIOSDomain, $ObjNT, $Translate)
             $Script:Depth = $Depth
             $Script:ObjNT = $ObjNT
             $Script:Translate = $Translate
@@ -319,11 +318,11 @@ Function Get-LocalGroupMembership {
                     [System.DirectoryServices.DirectoryEntry]$LocalGroup
                 )
                 # Invoke the Members method and convert to an array of member objects.
-                $Members = @($LocalGroup.psbase.Invoke("Members")) | foreach { ([System.DirectoryServices.DirectoryEntry]$_) }
+                $Members = @($LocalGroup.psbase.Invoke("Members")) | ForEach-Object { ([System.DirectoryServices.DirectoryEntry]$_) }
                 $Counter++
-                ForEach ($Member In $Members) {                
+                ForEach ($Member In $Members) {
                     Try {
-						
+
                         $Name = $Member.InvokeGet("Name")
                         $Path = $Member.InvokeGet("AdsPath")
 
@@ -337,29 +336,26 @@ Function Get-LocalGroupMembership {
 
                         If (($Path -like "*/$Computer/*")) {
                             $Type = 'Local'
-                        }
-                        Else { $Type = 'Domain' }
-						
+                        } Else { $Type = 'Domain' }
+
                         # Add Objectclass to match Get-LocalGroupMember output
                         if ($isGroup) {
                             $ObjectClass = 'Group'
-                        }
-                        elseif ($isGroup -eq $false) {
+                        } elseif ($isGroup -eq $false) {
                             $ObjectClass = 'User'
-                        }
-                        else {
+                        } else {
                             'Unknown'
                         }
 
                         New-Object PSObject -Property @{
-                            Computername    = $Computer
-                            Name            = $Name
+                            Computername = $Computer
+                            Name = $Name
                             PrincipalSource = $Type
-                            ParentGroup     = $LocalGroup.Name[0]
-                            isGroup         = $isGroup
-                            ObjectClass     = $ObjectClass
-                            Depth           = $Counter
-                            Group           = $Group
+                            ParentGroup = $LocalGroup.Name[0]
+                            isGroup = $isGroup
+                            ObjectClass = $ObjectClass
+                            Depth = $Counter
+                            Group = $Group
                         }
                         If ($isGroup) {
                             # Check if this group is local or domain.
@@ -372,8 +368,7 @@ Function Get-LocalGroupMembership {
                                         # Enumerate members of local group.
                                         Get-LocalGroupMember $Member
                                     }
-                                }
-                                Else {
+                                } Else {
                                     If ($Groups[$Name] -notcontains 'Domain') {
                                         $host.ui.WriteVerboseLine(("{0}: Getting domain group members" -f $Name))
                                         $Groups[$Name] += , 'Domain'
@@ -383,8 +378,7 @@ Function Get-LocalGroupMembership {
                                 }
                             }
                         }
-                    }
-                    Catch {
+                    } Catch {
                         $host.ui.WriteWarningLine(("GLGM{0}" -f $_.Exception.Message))
                     }
                 }
@@ -394,9 +388,9 @@ Function Get-LocalGroupMembership {
                 [cmdletbinding()]
                 Param (
                     [parameter()]
-                    $DomainGroup, 
+                    $DomainGroup,
                     [parameter()]
-                    [string]$NTName, 
+                    [string]$NTName,
                     [parameter()]
                     [string]$blnNT
                 )
@@ -406,47 +400,44 @@ Function Get-LocalGroupMembership {
                         $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (3, ("{0}{1}" -f $NetBIOSDomain.Trim(), $NTName)))
                         $DN = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 1)
                         $ADGroup = [ADSI]"LDAP://$DN"
-                    }
-                    Else {
+                    } Else {
                         $DN = $DomainGroup.distinguishedName
                         $ADGroup = $DomainGroup
-                    }         
-                    $Counter++   
+                    }
+                    $Counter++
                     ForEach ($MemberDN In $ADGroup.Member) {
                         $MemberGroup = [ADSI]("LDAP://{0}" -f ($MemberDN -replace '/', '\/'))
-						
+
                         # Add Objectclass to match Get-LocalGroupMember output
                         if ($MemberGroup.Class -eq "group") {
                             $ObjectClass = 'Group'
-                        }
-                        else {
+                        } else {
                             $ObjectClass = 'User'
                         }
-						
+
                         New-Object PSObject -Property @{
-                            Computername    = $Computer
-                            Name            = $MemberGroup.name[0]
+                            Computername = $Computer
+                            Name = $MemberGroup.name[0]
                             PrincipalSource = 'Domain'
-                            ParentGroup     = $NTName
-                            isGroup         = ($MemberGroup.Class -eq "group")
-                            ObjectClass     = $ObjectClass
-                            Depth           = $Counter
-                            Group           = $Group
+                            ParentGroup = $NTName
+                            isGroup = ($MemberGroup.Class -eq "group")
+                            ObjectClass = $ObjectClass
+                            Depth = $Counter
+                            Group = $Group
                         }
                         # Check if this member is a group.
-                        If ($MemberGroup.Class -eq "group") {              
+                        If ($MemberGroup.Class -eq "group") {
                             If ($Counter -lt $Depth) {
                                 If ($Groups[$MemberGroup.name[0]] -notcontains 'Domain') {
                                     Write-Verbose ("{0}: Getting domain group members" -f $MemberGroup.name[0])
                                     $Groups[$MemberGroup.name[0]] += , 'Domain'
                                     # Enumerate members of domain group.
                                     Get-DomainGroupMember $MemberGroup $MemberGroup.Name[0] $False
-                                }                                                
+                                }
                             }
                         }
                     }
-                }
-                Catch {
+                } Catch {
                     $host.ui.WriteWarningLine(("GDGM{0}" -f $_.Exception.Message))
                 }
             }
@@ -468,7 +459,7 @@ Function Get-LocalGroupMembership {
             $Base = ($Root.distinguishedName)
 
             # Use the NameTranslate object.
-            $Script:Translate = New-Object -comObject "NameTranslate"
+            $Script:Translate = New-Object -ComObject "NameTranslate"
             $Script:objNT = $Translate.GetType()
 
             # Initialize NameTranslate by locating the Global Catalog.
@@ -476,53 +467,53 @@ Function Get-LocalGroupMembership {
 
             # Retrieve NetBIOS name of the current domain.
             $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
-            [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)  
+            [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)
+        } Catch {
+            # Write-Warning ("{0}" -f $_.Exception.Message)
         }
-        Catch { # Write-Warning ("{0}" -f $_.Exception.Message) 
-        }         
-        
+
         # region Runspace Creation
         Write-Verbose ("Creating runspace pool and session states")
         $sessionstate = [system.management.automation.runspaces.initialsessionstate]::CreateDefault()
         $runspacepool = [runspacefactory]::CreateRunspacePool(1, $Throttle, $sessionstate, $Host)
-        $runspacepool.Open()  
-        
+        $runspacepool.Open()
+
         Write-Verbose ("Creating empty collection to hold runspace jobs")
-        $Script:runspaces = New-Object System.Collections.ArrayList        
+        $Script:runspaces = New-Object System.Collections.ArrayList
         # endregion Runspace Creation
     }
 
     Process {
         ForEach ($Computer in $Computername) {
-            # Create the powershell instance and supply the scriptblock with the other parameters 
+            # Create the powershell instance and supply the scriptblock with the other parameters
             $powershell = [powershell]::Create().AddScript($scriptBlock).AddArgument($computer).AddArgument($Group).AddArgument($Depth).AddArgument($NetBIOSDomain).AddArgument($ObjNT).AddArgument($Translate)
-           
+
             # Add the runspace into the powershell instance
             $powershell.RunspacePool = $runspacepool
-           
+
             # Create a temporary collection for each runspace
             $temp = "" | Select-Object PowerShell, Runspace, Computer
             $Temp.Computer = $Computer
             $temp.PowerShell = $powershell
-           
+
             # Save the handle output when calling BeginInvoke() that will be used later to end the runspace
             $temp.Runspace = $powershell.BeginInvoke()
             Write-Verbose ("Adding {0} collection" -f $temp.Computer)
             $runspaces.Add($temp) | Out-Null
-           
+
             Write-Verbose ("Checking status of runspace jobs")
-            Get-RunspaceData @runspacehash   
+            Get-RunspaceData @runspacehash
         }
     }
     End {
-        Write-Verbose ("Finish processing the remaining runspace jobs: {0}" -f (@(($runspaces | Where { $_.Runspace -ne $Null }).Count)))
+        Write-Verbose ("Finish processing the remaining runspace jobs: {0}" -f (@(($runspaces | Where-Object { $_.Runspace -ne $Null }).Count)))
         $runspacehash.Wait = $true
         Get-RunspaceData @runspacehash
-    
+
         # region Cleanup Runspace
         Write-Verbose ("Closing the runspace pool")
-        $runspacepool.close()  
-        $runspacepool.Dispose() 
-        # endregion Cleanup Runspace    
+        $runspacepool.close()
+        $runspacepool.Dispose()
+        # endregion Cleanup Runspace
     }
 }
