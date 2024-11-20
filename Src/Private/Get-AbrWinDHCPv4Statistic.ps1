@@ -31,14 +31,14 @@ function Get-AbrWinDHCPv4Statistic {
                     $OutObj = @()
                     try {
                         $inObj = [ordered] @{
-                            'Total Scopes' = ConvertTo-EmptyToFiller $DhcpSv4Statistics.TotalScopes
-                            'Total Addresses' = ConvertTo-EmptyToFiller $DhcpSv4Statistics.TotalAddresses
-                            'Addresses In Use' = ConvertTo-EmptyToFiller $DhcpSv4Statistics.AddressesInUse
-                            'Addresses Available' = ConvertTo-EmptyToFiller $DhcpSv4Statistics.AddressesAvailable
-                            'Percentage In Use' = ConvertTo-EmptyToFiller ([math]::Round($DhcpSv4Statistics.PercentageInUse, 0))
-                            'Percentage Available' = ConvertTo-EmptyToFiller ([math]::Round($DhcpSv4Statistics.PercentageAvailable, 0))
+                            'Total Scopes' = $DhcpSv4Statistics.TotalScopes
+                            'Total Addresses' = $DhcpSv4Statistics.TotalAddresses
+                            'Addresses In Use' = $DhcpSv4Statistics.AddressesInUse
+                            'Addresses Available' = $DhcpSv4Statistics.AddressesAvailable
+                            'Percentage In Use' = ([math]::Round($DhcpSv4Statistics.PercentageInUse, 0))
+                            'Percentage Available' = ([math]::Round($DhcpSv4Statistics.PercentageAvailable, 0))
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Service Statistics Item)"
                     }

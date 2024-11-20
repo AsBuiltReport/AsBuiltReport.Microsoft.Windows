@@ -30,7 +30,8 @@ function Get-AbrWinHostHWSummary {
                 Section -Style Heading2 'Host Hardware Settings' {
                     Paragraph 'The following section details hardware settings for the host'
                     BlankLine
-                    $HostHardware = [PSCustomObject] @{
+                    $OutObj = @()
+                    $inObj = [ordered] @{
                         'Manufacturer' = $HostComputer.Manufacturer
                         'Model' = $HostComputer.Model
                         'Product ID' = $HostComputer.SystemSKUNumbe
@@ -42,6 +43,8 @@ function Get-AbrWinHostHWSummary {
                         'Number of Logical Cores' = ($HostCPU.NumberOfLogicalProcessors | Measure-Object -Sum).Sum
                         'Physical Memory' = "$([Math]::Round($HostComputer.TotalPhysicalMemory / 1Gb)) GB"
                     }
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                     $TableParams = @{
                         Name = "Host Hardware Specifications"
                         List = $true
@@ -50,7 +53,7 @@ function Get-AbrWinHostHWSummary {
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
-                    $HostHardware | Table @TableParams
+                    $OutObj | Table @TableParams
                 }
             } catch {
                 Write-PScriboMessage -IsWarning $_.Exception.Message

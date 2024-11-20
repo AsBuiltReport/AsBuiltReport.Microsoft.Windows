@@ -5,7 +5,7 @@ function Get-AbrWinOSConfig {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -29,7 +29,8 @@ function Get-AbrWinOSConfig {
             Section -Style Heading3 'OS Configuration' {
                 Paragraph 'The following section details host OS configuration'
                 BlankLine
-                $HostOSReport = [PSCustomObject] @{
+                $OutObj = @()
+                $inObj = [ordered] @{
                     'Windows Product Name' = $HostInfo.WindowsProductName
                     'Windows Version' = $HostInfo.WindowsCurrentVersion
                     'Windows Build Number' = $HostInfo.OsVersion
@@ -51,6 +52,8 @@ function Get-AbrWinOSConfig {
                         default { "Unknown" }
                     }
                 }
+                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                 $TableParams = @{
                     Name = "OS Settings"
                     List = $true
@@ -59,7 +62,7 @@ function Get-AbrWinOSConfig {
                 if ($Report.ShowTableCaptions) {
                     $TableParams['Caption'] = "- $($TableParams.Name)"
                 }
-                $HostOSReport | Table @TableParams
+                $OutObj | Table @TableParams
             }
         }
     }

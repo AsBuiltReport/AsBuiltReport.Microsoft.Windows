@@ -5,7 +5,7 @@ function Get-AbrWinLocalGroup {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -29,10 +29,10 @@ function Get-AbrWinLocalGroup {
             try {
                 if ($LocalGroups) {
                     Section -Style Heading3 'Local Groups' {
-                        $LocalGroupsReport = @()
+                        $OutObj = @()
                         ForEach ($LocalGroup in $LocalGroups) {
                             try {
-                                $TempLocalGroupsReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Group Name' = $LocalGroup.GroupName
                                     'Description' = Switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
                                         $true { "--" }
@@ -45,7 +45,7 @@ function Get-AbrWinLocalGroup {
                                         default { "Unknown" }
                                     }
                                 }
-                                $LocalGroupsReport += $TempLocalGroupsReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -58,7 +58,7 @@ function Get-AbrWinLocalGroup {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $LocalGroupsReport | Sort-Object -Property 'Group Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Group Name' | Table @TableParams
                     }
                 }
             } catch {

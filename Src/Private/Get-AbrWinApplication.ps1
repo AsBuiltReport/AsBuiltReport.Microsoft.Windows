@@ -5,7 +5,7 @@ function Get-AbrWinApplication {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.5
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -34,10 +34,10 @@ function Get-AbrWinApplication {
                     Section -Style Heading3 'Installed Applications' {
                         Paragraph 'The following settings details applications listed in Add/Remove Programs'
                         BlankLine
-                        [array]$AddRemoveReport = @()
+                        $OutObj = @()
                         ForEach ($App in $AddRemove) {
                             try {
-                                $TempAddRemoveReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Application Name' = $App.DisplayName
                                     'Publisher' = $App.Publisher
                                     'Version' = Switch ([string]::IsNullOrEmpty($App.DisplayVersion)) {
@@ -51,7 +51,7 @@ function Get-AbrWinApplication {
                                         default { 'Unknown' }
                                     }
                                 }
-                                $AddRemoveReport += $TempAddRemoveReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -64,7 +64,7 @@ function Get-AbrWinApplication {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $AddRemoveReport | Where-Object { $_.'Application Name' -notlike $null } | Sort-Object -Property 'Application Name' | Table @TableParams
+                        $OutObj | Where-Object { $_.'Application Name' -notlike '--' } | Sort-Object -Property 'Application Name' | Table @TableParams
                     }
                 }
             } catch {

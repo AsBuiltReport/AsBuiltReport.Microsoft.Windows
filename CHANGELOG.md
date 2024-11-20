@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.6] - 2024-11-20
+
+### Changed
+
+- Increase Dbatools module requirement v2.1.27
+- Improve detection of empty fields in tables
+- Improve detection of true/false elements in tables
+- Update GitHub release workflow to add post to Bluesky social platform
+
+### Fixed
+
+- Fix [#36](https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues/36)
+
 ## [0.5.5] - 2024-07-29
 
 ### Changed

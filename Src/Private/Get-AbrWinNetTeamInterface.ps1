@@ -5,7 +5,7 @@ function Get-AbrWinNetTeamInterface {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -33,16 +33,16 @@ function Get-AbrWinNetTeamInterface {
                         Paragraph 'The following table details Network Team Interfaces'
                         BlankLine
                         $NetTeams = Invoke-Command -Session $TempPssSession { Get-NetLbfoTeam }
-                        $NetTeamReport = @()
+                        $OutObj = @()
                         ForEach ($NetTeam in $NetTeams) {
                             try {
-                                $TempNetTeamReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Team Name' = $NetTeam.Name
                                     'Team Mode' = $NetTeam.tm
                                     'Load Balancing' = $NetTeam.lba
                                     'Network Adapters' = $NetTeam.Members -Join ","
                                 }
-                                $NetTeamReport += $TempNetTeamReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -55,7 +55,7 @@ function Get-AbrWinNetTeamInterface {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $NetTeamReport | Sort-Object -Property 'Team Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Team Name' | Table @TableParams
                     }
                 }
             } catch {

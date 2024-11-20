@@ -37,7 +37,7 @@ function Get-AbrWinFOClusterQuorum {
                                 'Quorum Resource' = $Setting.QuorumResource
                                 'Quorum Type' = $Setting.QuorumType
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

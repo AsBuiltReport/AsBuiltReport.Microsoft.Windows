@@ -30,14 +30,14 @@ function Get-AbrWinDNSInfrastructure {
                 $OutObj = @()
                 try {
                     $inObj = [ordered] @{
-                        'Build Number' = ConvertTo-EmptyToFiller $DNSSetting.BuildNumber
-                        'IPv6' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.EnableIPv6)
-                        'DnsSec' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.EnableDnsSec)
-                        'ReadOnly DC' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.IsReadOnlyDC)
+                        'Build Number' = $DNSSetting.BuildNumber
+                        'IPv6' = ($DNSSetting.EnableIPv6)
+                        'DnsSec' = ($DNSSetting.EnableDnsSec)
+                        'ReadOnly DC' = ($DNSSetting.IsReadOnlyDC)
                         'Listening IP' = $DNSSetting.ListeningIPAddress
                         'All IPs' = $DNSSetting.AllIPAddress
                     }
-                    $OutObj += [pscustomobject]$inobj
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                 } catch {
                     Write-PScriboMessage -IsWarning " $($_.Exception.Message) (Infrastructure Summary)"
                 }
@@ -66,12 +66,12 @@ function Get-AbrWinDNSInfrastructure {
                             try {
                                 $inObj = [ordered] @{
                                     'Interface' = $DNSIPSetting.InterfaceAlias
-                                    'DNS IP 1' = ConvertTo-EmptyToFiller $DNSIPSetting.ServerAddresses[0]
-                                    'DNS IP 2' = ConvertTo-EmptyToFiller $DNSIPSetting.ServerAddresses[1]
-                                    'DNS IP 3' = ConvertTo-EmptyToFiller $DNSIPSetting.ServerAddresses[2]
-                                    'DNS IP 4' = ConvertTo-EmptyToFiller $DNSIPSetting.ServerAddresses[3]
+                                    'DNS IP 1' = $DNSIPSetting.ServerAddresses[0]
+                                    'DNS IP 2' = $DNSIPSetting.ServerAddresses[1]
+                                    'DNS IP 3' = $DNSIPSetting.ServerAddresses[2]
+                                    'DNS IP 4' = $DNSIPSetting.ServerAddresses[3]
                                 }
-                                $OutObj = [pscustomobject]$inobj
+                                $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                 if ($HealthCheck.DNS.DP) {
                                     $OutObj | Where-Object { $_.'DNS IP 1' -eq "127.0.0.1" } | Set-Style -Style Warning -Property 'DNS IP 1'
@@ -109,22 +109,22 @@ function Get-AbrWinDNSInfrastructure {
                             $OutObj = @()
                             try {
                                 $inObj = [ordered] @{
-                                    'NoRefresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.NoRefreshInterval
-                                    'Refresh Interval' = ConvertTo-EmptyToFiller $DNSSetting.RefreshInterval
-                                    'Scavenging Interval' = ConvertTo-EmptyToFiller $DNSSetting.ScavengingInterval
+                                    'NoRefresh Interval' = $DNSSetting.NoRefreshInterval
+                                    'Refresh Interval' = $DNSSetting.RefreshInterval
+                                    'Scavenging Interval' = $DNSSetting.ScavengingInterval
                                     'Last Scavenge Time' = Switch ([string]::IsNullOrEmpty($DNSSetting.LastScavengeTime)) {
                                         $true { "--" }
-                                        $false { ConvertTo-EmptyToFiller ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
+                                        $false { ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
                                         default { 'Unknown' }
                                     }
                                     'Scavenging State' = Switch ($DNSSetting.ScavengingState) {
                                         "True" { "Enabled" }
                                         "False" { "Disabled" }
-                                        default { ConvertTo-EmptyToFiller $DNSSetting.ScavengingState }
+                                        default { $DNSSetting.ScavengingState }
                                     }
                                 }
 
-                                $OutObj += [pscustomobject]$inobj
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 $TableParams = @{
                                     Name = "Scavenging - $($System.toUpper().split(".")[0])"
                                     List = $false
@@ -157,10 +157,10 @@ function Get-AbrWinDNSInfrastructure {
                         $inObj = [ordered] @{
                             'IP Address' = $DNSSetting.IPAddress -join ","
                             'Timeout' = ("$($DNSSetting.Timeout)/s")
-                            'Use Root Hint' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $DNSSetting.UseRootHint)
-                            'Use Recursion' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Recursion.Enable)
+                            'Use Root Hint' = ($DNSSetting.UseRootHint)
+                            'Use Recursion' = ($Recursion.Enable)
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         $TableParams = @{
                             Name = "Forwarders - $($System.toUpper().split(".")[0])"
                             List = $false

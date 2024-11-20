@@ -5,7 +5,7 @@ function Get-AbrWinOSHotfix {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.5
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -30,10 +30,10 @@ function Get-AbrWinOSHotfix {
                 $HotFixes = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-HotFix }
                 if ($HotFixes) {
                     Section -Style Heading3 'Installed Hotfixes' {
-                        $HotFixReport = @()
+                        $OutObj = @()
                         Foreach ($HotFix in $HotFixes) {
                             try {
-                                $TempHotFix = [PSCustomObject] @{
+                                $inObj = [ordered] @{
                                     'Hotfix ID' = $HotFix.HotFixID
                                     'Description' = $HotFix.Description
                                     'Installation Date' = Switch ([string]::IsNullOrEmpty($HotFix.InstalledOn)) {
@@ -42,7 +42,7 @@ function Get-AbrWinOSHotfix {
                                         default { 'Unknown' }
                                     }
                                 }
-                                $HotfixReport += $TempHotFix
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -55,7 +55,7 @@ function Get-AbrWinOSHotfix {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HotFixReport | Sort-Object -Property 'Hotfix ID' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Hotfix ID' | Table @TableParams
                     }
                 }
             } catch {
@@ -72,7 +72,7 @@ function Get-AbrWinOSHotfix {
                                 'KB Article' = "KB$($Update.KBArticleIDs)"
                                 'Name' = $Update.Title
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                             if ($HealthCheck.OperatingSystem.Updates) {
                                 $OutObj | Set-Style -Style Warning

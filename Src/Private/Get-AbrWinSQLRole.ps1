@@ -40,10 +40,10 @@ function Get-AbrWinSQLRole {
                                     $false { $Item.Login }
                                     default { 'Unknown' }
                                 }
-                                'Fixed Role' = ConvertTo-TextYN $Item.IsFixedRole
+                                'Fixed Role' = $Item.IsFixedRole
                                 'Create Date' = $Item.DateCreated
                             }
-                            $ItemInfo += [PSCustomObject]$InObj
+                            $ItemInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning "SQL Server System Roles Section: $($_.Exception.Message)"
                         }

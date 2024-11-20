@@ -37,7 +37,7 @@ function Get-AbrWinFOClusterPermission {
                                 'Access Control Type' = $Setting.AccessControlType
                                 'Rights' = $Setting.ClusterRights
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

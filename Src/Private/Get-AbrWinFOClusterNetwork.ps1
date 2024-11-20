@@ -38,7 +38,7 @@ function Get-AbrWinFOClusterNetwork {
                                 'Role' = $Setting.Role
                                 'Address' = "$($Setting.Address)/$($Setting.AddressMask)"
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

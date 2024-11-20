@@ -5,7 +5,7 @@ function Get-AbrWinHyperVNetworking {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -29,7 +29,8 @@ function Get-AbrWinHyperVNetworking {
             try {
                 try {
                     Section -Style Heading3 "Hyper-V MAC Pool settings" {
-                        $VmHostMacPool = [PSCustomObject]@{
+                        $OutObj = @()
+                        $inObj = [ordered] @{
                             'Mac Address Minimum' = Switch (($VmHost.MacAddressMinimum).Length) {
                                 0 { "--" }
                                 12 { $VmHost.MacAddressMinimum -replace '..(?!$)', '$&:' }
@@ -41,6 +42,8 @@ function Get-AbrWinHyperVNetworking {
                                 default { $VmHost.MacAddressMinimum }
                             }
                         }
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                         $TableParams = @{
                             Name = "Host MAC Pool"
                             List = $false
@@ -49,7 +52,7 @@ function Get-AbrWinHyperVNetworking {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $VmHostMacPool |  Table @TableParams
+                        $OutObj |  Table @TableParams
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
@@ -60,19 +63,19 @@ function Get-AbrWinHyperVNetworking {
                         Section -Style Heading3 "Hyper-V Management OS Adapters" {
                             Paragraph 'The following table details the Management OS Virtual Adapters created on Virtual Switches'
                             BlankLine
-                            $VmOsAdapterReport = @()
+                            $OutObj = @()
                             Foreach ($VmOsAdapter in $VmOsAdapters) {
                                 try {
                                     $AdapterVlan = Invoke-Command -Session $TempPssSession { Get-VMNetworkAdapterVlan -ManagementOS -VMNetworkAdapterName ($using:VmOsAdapter).Name | Select-Object -Property * }
-                                    $TempVmOsAdapterReport = [PSCustomObject]@{
+                                    $inObj = [ordered] @{
                                         'Name' = $VmOsAdapter.Name
                                         'Switch Name' = $VmOsAdapter.SwitchName
                                         'Mac Address' = $VmOsAdapter.MacAddress
-                                        'IPv4 Address' = ConvertTo-EmptyToFiller $VmOsAdapter.IPAddresses
+                                        'IPv4 Address' = $VmOsAdapter.IPAddresses
                                         'Adapter Mode' = $AdapterVlan.OperationMode
                                         'Vlan ID' = $AdapterVlan.AccessVlanId
                                     }
-                                    $VmOsAdapterReport += $TempVmOsAdapterReport
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 } catch {
                                     Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
@@ -85,7 +88,7 @@ function Get-AbrWinHyperVNetworking {
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
-                            $VmOsAdapterReport | Sort-Object -Property 'Name' | Table @TableParams
+                            $OutObj | Sort-Object -Property 'Name' | Table @TableParams
                         }
                     }
                 } catch {
@@ -97,16 +100,16 @@ function Get-AbrWinHyperVNetworking {
                         Section -Style Heading3 "Hyper-V vSwitch Settings" {
                             Paragraph 'The following table provide a summary of Hyper-V configured vSwitches'
                             BlankLine
-                            $VmSwitchesReport = @()
+                            $OutObj = @()
                             ForEach ($VmSwitch in $VmSwitches) {
                                 try {
-                                    $TempVmSwitchesReport = [PSCustomObject]@{
+                                    $inObj = [ordered] @{
                                         'Switch Name' = $VmSwitch.Name
                                         'Switch Type' = $VmSwitch.SwitchType
-                                        'Embedded Team' = ConvertTo-TextYN $VmSwitch.EmbeddedTeamingEnabled
-                                        'Interface Description' = ConvertTo-EmptyToFiller $VmSwitch.NetAdapterInterfaceDescription
+                                        'Embedded Team' = $VmSwitch.EmbeddedTeamingEnabled
+                                        'Interface Description' = $VmSwitch.NetAdapterInterfaceDescription
                                     }
-                                    $VmSwitchesReport += $TempVmSwitchesReport
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 } catch {
                                     Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
@@ -120,24 +123,27 @@ function Get-AbrWinHyperVNetworking {
                             if ($Report.ShowTableCaptions) {
                                 $TableParams['Caption'] = "- $($TableParams.Name)"
                             }
-                            $VmSwitchesReport | Sort-Object -Property 'Switch Name' | Table @TableParams
+                            $OutObj | Sort-Object -Property 'Switch Name' | Table @TableParams
 
                             Foreach ($VmSwitch in $VmSwitches) {
                                 try {
                                     Section -ExcludeFromTOC -Style NOTOCHeading4 ($VmSwitch.Name) {
-                                        $VmSwitchReport = [PSCustomObject]@{
+                                        $OutObj = @()
+                                        $inObj = [ordered] @{
                                             'Switch Name' = $VmSwitch.Name
                                             'Switch Type' = $VmSwitch.SwitchType
-                                            'Switch Embedded Teaming Status' = ConvertTo-TextYN $VmSwitch.EmbeddedTeamingEnabled
+                                            'Switch Embedded Teaming Status' = $VmSwitch.EmbeddedTeamingEnabled
                                             'Bandwidth Reservation Mode' = $VmSwitch.BandwidthReservationMode
                                             'Bandwidth Reservation Percentage' = $VmSwitch.Percentage
-                                            'Management OS Allowed' = ConvertTo-TextYN $VmSwitch.AllowManagementOS
+                                            'Management OS Allowed' = $VmSwitch.AllowManagementOS
                                             'Physical Adapters' = $VmSwitch.NetAdapterInterfaceDescriptions -Join ","
-                                            'IOV Support' = ConvertTo-TextYN $VmSwitch.IovSupport
+                                            'IOV Support' = $VmSwitch.IovSupport
                                             'IOV Support Reasons' = $VmSwitch.IovSupportReasons
                                             'Available VM Queues' = $VmSwitch.AvailableVMQueues
-                                            'Packet Direct Enabled' = ConvertTo-TextYN $VmSwitch.PacketDirectinUse
+                                            'Packet Direct Enabled' = $VmSwitch.PacketDirectinUse
                                         }
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
 
                                         $TableParams = @{
                                             Name = "VM Switch Details"
@@ -147,7 +153,7 @@ function Get-AbrWinHyperVNetworking {
                                         if ($Report.ShowTableCaptions) {
                                             $TableParams['Caption'] = "- $($TableParams.Name)"
                                         }
-                                        $VmSwitchReport | Table @TableParams
+                                        $OutObj | Table @TableParams
                                     }
                                 } catch {
                                     Write-PScriboMessage -IsWarning $_.Exception.Message

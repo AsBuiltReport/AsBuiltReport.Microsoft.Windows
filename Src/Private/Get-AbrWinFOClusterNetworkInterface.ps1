@@ -38,7 +38,7 @@ function Get-AbrWinFOClusterNetworkInterface {
                                 'Network' = $Setting.Network
                                 'State' = $Setting.State
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

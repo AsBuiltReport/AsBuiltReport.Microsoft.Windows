@@ -45,9 +45,9 @@ function Get-AbrWinFOClusterFaultDomain {
                                     $false { $Setting.ChildrenNames }
                                     default { 'Unknown' }
                                 }
-                                'Location' = ConvertTo-EmptyToFiller $Setting.Location
+                                'Location' = $Setting.Location
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

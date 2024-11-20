@@ -36,9 +36,9 @@ function Get-AbrWinSQLBackupDevice {
                                 'Name' = $Item.Name
                                 'Backup Device Type' = $Item.BackupDeviceType
                                 'Physical Location' = $Item.PhysicalLocation
-                                'Skip Tape Label' = ConvertTo-TextYN $Item.SkipTapeLabel
+                                'Skip Tape Label' = $Item.SkipTapeLabel
                             }
-                            $ItemInfo += [PSCustomObject]$InObj
+                            $ItemInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning "SQL Server System Backup Device Section: $($_.Exception.Message)"
                         }

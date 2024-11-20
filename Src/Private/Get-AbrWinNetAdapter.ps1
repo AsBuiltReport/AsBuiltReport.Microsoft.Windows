@@ -5,7 +5,7 @@ function Get-AbrWinNetAdapter {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -30,16 +30,16 @@ function Get-AbrWinNetAdapter {
                 $HostAdapters = Invoke-Command -Session $TempPssSession { Get-NetAdapter }
                 if ($HostAdapters) {
                     Section -Style Heading3 'Network Adapters' {
-                        $HostAdaptersReport = @()
+                        $OutObj = @()
                         ForEach ($HostAdapter in $HostAdapters) {
                             try {
-                                $TempHostAdaptersReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Adapter Name' = $HostAdapter.Name
                                     'Adapter Description' = $HostAdapter.InterfaceDescription
                                     'Mac Address' = $HostAdapter.MacAddress
                                     'Link Speed' = $HostAdapter.LinkSpeed
                                 }
-                                $HostAdaptersReport += $TempHostAdaptersReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -52,7 +52,7 @@ function Get-AbrWinNetAdapter {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HostAdaptersReport | Sort-Object -Property 'Adapter Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Adapter Name' | Table @TableParams
                     }
                 }
             } catch {

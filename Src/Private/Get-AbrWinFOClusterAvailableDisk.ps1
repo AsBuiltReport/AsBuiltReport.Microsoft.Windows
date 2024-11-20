@@ -37,7 +37,7 @@ function Get-AbrWinFOClusterAvailableDisk {
                                 'Number' = $Setting.Number
                                 'Size' = ConvertTo-FileSizeString $Setting.Size
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

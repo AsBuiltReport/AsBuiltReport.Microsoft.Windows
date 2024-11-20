@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.5
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -143,7 +143,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             Get-AbrWinLocalGroup
                             #Local Administrators
                             Get-AbrWinLocalAdmin
-                            ScriptContent }
+                        }
                     }
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message

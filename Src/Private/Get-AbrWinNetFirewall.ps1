@@ -5,7 +5,7 @@ function Get-AbrWinNetFirewall {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -30,16 +30,16 @@ function Get-AbrWinNetFirewall {
                 $NetFirewallProfile = Get-NetFirewallProfile -CimSession $TempCimSession
                 if ($NetFirewallProfile) {
                     Section -Style Heading2 'Windows Firewall' {
-                        $NetFirewallProfileReport = @()
+                        $OutObj = @()
                         Foreach ($FirewallProfile in $NetFireWallProfile) {
                             try {
-                                $TempNetFirewallProfileReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Profile' = $FirewallProfile.Name
-                                    'Profile Enabled' = ConvertTo-TextYN $FirewallProfile.Enabled
+                                    'Profile Enabled' = $FirewallProfile.Enabled
                                     'Inbound Action' = $FirewallProfile.DefaultInboundAction
                                     'Outbound Action' = $FirewallProfile.DefaultOutboundAction
                                 }
-                                $NetFirewallProfileReport += $TempNetFirewallProfileReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             }
                             catch {
                                 Write-PscriboMessage -IsWarning $_.Exception.Message
@@ -47,7 +47,7 @@ function Get-AbrWinNetFirewall {
                         }
 
                         if ($HealthCheck.Networking.Firewall) {
-                            $NetFirewallProfileReport | Where-Object { $_.'Profile Enabled' -notlike 'Yes'} | Set-Style -Style Warning -Property 'Profile Enabled'
+                            $OutObj | Where-Object { $_.'Profile Enabled' -notlike 'Yes'} | Set-Style -Style Warning -Property 'Profile Enabled'
                         }
 
                         $TableParams = @{
@@ -58,7 +58,7 @@ function Get-AbrWinNetFirewall {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $NetFirewallProfileReport | Sort-Object -Property 'Profile' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Profile' | Table @TableParams
                     }
                 }
             }
