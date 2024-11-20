@@ -48,7 +48,7 @@ Below are the instructions on how to install, configure and generate a Microsoft
 <!-- ********** Update supported Windows versions ********** -->
 The Microsoft Windows As Built Report supports the following Windows Server versions;
 
-- 2016, 2019 & 2022
+- 2012, 2016, 2019, 2022 & 2025
 
 ### PowerShell
 
