@@ -456,7 +456,7 @@ Function Get-LocalGroupMembership {
             $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
             [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)
         } Catch {
-            # Write-Warning ("{0}" -f $_.Exception.Message)
+            Out-Null
         }
 
         # region Runspace Creation
