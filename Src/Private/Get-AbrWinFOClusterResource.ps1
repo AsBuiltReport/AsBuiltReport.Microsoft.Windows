@@ -38,7 +38,7 @@ function Get-AbrWinFOClusterResource {
                                 'Resource Type' = $Setting.ResourceType
                                 'State' = $Setting.State
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

@@ -5,7 +5,7 @@ function Get-AbrWinHostStorageMPIO {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -41,13 +41,13 @@ function Get-AbrWinHostStorageMPIO {
                                 Section -Style Heading4 'Multipath I/O AutoClaim' {
                                     Paragraph 'The following table details the BUS types MPIO will automatically claim for'
                                     BlankLine
-                                    $MpioAutoClaimReport = @()
+                                    $OutObj = @()
                                     foreach ($key in $MpioAutoClaim) {
                                         try {
                                             $Temp = "" | Select-Object BusType, State
                                             $Temp.BusType = $key
                                             $Temp.State = 'Enabled'
-                                            $MpioAutoClaimReport += $Temp
+                                            $OutObj += $Temp
                                         } catch {
                                             Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
@@ -60,7 +60,7 @@ function Get-AbrWinHostStorageMPIO {
                                     if ($Report.ShowTableCaptions) {
                                         $TableParams['Caption'] = "- $($TableParams.Name)"
                                     }
-                                    $MpioAutoClaimReport | Sort-Object -Property 'BusType' | Table @TableParams
+                                    $OutObj | Sort-Object -Property 'BusType' | Table @TableParams
                                 }
                             }
                             try {
@@ -69,16 +69,16 @@ function Get-AbrWinHostStorageMPIO {
                                     Section -Style Heading4 'MPIO Detected Hardware' {
                                         Paragraph 'The following table details the hardware detected and claimed by MPIO'
                                         BlankLine
-                                        $MpioAvailableHwReport = @()
+                                        $OutObj = @()
                                         foreach ($MpioAvailableHw in $MpioAvailableHws) {
                                             try {
-                                                $TempMpioAvailableHwReport = [PSCustomObject]@{
+                                                $inObj = [ordered] @{
                                                     'Vendor' = $MpioAvailableHw.VendorId
                                                     'Product' = $MpioAvailableHw.ProductId
                                                     'BusType' = $MpioAvailableHw.BusType
-                                                    'Multipathed' = ConvertTo-TextYN $MpioAvailableHw.IsMultipathed
+                                                    'Multipathed' = $MpioAvailableHw.IsMultipathed
                                                 }
-                                                $MpioAvailableHwReport += $TempMpioAvailableHwReport
+                                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                             } catch {
                                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                                             }
@@ -91,7 +91,7 @@ function Get-AbrWinHostStorageMPIO {
                                         if ($Report.ShowTableCaptions) {
                                             $TableParams['Caption'] = "- $($TableParams.Name)"
                                         }
-                                        $MpioAvailableHwReport | Table @TableParams
+                                        $OutObj | Table @TableParams
                                     }
                                 }
                             } catch {

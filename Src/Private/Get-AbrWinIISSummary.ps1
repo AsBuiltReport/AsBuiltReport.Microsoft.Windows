@@ -5,7 +5,7 @@ function Get-AbrWinIISSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -26,16 +26,19 @@ function Get-AbrWinIISSummary {
     process {
         if ($InfoLevel.IIS -ge 1) {
             try {
+                $OutObj = @()
                 $IISApplicationDefaults = Invoke-Command -Session $TempPssSession { (Get-IISServerManager).ApplicationDefaults }
                 $IISSiteDefaults = Invoke-Command -Session $TempPssSession { (Get-IISServerManager).SiteDefaults | Select-Object ServerAutoStart, @{name = 'Directory'; Expression = { $_.Logfile.Directory } } }
                 if ($IISApplicationDefaults -and $IISSiteDefaults) {
                     try {
-                        $IISServerManagerReport = [PSCustomObject]@{
+                        $inObj = [ordered] @{
                             'Default Application Pool' = ($IISApplicationDefaults).ApplicationPoolName
                             'Enabled Protocols' = (($IISApplicationDefaults).EnabledProtocols).toUpper()
                             'Logfile Path' = ($IISSiteDefaults).Directory
-                            'Server Auto Start' = ConvertTo-TextYN ($IISSiteDefaults).ServerAutoStart
+                            'Server Auto Start' = ($IISSiteDefaults).ServerAutoStart
                         }
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                         $TableParams = @{
                             Name = "IIS Host Settings"
                             List = $false
@@ -44,7 +47,7 @@ function Get-AbrWinIISSummary {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $IISServerManagerReport | Table @TableParams
+                        $OutObj | Table @TableParams
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }

@@ -5,7 +5,7 @@ function Get-AbrWinOSService {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -33,17 +33,17 @@ function Get-AbrWinOSService {
                         Paragraph 'The following table details status of important services'
                         BlankLine
                         $Services = @('DNS', 'DFS Replication', 'Intersite Messaging', 'Kerberos Key Distribution Center', 'Active Directory Domain Services', 'W32Time', 'ADWS', 'DHCPServer', 'Dnscache', 'gpsvc', 'HvHost', 'vmcompute', 'vmms', 'iphlpsvc', 'MSiSCSI', 'Netlogon', 'RasMan', 'SessionEnv', 'TermService', 'RpcSs', 'RpcEptMapper', 'SamSs', 'LanmanServer', 'Schedule', 'lmhosts', 'UsoSvc', 'mpssvc', 'W3SVC', 'MSSQLSERVER', 'ClusSvc')
-                        $ServicesReport = @()
+                        $OutObj = @()
                         Foreach ($Service in $Services) {
                             try {
                                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service $using:Service -ErrorAction SilentlyContinue | Select-Object DisplayName, Name, Status }
                                 if ($Status) {
-                                    $TempServicesReport = [PSCustomObject] @{
+                                    $inObj = [ordered] @{
                                         'Display Name' = $Status.DisplayName
                                         'Short Name' = $Status.Name
                                         'Status' = $Status.Status
                                     }
-                                    $ServicesReport += $TempServicesReport
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 }
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
@@ -51,7 +51,7 @@ function Get-AbrWinOSService {
                         }
 
                         if ($HealthCheck.OperatingSystem.Services) {
-                            $ServicesReport | Where-Object { $_.'Status' -notlike 'Running' } | Set-Style -Style Warning -Property 'Status'
+                            $OutObj | Where-Object { $_.'Status' -notlike 'Running' } | Set-Style -Style Warning -Property 'Status'
                         }
 
                         $TableParams = @{
@@ -62,7 +62,7 @@ function Get-AbrWinOSService {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $ServicesReport | Sort-Object -Property 'Display Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Display Name' | Table @TableParams
                     }
                 }
             } catch {

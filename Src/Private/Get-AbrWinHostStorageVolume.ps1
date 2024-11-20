@@ -5,7 +5,7 @@ function Get-AbrWinHostStorageVolume {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.5
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,10 +32,10 @@ function Get-AbrWinHostStorageVolume {
                     Section -Style Heading3 'Host Volumes' {
                         Paragraph 'The following section details local volumes on the host'
                         BlankLine
-                        $HostVolumeReport = @()
+                        $OutObj = @()
                         ForEach ($HostVolume in $HostVolumes) {
                             try {
-                                $TempHostVolumeReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Drive Letter' = $HostVolume.DriveLetter
                                     'File System Label' = $HostVolume.FileSystemLabel
                                     'File System' = $HostVolume.FileSystem
@@ -43,7 +43,7 @@ function Get-AbrWinHostStorageVolume {
                                     'Free Space' = "$([Math]::Round($HostVolume.SizeRemaining / 1gb)) GB"
                                     'Health Status' = $HostVolume.HealthStatus
                                 }
-                                $HostVolumeReport += $TempHostVolumeReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -56,7 +56,7 @@ function Get-AbrWinHostStorageVolume {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HostVolumeReport | Sort-Object -Property 'Drive Letter' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Drive Letter' | Table @TableParams
                     }
                 }
             } catch {

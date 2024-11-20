@@ -47,22 +47,22 @@ function Get-AbrWinSQLLogin {
                                     $false { $Item.LastLogin }
                                     default { 'Unknown' }
                                 }
-                                'Has Access?' = ConvertTo-TextYN $Item.HasAccess
+                                'Has Access?' = $Item.HasAccess
                                 'Is Locked?' = Switch ([string]::IsNullOrEmpty($Item.IsLocked)) {
                                     $true { 'No' }
-                                    $false { ConvertTo-TextYN $Item.IsLocked }
+                                    $false { $Item.IsLocked }
                                     default { 'Unknown' }
                                 }
-                                'Is Disabled?' = ConvertTo-TextYN $Item.IsDisabled
+                                'Is Disabled?' = $Item.IsDisabled
                                 'Must Change Password' = Switch ([string]::IsNullOrEmpty($Item.MustChangePassword)) {
                                     $true { 'No' }
-                                    $false { ConvertTo-TextYN $Item.MustChangePassword }
+                                    $false { $Item.MustChangePassword }
                                     default { 'Unknown' }
                                 }
 
 
                             }
-                            $ItemInfo += [PSCustomObject]$InObj
+                            $ItemInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning "SQL Server System Login Section: $($_.Exception.Message)"
                         }

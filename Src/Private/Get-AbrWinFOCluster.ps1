@@ -35,9 +35,9 @@ function Get-AbrWinFOCluster {
                         'Domain' = $Settings.Domain
                         'Shared Volumes Root' = $Settings.SharedVolumesRoot
                         'Administrative Access Point' = $Settings.AdministrativeAccessPoint
-                        'Description' = ConvertTo-EmptyToFiller $Settings.Description
+                        'Description' = $Settings.Description
                     }
-                    $OutObj += [pscustomobject]$inobj
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }

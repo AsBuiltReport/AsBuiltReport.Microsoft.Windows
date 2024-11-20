@@ -5,7 +5,7 @@ function Get-AbrWinOSRoleFeature {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -30,16 +30,16 @@ function Get-AbrWinOSRoleFeature {
                 $HostRolesAndFeatures = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-WindowsFeature | Where-Object { $_.Installed -eq $True } }
                 if ($HostRolesAndFeatures) {
                     Section -Style Heading3 'Roles' {
-                        [array]$HostRolesAndFeaturesReport = @()
+                        $OutObj = @()
                         ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                             if ( $HostRoleAndFeature.FeatureType -eq 'Role') {
                                 try {
-                                    $TempHostRolesAndFeaturesReport = [PSCustomObject] @{
+                                    $inObj = [ordered] @{
                                         'Name' = $HostRoleAndFeature.DisplayName
                                         'Type' = $HostRoleAndFeature.FeatureType
                                         'Description' = $HostRoleAndFeature.Description
                                     }
-                                    $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 } catch {
                                     Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
@@ -53,21 +53,21 @@ function Get-AbrWinOSRoleFeature {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HostRolesAndFeaturesReport | Sort-Object -Property 'Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Name' | Table @TableParams
                         if ($InfoLevel.OperatingSystem -ge 2) {
                             try {
                                 if ($HostRolesAndFeatures) {
                                     Section -Style Heading3 'Features and Role Services' {
-                                        [array]$HostRolesAndFeaturesReport = @()
+                                        $OutObj = @()
                                         ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                                             if ( $HostRoleAndFeature.FeatureType -eq 'Role Service' -or $HostRoleAndFeature.FeatureType -eq 'Feature') {
                                                 try {
-                                                    $TempHostRolesAndFeaturesReport = [PSCustomObject] @{
+                                                    $inObj = [ordered] @{
                                                         'Name' = $HostRoleAndFeature.DisplayName
                                                         'Type' = $HostRoleAndFeature.FeatureType
                                                         'Description' = $HostRoleAndFeature.Description
                                                     }
-                                                    $HostRolesAndFeaturesReport += $TempHostRolesAndFeaturesReport
+                                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                 } catch {
                                                     Write-PScriboMessage -IsWarning $_.Exception.Message
                                                 }
@@ -81,7 +81,7 @@ function Get-AbrWinOSRoleFeature {
                                         if ($Report.ShowTableCaptions) {
                                             $TableParams['Caption'] = "- $($TableParams.Name)"
                                         }
-                                        $HostRolesAndFeaturesReport | Sort-Object -Property 'Name' | Table @TableParams
+                                        $OutObj | Sort-Object -Property 'Name' | Table @TableParams
                                     }
                                 }
                             } catch {

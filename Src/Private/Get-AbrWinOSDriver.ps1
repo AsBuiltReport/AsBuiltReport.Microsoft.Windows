@@ -5,7 +5,7 @@ function Get-AbrWinOSDriver {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -31,16 +31,16 @@ function Get-AbrWinOSDriver {
                 if ($HostDriversList) {
                     Section -Style Heading3 'Drivers' {
                         Invoke-Command -Session $TempPssSession { Import-Module DISM }
-                        $HostDriverReport = @()
+                        $OutObj = @()
                         ForEach ($HostDriver in $HostDriversList) {
                             try {
-                                $TempDriver = [PSCustomObject] @{
+                                $inObj = [ordered] @{
                                     'Class Description' = $HostDriver.ClassDescription
                                     'Provider Name' = $HostDriver.ProviderName
                                     'Driver Version' = $HostDriver.Version
                                     'Version Date' = $HostDriver.Date.ToShortDateString()
                                 }
-                                $HostDriverReport += $TempDriver
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -53,7 +53,7 @@ function Get-AbrWinOSDriver {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $HostDriverReport | Sort-Object -Property 'Class Description' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Class Description' | Table @TableParams
                     }
                 }
             } catch {

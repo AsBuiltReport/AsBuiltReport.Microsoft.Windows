@@ -45,9 +45,9 @@ function Get-AbrWinDHCPv4PerScopeSetting {
                                                 'Name' = $Option.Name
                                                 'Option Id' = $Option.OptionId
                                                 'Value' = $Option.Value
-                                                'Policy Name' = ConvertTo-EmptyToFiller $Option.PolicyName
+                                                'Policy Name' = $Option.PolicyName
                                             }
-                                            $OutObj += [pscustomobject]$inobj
+                                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope Options Item)"
                                         }
