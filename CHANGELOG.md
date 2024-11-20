@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.6] - 2024-11-20
 
+### Added
+
+- Initial support for Server 2025
+
 ### Changed
 
 - Increase Dbatools module requirement v2.1.27
