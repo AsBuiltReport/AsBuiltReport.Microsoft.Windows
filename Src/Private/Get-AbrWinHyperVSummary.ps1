@@ -5,7 +5,7 @@ function Get-AbrWinHyperVSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -29,20 +29,23 @@ function Get-AbrWinHyperVSummary {
             try {
                 $script:VmHost = Invoke-Command -Session $TempPssSession { Get-VMHost }
                 if ($VmHost) {
-                    $VmHostReport = [PSCustomObject]@{
+                    $OutObj = @()
+                    $inObj = [ordered] @{
                         'Logical Processor Count' = $VmHost.LogicalProcessorCount
                         'Memory Capacity' = "$([Math]::Round($VmHost.MemoryCapacity / 1gb)) GB"
                         'VM Default Path' = $VmHost.VirtualMachinePath
                         'VM Disk Default Path' = $VmHost.VirtualHardDiskPath
                         'Supported VM Versions' = $VmHost.SupportedVmVersions -Join ","
-                        'Numa Spannning Enabled' = ConvertTo-TextYN $VmHost.NumaSpanningEnabled
-                        'Iov Support' = ConvertTo-TextYN $VmHost.IovSupport
-                        'VM Migrations Enabled' = ConvertTo-TextYN $VmHost.VirtualMachineMigrationEnabled
-                        'Allow any network for Migrations' = ConvertTo-TextYN $VmHost.UseAnyNetworkForMigration
+                        'Numa Spannning Enabled' = $VmHost.NumaSpanningEnabled
+                        'Iov Support' = $VmHost.IovSupport
+                        'VM Migrations Enabled' = $VmHost.VirtualMachineMigrationEnabled
+                        'Allow any network for Migrations' = $VmHost.UseAnyNetworkForMigration
                         'VM Migration Authentication Type' = $VmHost.VirtualMachineMigrationAuthenticationType
                         'Max Concurrent Storage Migrations' = $VmHost.MaximumStorageMigrations
                         'Max Concurrent VM Migrations' = $VmHost.MaximumStorageMigrations
                     }
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                     $TableParams = @{
                         Name = "Hyper-V Host Settings"
                         List = $true
@@ -51,7 +54,7 @@ function Get-AbrWinHyperVSummary {
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
-                    $VmHostReport | Table @TableParams
+                    $OutObj | Table @TableParams
                 }
             } catch {
                 Write-PScriboMessage -IsWarning $_.Exception.Message

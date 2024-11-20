@@ -38,9 +38,9 @@ function Get-AbrWinHostStorageISCSI {
                                 Section -Style Heading4 'iSCSI Host Initiator' {
                                     Paragraph 'The following table details the hosts iSCSI IQN'
                                     BlankLine
-                                    $HostInitiatorReport = @()
+                                    $OutObj = @()
                                     try {
-                                        $TempHostInitiator = [PSCustomObject]@{
+                                        $inObj = [ordered] @{
                                             'Node Address' = $HostInitiator.NodeAddress
                                             'Operational Status' = Switch ($HostInitiator.OperationalStatus) {
                                                 1 { 'Unknown' }
@@ -57,10 +57,10 @@ function Get-AbrWinHostStorageISCSI {
                                     } catch {
                                         Write-PScriboMessage -IsWarning $_.Exception.Message
                                     }
-                                    $HostInitiatorReport += $TempHostInitiator
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                     if ($HealthCheck.Storage.BP) {
-                                        $HostInitiatorReport | Where-Object { $_.'Operational Status' -ne 'Operational' } | Set-Style -Style Warning -Property 'Operational Status'
+                                        $OutObj | Where-Object { $_.'Operational Status' -ne 'Operational' } | Set-Style -Style Warning -Property 'Operational Status'
                                     }
 
                                     $TableParams = @{
@@ -71,7 +71,7 @@ function Get-AbrWinHostStorageISCSI {
                                     if ($Report.ShowTableCaptions) {
                                         $TableParams['Caption'] = "- $($TableParams.Name)"
                                     }
-                                    $HostInitiatorReport | Table @TableParams
+                                    $OutObj | Table @TableParams
                                 }
                             }
 
@@ -80,14 +80,14 @@ function Get-AbrWinHostStorageISCSI {
                                 Section -Style Heading4 'iSCSI Target Server' {
                                     Paragraph 'The following table details iSCSI Target Server details'
                                     BlankLine
-                                    $HostIscsiTargetServerReport = @()
+                                    $OutObj = @()
                                     ForEach ($HostIscsiTargetServer in $HostIscsiTargetServers) {
                                         try {
-                                            $TempHostIscsiTargetServerReport = [PSCustomObject]@{
+                                            $inObj = [ordered] @{
                                                 'Target Portal Address' = $HostIscsiTargetServer.TargetPortalAddress
                                                 'Target Portal Port Number' = $HostIscsiTargetServer.TargetPortalPortNumber
                                             }
-                                            $HostIscsiTargetServerReport += $TempHostIscsiTargetServerReport
+                                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
@@ -100,7 +100,7 @@ function Get-AbrWinHostStorageISCSI {
                                     if ($Report.ShowTableCaptions) {
                                         $TableParams['Caption'] = "- $($TableParams.Name)"
                                     }
-                                    $HostIscsiTargetServerReport | Sort-Object -Property 'Target Portal Address' | Table @TableParams
+                                    $OutObj | Sort-Object -Property 'Target Portal Address' | Table @TableParams
                                 }
                             }
                         } catch {
@@ -112,21 +112,21 @@ function Get-AbrWinHostStorageISCSI {
                                 Section -Style Heading4 'iSCIS Target Volumes' {
                                     Paragraph 'The following table details iSCSI target volumes'
                                     BlankLine
-                                    $HostIscsiTargetVolumeReport = @()
+                                    $OutObj = @()
                                     ForEach ($HostIscsiTargetVolume in $HostIscsiTargetVolumes) {
                                         try {
-                                            $TempHostIscsiTargetVolumeReport = [PSCustomObject]@{
+                                            $inObj = [ordered] @{
                                                 'Node Address' = $HostIscsiTargetVolume.NodeAddress
-                                                'Node Connected' = ConvertTo-TextYN $HostIscsiTargetVolume.IsConnected
+                                                'Node Connected' = $HostIscsiTargetVolume.IsConnected
                                             }
-                                            $HostIscsiTargetVolumeReport += $TempHostIscsiTargetVolumeReport
+                                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
                                     }
 
                                     if ($HealthCheck.Storage.BP) {
-                                        $HostIscsiTargetVolumeReport | Where-Object { $_.'Node Connected' -ne 'Yes' } | Set-Style -Style Warning -Property 'Node Connected'
+                                        $OutObj | Where-Object { $_.'Node Connected' -ne 'Yes' } | Set-Style -Style Warning -Property 'Node Connected'
                                     }
 
                                     $TableParams = @{
@@ -137,7 +137,7 @@ function Get-AbrWinHostStorageISCSI {
                                     if ($Report.ShowTableCaptions) {
                                         $TableParams['Caption'] = "- $($TableParams.Name)"
                                     }
-                                    $HostIscsiTargetVolumeReport | Sort-Object -Property 'Node Address' | Table @TableParams
+                                    $OutObj | Sort-Object -Property 'Node Address' | Table @TableParams
                                 }
                             }
                         } catch {
@@ -149,15 +149,15 @@ function Get-AbrWinHostStorageISCSI {
                                 Section -Style Heading4 'iSCSI Connections' {
                                     Paragraph 'The following table details iSCSI Connections'
                                     BlankLine
-                                    $HostIscsiConnectionsReport = @()
+                                    $OutObj = @()
                                     ForEach ($HostIscsiConnection in $HostIscsiConnections) {
                                         try {
-                                            $TempHostIscsiConnectionsReport = [PSCustomObject]@{
+                                            $inObj = [ordered] @{
                                                 'Connection Identifier' = $HostIscsiConnection.ConnectionIdentifier
                                                 'Initiator Address' = $HostIscsiConnection.InitiatorAddress
                                                 'Target Address' = $HostIscsiConnection.TargetAddress
                                             }
-                                            $HostIscsiConnectionsReport += $TempHostIscsiConnectionsReport
+                                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning $_.Exception.Message
                                         }
@@ -170,7 +170,7 @@ function Get-AbrWinHostStorageISCSI {
                                     if ($Report.ShowTableCaptions) {
                                         $TableParams['Caption'] = "- $($TableParams.Name)"
                                     }
-                                    $HostIscsiConnectionsReport | Sort-Object -Property 'Connection Identifier' | Table @TableParams
+                                    $OutObj | Sort-Object -Property 'Connection Identifier' | Table @TableParams
                                 }
                             }
                         } catch {

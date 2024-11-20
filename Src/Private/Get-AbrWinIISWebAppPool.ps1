@@ -5,7 +5,7 @@ function Get-AbrWinIISWebAppPool {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -31,17 +31,17 @@ function Get-AbrWinIISWebAppPool {
                     Section -Style Heading3 'Application Pools' {
                         Paragraph 'The following table lists IIS Application Pools'
                         BlankLine
-                        $IISWebAppPoolsReport = @()
+                        $OutObj = @()
                         foreach ($IISWebAppPool in $IISWebAppPools) {
                             try {
-                                $TempIISWebAppPoolsReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Name' = $IISWebAppPool.Name
                                     'Status' = $IISWebAppPool.State
                                     'CLR Ver' = $IISWebAppPool.ManagedRuntimeVersion
                                     'Pipeline Mode ' = $IISWebAppPool.ManagedPipelineMode
                                     'Start Mode' = $IISWebAppPool.StartMode
                                 }
-                                $IISWebAppPoolsReport += $TempIISWebAppPoolsReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -55,7 +55,7 @@ function Get-AbrWinIISWebAppPool {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $IISWebAppPoolsReport | Table @TableParams
+                        $OutObj | Table @TableParams
                     }
                 }
             } catch {

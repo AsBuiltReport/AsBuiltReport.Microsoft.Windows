@@ -33,13 +33,13 @@ function Get-AbrWinDHCPInfrastructure {
                 $OutObj = @()
                 try {
                     $inObj = [ordered] @{
-                        'Domain Joined' = ConvertTo-TextYN $Settings.IsDomainJoined
-                        'Authorized' = ConvertTo-TextYN $Settings.IsAuthorized
+                        'Domain Joined' = $Settings.IsDomainJoined
+                        'Authorized' = $Settings.IsAuthorized
                         'Conflict Detection Attempts' = $Settings.ConflictDetectionAttempts
-                        'Activate Policies' = ConvertTo-TextYN $Settings.ActivatePolicies
-                        'Dynamic Bootp' = ConvertTo-TextYN $Settings.DynamicBootp
-                        'Database Path' = ConvertTo-EmptyToFiller $Database.FileName
-                        'Database Backup Path' = ConvertTo-EmptyToFiller $Database.BackupPath
+                        'Activate Policies' = $Settings.ActivatePolicies
+                        'Dynamic Bootp' = $Settings.DynamicBootp
+                        'Database Path' = $Database.FileName
+                        'Database Backup Path' = $Database.BackupPath
                         'Database Backup Interval' = switch ([string]::IsNullOrEmpty($Database.BackupInterval)) {
                             $true { "--" }
                             $false { "$($Database.BackupInterval) min" }
@@ -47,13 +47,13 @@ function Get-AbrWinDHCPInfrastructure {
                         }
                         'Database Logging Enabled' = Switch ([string]::IsNullOrEmpty($Database.LoggingEnabled)) {
                             $true { "--" }
-                            $false { ConvertTo-TextYN $Database.LoggingEnabled }
+                            $false { $Database.LoggingEnabled }
                             default { 'Unknown' }
                         }
-                        'User Name' = ConvertTo-EmptyToFiller $DNSCredential.UserName
-                        'Domain Name' = ConvertTo-EmptyToFiller $DNSCredential.DomainName
+                        'User Name' = $DNSCredential.UserName
+                        'Domain Name' = $DNSCredential.DomainName
                     }
-                    $OutObj += [pscustomobject]$inobj
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                 } catch {
                     Write-PScriboMessage -IsWarning $_.Exception.Message
                 }

@@ -51,7 +51,7 @@ function Get-AbrWinSQLDatabase {
                                 $InObj = [Ordered]@{
                                     'Name' = $SQLDB.Name
                                     'Status' = $SQLDB.Status
-                                    'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
+                                    'Is Accessible?' = $SQLDB.IsAccessible
                                     'Recovery Model' = $SQLDB.RecoveryModel
                                     'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeMB)) {
                                         $true { '--' }
@@ -60,7 +60,7 @@ function Get-AbrWinSQLDatabase {
                                     }
                                     'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
                                     'Collation' = $SQLDB.Collation
-                                    'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
+                                    'Encrypted' = $SQLDB.Encrypted
                                     'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
                                         '01/01/0001 00:00:00' { "Never" }
                                         $null { '--' }
@@ -73,7 +73,7 @@ function Get-AbrWinSQLDatabase {
                                     }
                                     'Owner' = $SQLDB.Owner
                                 }
-                                $SQLDBInfo += [PSCustomObject]$InObj
+                                $SQLDBInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning "SQL Server System Database table: $($_.Exception.Message)"
                             }
@@ -124,7 +124,7 @@ function Get-AbrWinSQLDatabase {
                                 $InObj = [Ordered]@{
                                     'Name' = $SQLDB.Name
                                     'Status' = $SQLDB.Status
-                                    'Is Accessible?' = ConvertTo-TextYN $SQLDB.IsAccessible
+                                    'Is Accessible?' = $SQLDB.IsAccessible
                                     'Recovery Model' = $SQLDB.RecoveryModel
                                     'Size' = Switch ([string]::IsNullOrEmpty($SQLDB.SizeMB)) {
                                         $true { '--' }
@@ -133,7 +133,7 @@ function Get-AbrWinSQLDatabase {
                                     }
                                     'Compatibility' = $CompatibilityHash[[string]$SQLDB.Compatibility]
                                     'Collation' = $SQLDB.Collation
-                                    'Encrypted' = ConvertTo-TextYN $SQLDB.Encrypted
+                                    'Encrypted' = $SQLDB.Encrypted
                                     'Last Full Backup' = Switch ($SQLDB.LastFullBackup) {
                                         '01/01/0001 00:00:00' { "Never" }
                                         $null { '--' }
@@ -146,7 +146,7 @@ function Get-AbrWinSQLDatabase {
                                     }
                                     'Owner' = $SQLDB.Owner
                                 }
-                                $SQLDBInfo += [PSCustomObject]$InObj
+                                $SQLDBInfo += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning "SQL Server User Database table: $($_.Exception.Message)"
                             }

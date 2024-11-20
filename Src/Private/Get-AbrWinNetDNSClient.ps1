@@ -5,7 +5,7 @@ function Get-AbrWinNetDNSClient {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,12 +32,16 @@ function Get-AbrWinNetDNSClient {
                     Section -Style Heading3 'DNS Client' {
                         Paragraph 'The following table details the DNS Search Domains'
                         BlankLine
-                        $DnsClientReport = [PSCustomObject]@{
+                        $OutObj = @()
+                        $inObj = [ordered] @{
                             'DNS Suffix' = $DnsClient.SuffixSearchList -Join ","
-                            'Use Suffix Search List' = ConvertTo-TextYN $DnsClient.UseSuffixSearchList
-                            'Use Devolution' = ConvertTo-TextYN $DnsClient.UseDevolution
+                            'Use Suffix Search List' = $DnsClient.UseSuffixSearchList
+                            'Use Devolution' = $DnsClient.UseDevolution
                             'Devolution Level' = $DnsClient.DevolutionLevel
                         }
+
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
                         $TableParams = @{
                             Name = "DNS Search Domain"
                             List = $false
@@ -46,7 +50,7 @@ function Get-AbrWinNetDNSClient {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $DnsClientReport | Sort-Object -Property 'DNS Suffix' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'DNS Suffix' | Table @TableParams
                     }
                 }
             } catch {

@@ -39,7 +39,7 @@ function Get-AbrWinFOClusterSharedVolumeState {
                                 'Volume Name' = $Setting.VolumeFriendlyName
                                 'Volume Path' = $Setting.VolumeName
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }

@@ -5,7 +5,7 @@ function ConvertTo-TextYN {
     .DESCRIPTION
 
     .NOTES
-        Version:        0.4.0
+        Version:        0.3.0
         Author:         LEE DAILEY
 
     .EXAMPLE
@@ -15,18 +15,17 @@ function ConvertTo-TextYN {
     #>
     [CmdletBinding()]
     [OutputType([String])]
-    Param
-    (
+    Param (
         [Parameter (
             Position = 0,
             Mandatory)]
         [AllowEmptyString()]
-        [string]
-        $TEXT
+        [string] $TEXT
     )
 
     switch ($TEXT) {
         "" { "--"; break }
+        " " { "--"; break }
         $Null { "--"; break }
         "True" { "Yes"; break }
         "False" { "No"; break }
@@ -37,17 +36,13 @@ function ConvertTo-TextYN {
 function ConvertTo-FileSizeString {
     <#
     .SYNOPSIS
-        Used by As Built Report to convert bytes automatically to GB or TB based on size.
+    Used by As Built Report to convert bytes automatically to GB or TB based on size.
     .DESCRIPTION
-
     .NOTES
-        Version:        0.4.0
-        Author:         LEE DAILEY
-
+        Version:        0.1.0
+        Author:         Jonathan Colon
     .EXAMPLE
-
     .LINK
-
     #>
     [CmdletBinding()]
     [OutputType([String])]
@@ -60,23 +55,15 @@ function ConvertTo-FileSizeString {
         $Size
     )
 
-    switch ($Size) {
-        { $_ -gt 1TB }
-        { [string]::Format("{0:0.00} TB", $Size / 1TB); break }
-        { $_ -gt 1GB }
-        { [string]::Format("{0:0.00} GB", $Size / 1GB); break }
-        { $_ -gt 1MB }
-        { [string]::Format("{0:0.00} MB", $Size / 1MB); break }
-        { $_ -gt 1KB }
-        { [string]::Format("{0:0.00} KB", $Size / 1KB); break }
-        { $_ -gt 0 }
-        { [string]::Format("{0} B", $Size); break }
-        { $_ -eq 0 }
-        { "0 KB"; break }
-        default
-        { "0 KB" }
+    $Unit = Switch ($Size) {
+        { $Size -gt 1PB } { 'PB' ; Break }
+        { $Size -gt 1TB } { 'TB' ; Break }
+        { $Size -gt 1GB } { 'GB' ; Break }
+        { $Size -gt 1Mb } { 'MB' ; Break }
+        Default { 'KB' }
     }
-} # end >> function Format-FileSize
+    return "$([math]::Round(($Size / $("1" + $Unit)), 0)) $Unit"
+} # end
 
 function ConvertTo-EmptyToFiller {
     <#
@@ -311,7 +298,7 @@ Function Get-LocalGroupMembership {
             $Script:ObjNT = $ObjNT
             $Script:Translate = $Translate
             $Script:NetBIOSDomain = $NetBIOSDomain
-            Function Get-LocalGroupMember {
+            Function Get-LocalGroupMemberObj {
                 [cmdletbinding()]
                 Param (
                     [parameter()]
@@ -366,7 +353,7 @@ Function Get-LocalGroupMembership {
                                         $host.ui.WriteVerboseLine(("{0}: Getting local group members" -f $Name))
                                         $Groups[$Name] += , 'Local'
                                         # Enumerate members of local group.
-                                        Get-LocalGroupMember $Member
+                                        Get-LocalGroupMemberObj $Member
                                     }
                                 } Else {
                                     If ($Groups[$Name] -notcontains 'Domain') {
@@ -448,7 +435,7 @@ Function Get-LocalGroupMembership {
             $ADSIGroup = [ADSI]"WinNT://$Computer/$Group,group"
             Write-Verbose ("Checking {0} membership for {1}" -f $Group, $Computer)
             $Groups[$Group] += , 'Local'
-            Get-LocalGroupMember -LocalGroup $ADSIGroup
+            Get-LocalGroupMemberObj -LocalGroup $ADSIGroup
             # endregion Get Local Group Members
         }
         # endregion ScriptBlock
@@ -469,7 +456,7 @@ Function Get-LocalGroupMembership {
             $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
             [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)
         } Catch {
-            # Write-Warning ("{0}" -f $_.Exception.Message)
+            Out-Null
         }
 
         # region Runspace Creation
@@ -517,3 +504,39 @@ Function Get-LocalGroupMembership {
         # endregion Cleanup Runspace
     }
 }
+
+function ConvertTo-HashToYN {
+    <#
+    .SYNOPSIS
+        Used by As Built Report to convert array content true or false automatically to Yes or No.
+    .DESCRIPTION
+
+    .NOTES
+        Version:        0.1.0
+        Author:         Jonathan Colon
+
+    .EXAMPLE
+
+    .LINK
+
+    #>
+    [CmdletBinding()]
+    [OutputType([Hashtable])]
+    Param (
+        [Parameter (Position = 0, Mandatory)]
+        [AllowEmptyString()]
+        [Hashtable] $TEXT
+    )
+
+    $result = [ordered] @{}
+    foreach ($i in $inObj.GetEnumerator()) {
+        try {
+            $result.add($i.Key, (ConvertTo-TextYN $i.Value))
+        } catch {
+            $result.add($i.Key, ($i.Value))
+        }
+    }
+    if ($result) {
+        return $result
+    } else { return $TEXT }
+} # end

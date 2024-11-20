@@ -42,13 +42,13 @@ function Get-AbrWinSQLBuild {
                             'Level' = "Microsoft SQL Server $($Build.NameLevel)"
                             'Build' = $Properties.VersionString
                             'Service Pack' = $Properties.ProductLevel
-                            'Comulative Update' = ConvertTo-EmptyToFiller $Build.CULevel
+                            'Comulative Update' = $Build.CULevel
                             'KB Level' = $Build.KBLevel
-                            'Case Sensitive' = ConvertTo-TextYN $Properties.IsCaseSensitive
-                            'Full Text Installed' = ConvertTo-TextYN $Properties.IsFullTextInstalled
-                            'XTP Supported' = ConvertTo-TextYN $Properties.IsXTPSupported
-                            'Clustered' = ConvertTo-TextYN $Properties.IsClustered
-                            'Single User' = ConvertTo-TextYN $Properties.IsSingleUser
+                            'Case Sensitive' = $Properties.IsCaseSensitive
+                            'Full Text Installed' = $Properties.IsFullTextInstalled
+                            'XTP Supported' = $Properties.IsXTPSupported
+                            'Clustered' = $Properties.IsClustered
+                            'Single User' = $Properties.IsSingleUser
                             'Language' = $Properties.Language
                             'Collation' = $Properties.Collation
                             'Sql CharSet Name' = $Properties.SqlCharSetName
@@ -59,8 +59,8 @@ function Get-AbrWinSQLBuild {
                             'Default File' = $Properties.DefaultFile
                             'Default Log' = $Properties.DefaultLog
                             'Login Mode' = $Properties.LoginMode
-                            'Mail Profile' = ConvertTo-EmptyToFiller $Properties.MailProfile
-                            'Warning' = ConvertTo-EmptyToFiller $Build.Warning
+                            'Mail Profile' = $Properties.MailProfile
+                            'Warning' = $Build.Warning
                         }
                         $SQLServerObjt += $TempSQLServerObjt
 

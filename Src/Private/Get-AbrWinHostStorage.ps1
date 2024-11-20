@@ -5,7 +5,7 @@ function Get-AbrWinHostStorage {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,17 +32,17 @@ function Get-AbrWinHostStorage {
                     Section -Style Heading3 'Local Disks' {
                         Paragraph 'The following table details physical disks installed in the host'
                         BlankLine
-                        $LocalDiskReport = @()
+                        $OutObj = @()
                         ForEach ($Disk in $HostDisks) {
                             try {
-                                $TempLocalDiskReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Disk Number' = $Disk.Number
                                     'Model' = $Disk.Model
                                     'Serial Number' = $Disk.SerialNumber
                                     'Partition Style' = $Disk.PartitionStyle
                                     'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
-                                $LocalDiskReport += $TempLocalDiskReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -55,7 +55,7 @@ function Get-AbrWinHostStorage {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $LocalDiskReport | Sort-Object -Property 'Disk Number' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Disk Number' | Table @TableParams
                     }
                 }
             } catch {
@@ -68,17 +68,17 @@ function Get-AbrWinHostStorage {
                     Section -Style Heading3 'SAN Disks' {
                         Paragraph 'The following section details SAN disks connected to the host'
                         BlankLine
-                        $SanDiskReport = @()
+                        $OutObj = @()
                         ForEach ($Disk in $SanDisks) {
                             try {
-                                $TempSanDiskReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Disk Number' = $Disk.Number
                                     'Model' = $Disk.Model
                                     'Serial Number' = $Disk.SerialNumber
                                     'Partition Style' = $Disk.PartitionStyle
                                     'Disk Size' = "$([Math]::Round($Disk.Size / 1Gb)) GB"
                                 }
-                                $SanDiskReport += $TempSanDiskReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -91,7 +91,7 @@ function Get-AbrWinHostStorage {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $SanDiskReport | Sort-Object -Property 'Disk Number' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Disk Number' | Table @TableParams
                     }
                 }
             } catch {

@@ -35,15 +35,15 @@ function Get-AbrWinDNSZone {
                         try {
                             Write-PScriboMessage "Collecting Actve Directory DNS Zone: '$($Zones.ZoneName)' on $DC"
                             $inObj = [ordered] @{
-                                'Zone Name' = ConvertTo-EmptyToFiller $Zones.ZoneName
-                                'Zone Type' = ConvertTo-EmptyToFiller $Zones.ZoneType
-                                'Replication Scope' = ConvertTo-EmptyToFiller $Zones.ReplicationScope
-                                'Dynamic Update' = ConvertTo-EmptyToFiller $Zones.DynamicUpdate
-                                'DS Integrated' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsDsIntegrated)
-                                'Read Only' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsReadOnly)
-                                'Signed' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsSigned)
+                                'Zone Name' = $Zones.ZoneName
+                                'Zone Type' = $Zones.ZoneType
+                                'Replication Scope' = $Zones.ReplicationScope
+                                'Dynamic Update' = $Zones.DynamicUpdate
+                                'DS Integrated' = ($Zones.IsDsIntegrated)
+                                'Read Only' = ($Zones.IsReadOnly)
+                                'Signed' = ($Zones.IsSigned)
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Domain Name System Zone Item)"
                         }
@@ -71,8 +71,8 @@ function Get-AbrWinDNSZone {
                                         try {
                                             $inObj = [ordered] @{
                                                 'Zone Name' = $Zone.PSChildName
-                                                'Secondary Servers' = ConvertTo-EmptyToFiller ($Zone.SecondaryServers -join ", ")
-                                                'Notify Servers' = ConvertTo-EmptyToFiller $Zone.NotifyServers
+                                                'Secondary Servers' = ($Zone.SecondaryServers -join ", ")
+                                                'Notify Servers' = $Zone.NotifyServers
                                                 'Secure Secondaries' = Switch ($Zone.SecureSecondaries) {
                                                     "0" { "Send zone transfers to all secondary servers that request them." }
                                                     "1" { "Send zone transfers only to name servers that are authoritative for the zone." }
@@ -81,7 +81,7 @@ function Get-AbrWinDNSZone {
                                                     default { $Zone.SecureSecondaries }
                                                 }
                                             }
-                                            $OutObj = [pscustomobject]$inobj
+                                            $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                             $TableParams = @{
                                                 Name = "Zone Transfers - $($Zone.PSChildName.toUpper())"
@@ -113,15 +113,15 @@ function Get-AbrWinDNSZone {
                                     try {
                                         Write-PScriboMessage "Collecting Actve Directory DNS Zone: '$($Zones.ZoneName)'"
                                         $inObj = [ordered] @{
-                                            'Zone Name' = ConvertTo-EmptyToFiller $Zones.ZoneName
-                                            'Zone Type' = ConvertTo-EmptyToFiller $Zones.ZoneType
-                                            'Replication Scope' = ConvertTo-EmptyToFiller $Zones.ReplicationScope
-                                            'Dynamic Update' = ConvertTo-EmptyToFiller $Zones.DynamicUpdate
-                                            'DS Integrated' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsDsIntegrated)
-                                            'Read Only' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsReadOnly)
-                                            'Signed' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Zones.IsSigned)
+                                            'Zone Name' = $Zones.ZoneName
+                                            'Zone Type' = $Zones.ZoneType
+                                            'Replication Scope' = $Zones.ReplicationScope
+                                            'Dynamic Update' = $Zones.DynamicUpdate
+                                            'DS Integrated' = ($Zones.IsDsIntegrated)
+                                            'Read Only' = ($Zones.IsReadOnly)
+                                            'Signed' = ($Zones.IsSigned)
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Reverse Lookup Zone Configuration Item)"
                                     }
@@ -156,9 +156,9 @@ function Get-AbrWinDNSZone {
                                             'Zone Type' = $Zones.ZoneType
                                             'Replication Scope' = $Zones.ReplicationScope
                                             'Master Servers' = $Zones.MasterServers
-                                            'DS Integrated' = ConvertTo-TextYN $Zones.IsDsIntegrated
+                                            'DS Integrated' = $Zones.IsDsIntegrated
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Conditional Forwarder Item)"
                                     }
@@ -191,17 +191,17 @@ function Get-AbrWinDNSZone {
                                         try {
                                             Write-PScriboMessage "Collecting Actve Directory DNS Zone: '$($Settings.ZoneName)'"
                                             $inObj = [ordered] @{
-                                                'Zone Name' = ConvertTo-EmptyToFiller $Settings.ZoneName
-                                                'Aging Enabled' = ConvertTo-EmptyToFiller (ConvertTo-TextYN $Settings.AgingEnabled)
-                                                'Refresh Interval' = ConvertTo-EmptyToFiller $Settings.RefreshInterval
-                                                'NoRefresh Interval' = ConvertTo-EmptyToFiller $Settings.NoRefreshInterval
+                                                'Zone Name' = $Settings.ZoneName
+                                                'Aging Enabled' = ($Settings.AgingEnabled)
+                                                'Refresh Interval' = $Settings.RefreshInterval
+                                                'NoRefresh Interval' = $Settings.NoRefreshInterval
                                                 'Available For Scavenge' = Switch ([string]::IsNullOrEmpty($Settings.AvailForScavengeTime)) {
                                                     $true { "--" }
-                                                    $false { (ConvertTo-EmptyToFiller ($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")) }
+                                                    $false { (($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")) }
                                                     default { 'Unknown' }
                                                 }
                                             }
-                                            $OutObj += [pscustomobject]$inobj
+                                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                         } catch {
                                             Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Zone Scope Aging Item)"
                                         }

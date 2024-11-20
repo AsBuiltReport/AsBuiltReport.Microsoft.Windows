@@ -5,7 +5,7 @@ function Get-AbrWinSMBSummary {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Jonathan Colon
         Twitter:        @jcolonfzenpr
         Github:         rebelinux
@@ -28,18 +28,21 @@ function Get-AbrWinSMBSummary {
             try {
                 $SMBSummary = Get-SmbServerConfiguration -CimSession $TempCimSession | Select-Object AutoShareServer, EnableLeasing, EnableMultiChannel, EnableOplocks, KeepAliveTime, EnableSMB1Protocol, EnableSMB2Protocol
                 if ($SMBSummary) {
-                    $SMBSummaryReport = [PSCustomObject]@{
-                        'Auto Share Server' = ConvertTo-TextYN $SMBSummary.AutoShareServer
-                        'Enable Leasing' = ConvertTo-TextYN $SMBSummary.EnableLeasing
-                        'Enable MultiChannel' = ConvertTo-TextYN $SMBSummary.EnableMultiChannel
-                        'Enable Oplocks' = ConvertTo-TextYN $SMBSummary.EnableOplocks
+                    $OutObj = @()
+                    $inObj = [ordered] @{
+                        'Auto Share Server' = $SMBSummary.AutoShareServer
+                        'Enable Leasing' = $SMBSummary.EnableLeasing
+                        'Enable MultiChannel' = $SMBSummary.EnableMultiChannel
+                        'Enable Oplocks' = $SMBSummary.EnableOplocks
                         'Keep Alive Time' = $SMBSummary.KeepAliveTime
-                        'SMB1 Protocol' = ConvertTo-TextYN $SMBSummary.EnableSMB1Protocol
-                        'SMB2 Protocol' = ConvertTo-TextYN $SMBSummary.EnableSMB2Protocol
+                        'SMB1 Protocol' = $SMBSummary.EnableSMB1Protocol
+                        'SMB2 Protocol' = $SMBSummary.EnableSMB2Protocol
                     }
+                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
+
 
                     if ($HealthCheck.SMB.BP) {
-                        $SMBSummaryReport | Where-Object { $_.'SMB1 Protocol' -eq 'Yes' } | Set-Style -Style Warning -Property 'SMB1 Protocol'
+                        $OutObj | Where-Object { $_.'SMB1 Protocol' -eq 'Yes' } | Set-Style -Style Warning -Property 'SMB1 Protocol'
                     }
 
                     $TableParams = @{
@@ -50,7 +53,7 @@ function Get-AbrWinSMBSummary {
                     if ($Report.ShowTableCaptions) {
                         $TableParams['Caption'] = "- $($TableParams.Name)"
                     }
-                    $SMBSummaryReport | Table @TableParams
+                    $OutObj | Table @TableParams
                 }
             } catch {
                 Write-PScriboMessage -IsWarning $_.Exception.Message

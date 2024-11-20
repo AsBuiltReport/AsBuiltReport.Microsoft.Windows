@@ -5,7 +5,7 @@ function Get-AbrWinNetAdapterMTU {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -30,14 +30,14 @@ function Get-AbrWinNetAdapterMTU {
                 $NetMtus = Invoke-Command -Session $TempPssSession { Get-NetAdapterAdvancedProperty | Where-Object { $_.DisplayName -eq 'Jumbo Packet' } }
                 if ($NetMtus) {
                     Section -Style Heading3 'Network Adapter MTU' {
-                        $NetMtuReport = @()
+                        $OutObj = @()
                         ForEach ($NetMtu in $NetMtus) {
                             try {
-                                $TempNetMtuReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Adapter Name' = $NetMtu.Name
                                     'MTU Size' = $NetMtu.DisplayValue
                                 }
-                                $NetMtuReport += $TempNetMtuReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -50,7 +50,7 @@ function Get-AbrWinNetAdapterMTU {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $NetMtuReport | Sort-Object -Property 'Adapter Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Adapter Name' | Table @TableParams
                     }
                 }
             } catch {

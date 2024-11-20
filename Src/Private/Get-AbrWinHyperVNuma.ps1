@@ -5,7 +5,7 @@ function Get-AbrWinHyperVNuma {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @jcolonfzenpr
@@ -30,15 +30,15 @@ function Get-AbrWinHyperVNuma {
                 $VmHostNumaNodes = Invoke-Command -Session $TempPssSession { Get-VMHostNumaNode }
                 if ($VmHostNumaNodes) {
                     Section -Style Heading3 "Hyper-V NUMA Boundaries" {
-                        [array]$VmHostNumaReport = @()
+                        $OutObj = @()
                         foreach ($Node in $VmHostNumaNodes) {
                             try {
-                                $TempVmHostNumaReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Numa Node Id' = $Node.NodeId
                                     'Memory Available' = "$([math]::Round(($Node.MemoryAvailable)/1024,0)) GB"
                                     'Memory Total' = "$([math]::Round(($Node.MemoryTotal)/1024,0)) GB"
                                 }
-                                $VmHostNumaReport += $TempVmHostNumaReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -51,7 +51,7 @@ function Get-AbrWinHyperVNuma {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $VmHostNumaReport | Sort-Object -Property 'Numa Node Id' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Numa Node Id' | Table @TableParams
                     }
                 }
             } catch {

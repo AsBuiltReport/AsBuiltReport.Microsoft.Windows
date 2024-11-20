@@ -5,7 +5,7 @@ function Get-AbrWinLocalUser {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -29,19 +29,19 @@ function Get-AbrWinLocalUser {
             try {
                 if ($LocalUsers) {
                     Section -Style Heading3 'Local Users' {
-                        $LocalUsersReport = @()
+                        $OutObj = @()
                         ForEach ($LocalUser in $LocalUsers) {
                             try {
-                                $TempLocalUsersReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'User Name' = $LocalUser.Name
                                     'Description' = $LocalUser.Description
-                                    'Account Enabled' = ConvertTo-TextYN $LocalUser.Enabled
+                                    'Account Enabled' = $LocalUser.Enabled
                                     'Last Logon Date' = Switch (($LocalUser.LastLogon).count) {
                                         0 { "--" }
                                         default { $LocalUser.LastLogon.ToShortDateString() }
                                     }
                                 }
-                                $LocalUsersReport += $TempLocalUsersReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -54,7 +54,7 @@ function Get-AbrWinLocalUser {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $LocalUsersReport | Sort-Object -Property 'User Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'User Name' | Table @TableParams
                     }
                 }
             } catch {

@@ -46,7 +46,7 @@ function Get-AbrWinDHCPv4Scope {
                                 }
                                 'State' = $Scope.State
                             }
-                            $OutObj += [pscustomobject]$inobj
+                            $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         } catch {
                             Write-PScriboMessage -IsWarning $_.Exception.Message
                         }
@@ -76,7 +76,7 @@ function Get-AbrWinDHCPv4Scope {
                                             'Percentage In Use' = [math]::Round($DHCPStatistic.PercentageInUse, 0)
                                             'Reserved IP' = $DHCPStatistic.Reserved
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Statistics Item)"
                                     }
@@ -111,17 +111,17 @@ function Get-AbrWinDHCPv4Scope {
                                         $inObj = [ordered] @{
                                             'Partner DHCP Server' = $DHCPv4Failover.PartnerServer
                                             'Mode' = $DHCPv4Failover.Mode
-                                            'LoadBalance Percent' = ConvertTo-EmptyToFiller ([math]::Round($DHCPv4Failover.LoadBalancePercent, 0))
-                                            'Server Role' = ConvertTo-EmptyToFiller $DHCPv4Failover.ServerRole
-                                            'Reserve Percent' = ConvertTo-EmptyToFiller ([math]::Round($DHCPv4Failover.ReservePercent, 0))
-                                            'Max Client Lead Time' = ConvertTo-EmptyToFiller $DHCPv4Failover.MaxClientLeadTime
-                                            'State Switch Interval' = ConvertTo-EmptyToFiller $DHCPv4Failover.StateSwitchInterval
+                                            'LoadBalance Percent' = ([math]::Round($DHCPv4Failover.LoadBalancePercent, 0))
+                                            'Server Role' = $DHCPv4Failover.ServerRole
+                                            'Reserve Percent' = ([math]::Round($DHCPv4Failover.ReservePercent, 0))
+                                            'Max Client Lead Time' = $DHCPv4Failover.MaxClientLeadTime
+                                            'State Switch Interval' = $DHCPv4Failover.StateSwitchInterval
                                             'Scope Ids' = $DHCPv4Failover.ScopeId
                                             'State' = $DHCPv4Failover.State
-                                            'Auto State Transition' = ConvertTo-TextYN $DHCPv4Failover.AutoStateTransition
-                                            'Authetication Enable' = ConvertTo-TextYN $DHCPv4Failover.EnableAuth
+                                            'Auto State Transition' = $DHCPv4Failover.AutoStateTransition
+                                            'Authetication Enable' = $DHCPv4Failover.EnableAuth
                                         }
-                                        $OutObj = [pscustomobject]$inobj
+                                        $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Scope Failover Item)"
                                     }
@@ -165,7 +165,7 @@ function Get-AbrWinDHCPv4Scope {
                                                 default { $DHCPv4Binding.BindingState }
                                             }
                                         }
-                                        $OutObj += [pscustomobject]$inobj
+                                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                     } catch {
                                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (IPv4 Network Interface binding Item)"
                                     }

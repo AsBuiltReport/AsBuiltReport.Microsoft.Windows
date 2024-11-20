@@ -38,9 +38,9 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                             'Name' = $Option.Name
                             'Option Id' = $Option.OptionId
                             'Value' = $Option.Value
-                            'Policy Name' = ConvertTo-EmptyToFiller $Option.PolicyName
+                            'Policy Name' = $Option.PolicyName
                         }
-                        $OutObj += [pscustomobject]$inobj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     } catch {
                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (DHCP scopes server opions item)"
                     }
@@ -66,13 +66,13 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                                     Write-PScriboMessage "Collecting DHCP Server Scope DNS Setting."
                                     $inObj = [ordered] @{
                                         'Dynamic Updates' = $Option.DynamicUpdates
-                                        'Dns Suffix' = ConvertTo-EmptyToFiller $Option.DnsSuffix
-                                        'Name Protection' = ConvertTo-EmptyToFiller $Option.NameProtection
-                                        'Update Dns RR For Older Clients' = ConvertTo-EmptyToFiller $Option.UpdateDnsRRForOlderClients
-                                        'Disable Dns Ptr RR Update' = ConvertTo-EmptyToFiller $Option.DisableDnsPtrRRUpdate
-                                        'Delete Dns RR On Lease Expiry' = ConvertTo-EmptyToFiller $Option.DeleteDnsRROnLeaseExpiry
+                                        'Dns Suffix' = $Option.DnsSuffix
+                                        'Name Protection' = $Option.NameProtection
+                                        'Update Dns RR For Older Clients' = $Option.UpdateDnsRRForOlderClients
+                                        'Disable Dns Ptr RR Update' = $Option.DisableDnsPtrRRUpdate
+                                        'Delete Dns RR On Lease Expiry' = $Option.DeleteDnsRROnLeaseExpiry
                                     }
-                                    $OutObj += [pscustomobject]$inobj
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 } catch {
                                     Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Scope DNS Setting Item)"
                                 }

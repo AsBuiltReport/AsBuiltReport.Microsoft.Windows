@@ -38,10 +38,10 @@ function Get-AbrWinFOClusterNode {
                             'Fault Domain' = $Setting.FaultDomain
                             'Model' = $Setting.Model
                             'Manufacturer' = $Setting.Manufacturer
-                            'Description' = ConvertTo-EmptyToFiller $Setting.Description
+                            'Description' = $Setting.Description
 
                         }
-                        $OutObj += [PSCustomObject]$InObj
+                        $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                     }
 
                     if ($HealthCheck.FailOverCluster.Nodes) {

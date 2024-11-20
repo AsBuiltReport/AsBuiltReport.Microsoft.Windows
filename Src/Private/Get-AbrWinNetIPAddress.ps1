@@ -5,7 +5,7 @@ function Get-AbrWinNetIPAddress {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,10 +32,10 @@ function Get-AbrWinNetIPAddress {
                     Section -Style Heading3 'IP Addresses' {
                         Paragraph 'The following table details IP Addresses assigned to hosts'
                         BlankLine
-                        $NetIpsReport = @()
+                        $OutObj = @()
                         ForEach ($NetIp in $NetIps) {
                             try {
-                                $TempNetIpsReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Interface Name' = $NetIp.InterfaceAlias
                                     'Interface Description' = $NetIp.InterfaceDescription
                                     'IPv4 Addresses' = $NetIp.IPv4Address.IPAddress -Join ","
@@ -46,7 +46,7 @@ function Get-AbrWinNetIPAddress {
                                         default { "Unknown" }
                                     }
                                 }
-                                $NetIpsReport += $TempNetIpsReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -59,7 +59,7 @@ function Get-AbrWinNetIPAddress {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $NetIpsReport | Sort-Object -Property 'Interface Name' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Interface Name' | Table @TableParams
                     }
                 }
             } catch {

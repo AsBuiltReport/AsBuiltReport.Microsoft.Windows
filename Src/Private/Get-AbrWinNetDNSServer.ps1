@@ -5,7 +5,7 @@ function Get-AbrWinNetDNSServer {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.2
+        Version:        0.5.6
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -32,14 +32,14 @@ function Get-AbrWinNetDNSServer {
                     Section -Style Heading3 'DNS Servers' {
                         Paragraph 'The following table details the DNS Server Addresses Configured'
                         BlankLine
-                        $DnsServerReport = @()
+                        $OutObj = @()
                         ForEach ($DnsServer in $DnsServers) {
                             try {
-                                $TempDnsServerReport = [PSCustomObject]@{
+                                $inObj = [ordered] @{
                                     'Interface' = $DnsServer.InterfaceAlias
                                     'Server Address' = $DnsServer.ServerAddresses -Join ","
                                 }
-                                $DnsServerReport += $TempDnsServerReport
+                                $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
                                 Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
@@ -52,7 +52,7 @@ function Get-AbrWinNetDNSServer {
                         if ($Report.ShowTableCaptions) {
                             $TableParams['Caption'] = "- $($TableParams.Name)"
                         }
-                        $DnsServerReport | Sort-Object -Property 'Interface' | Table @TableParams
+                        $OutObj | Sort-Object -Property 'Interface' | Table @TableParams
                     }
                 }
             } catch {
