@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish-to-gallery:
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       - name: Set PSRepository to Trusted for PowerShell Gallery
@@ -49,9 +49,9 @@ jobs:
     needs: publish-to-gallery
     runs-on: ubuntu-latest
     steps:
-      - uses: zentered/bluesky-post-action@v0.1.0
-        with:
-          post: "[New Release] ${{ github.event.repository.name }} ${{ github.event.release.tag_name }}! Check out what's new! ${{ github.event.release.html_url }} #Microsoft #Windows #AsBuiltReport #PowerShell #MVPBuzz"
-        env:
-          BSKY_IDENTIFIER: ${{ secrets.BSKY_IDENTIFIER }}
-          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
+      - uses: zentered/bluesky-post-action@v0.2.0
+      with:
+        post: "[New Release] ${{ github.event.repository.name }} ${{ github.event.release.tag_name }}! Check out what's new! ${{ github.event.release.html_url }} #Microsoft #Windows #AsBuiltReport #PowerShell #MVPBuzz"
+      env:
+        BSKY_IDENTIFIER: ${{ secrets.BSKY_IDENTIFIER }}
+        BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}

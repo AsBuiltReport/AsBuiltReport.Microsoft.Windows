@@ -15,7 +15,7 @@ function ConvertTo-TextYN {
     #>
     [CmdletBinding()]
     [OutputType([String])]
-    Param (
+    param (
         [Parameter (
             Position = 0,
             Mandatory)]
@@ -46,7 +46,7 @@ function ConvertTo-FileSizeString {
     #>
     [CmdletBinding()]
     [OutputType([String])]
-    Param
+    param
     (
         [Parameter (
             Position = 0,
@@ -55,11 +55,11 @@ function ConvertTo-FileSizeString {
         $Size
     )
 
-    $Unit = Switch ($Size) {
-        { $Size -gt 1PB } { 'PB' ; Break }
-        { $Size -gt 1TB } { 'TB' ; Break }
-        { $Size -gt 1GB } { 'GB' ; Break }
-        { $Size -gt 1Mb } { 'MB' ; Break }
+    $Unit = switch ($Size) {
+        { $Size -gt 1PB } { 'PB' ; break }
+        { $Size -gt 1TB } { 'TB' ; break }
+        { $Size -gt 1GB } { 'GB' ; break }
+        { $Size -gt 1Mb } { 'MB' ; break }
         Default { 'KB' }
     }
     return "$([math]::Round(($Size / $("1" + $Unit)), 0)) $Unit"
@@ -78,7 +78,7 @@ function ConvertTo-EmptyToFiller {
     #>
     [CmdletBinding()]
     [OutputType([String])]
-    Param
+    param
     (
         [Parameter (
             Position = 0,
@@ -110,7 +110,7 @@ function Convert-IpAddressToMaskLength {
     #>
     [CmdletBinding()]
     [OutputType([String])]
-    Param
+    param
     (
         [Parameter (
             Position = 0,
@@ -158,7 +158,7 @@ function ConvertTo-ADObjectName {
     return $ADObject;
 }# end
 
-Function Get-LocalGroupMembership {
+function Get-LocalGroupMembership {
     <#
     .SYNOPSIS
         Recursively list all members of a specified Local group.
@@ -238,7 +238,7 @@ Function Get-LocalGroupMembership {
 
     #>
     [cmdletbinding()]
-    Param (
+    param (
         [parameter(ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
         [Alias('CN', '__Server', 'Computer', 'IPAddress')]
         [string[]]$Computername = $env:COMPUTERNAME,
@@ -250,7 +250,7 @@ Function Get-LocalGroupMembership {
         [Alias("MaxJobs")]
         [int]$Throttle = 10
     )
-    Begin {
+    begin {
         $PSBoundParameters.GetEnumerator() | ForEach-Object {
             Write-Verbose $_
         }
@@ -260,24 +260,24 @@ Function Get-LocalGroupMembership {
         # Define hash table for Get-RunspaceData function
         $runspacehash = @{}
         # Function to perform runspace job cleanup
-        Function Get-RunspaceData {
+        function Get-RunspaceData {
             [cmdletbinding()]
             param(
                 [switch]$Wait
             )
-            Do {
+            do {
                 $more = $false
-                Foreach ($runspace in $runspaces) {
-                    If ($runspace.Runspace.isCompleted) {
+                foreach ($runspace in $runspaces) {
+                    if ($runspace.Runspace.isCompleted) {
                         $runspace.powershell.EndInvoke($runspace.Runspace)
                         $runspace.powershell.dispose()
                         $runspace.Runspace = $null
                         $runspace.powershell = $null
-                    } ElseIf ($runspace.Runspace -ne $null) {
+                    } elseif ($runspace.Runspace -ne $null) {
                         $more = $true
                     }
                 }
-                If ($more -AND $PSBoundParameters['Wait']) {
+                if ($more -and $PSBoundParameters['Wait']) {
                     Start-Sleep -Milliseconds 100
                 }
                 # Clean out unused runspace jobs
@@ -288,27 +288,27 @@ Function Get-LocalGroupMembership {
                     Write-Verbose ("Removing {0}" -f $_.computer)
                     $Runspaces.remove($_)
                 }
-            } while ($more -AND $PSBoundParameters['Wait'])
+            } while ($more -and $PSBoundParameters['Wait'])
         }
 
         # region ScriptBlock
         $scriptBlock = {
-            Param ($Computer, $Group, $Depth, $NetBIOSDomain, $ObjNT, $Translate)
+            param ($Computer, $Group, $Depth, $NetBIOSDomain, $ObjNT, $Translate)
             $Script:Depth = $Depth
             $Script:ObjNT = $ObjNT
             $Script:Translate = $Translate
             $Script:NetBIOSDomain = $NetBIOSDomain
-            Function Get-LocalGroupMemberObj {
+            function Get-LocalGroupMemberObj {
                 [cmdletbinding()]
-                Param (
+                param (
                     [parameter()]
                     [System.DirectoryServices.DirectoryEntry]$LocalGroup
                 )
                 # Invoke the Members method and convert to an array of member objects.
                 $Members = @($LocalGroup.psbase.Invoke("Members")) | ForEach-Object { ([System.DirectoryServices.DirectoryEntry]$_) }
                 $Counter++
-                ForEach ($Member In $Members) {
-                    Try {
+                foreach ($Member in $Members) {
+                    try {
 
                         $Name = $Member.InvokeGet("Name")
                         $Path = $Member.InvokeGet("AdsPath")
@@ -317,13 +317,13 @@ Function Get-LocalGroupMembership {
                         $isGroup = ($Member.InvokeGet("Class") -eq "group")
 
                         # Remove the domain from the computername to fix the type comparison when supplied with FQDN
-                        IF ($Computer.Contains('.')) {
+                        if ($Computer.Contains('.')) {
                             $Computer = $computer.Substring(0, $computer.IndexOf('.'))
                         }
 
-                        If (($Path -like "*/$Computer/*")) {
+                        if (($Path -like "*/$Computer/*")) {
                             $Type = 'Local'
-                        } Else { $Type = 'Domain' }
+                        } else { $Type = 'Domain' }
 
                         # Add Objectclass to match Get-LocalGroupMember output
                         if ($isGroup) {
@@ -344,19 +344,19 @@ Function Get-LocalGroupMembership {
                             Depth = $Counter
                             Group = $Group
                         }
-                        If ($isGroup) {
+                        if ($isGroup) {
                             # Check if this group is local or domain.
                             # $host.ui.WriteVerboseLine("(RS)Checking if Counter: {0} is less than Depth: {1}" -f $Counter, $Depth)
-                            If ($Counter -lt $Depth) {
-                                If ($Type -eq 'Local') {
-                                    If ($Groups[$Name] -notcontains 'Local') {
+                            if ($Counter -lt $Depth) {
+                                if ($Type -eq 'Local') {
+                                    if ($Groups[$Name] -notcontains 'Local') {
                                         $host.ui.WriteVerboseLine(("{0}: Getting local group members" -f $Name))
                                         $Groups[$Name] += , 'Local'
                                         # Enumerate members of local group.
                                         Get-LocalGroupMemberObj $Member
                                     }
-                                } Else {
-                                    If ($Groups[$Name] -notcontains 'Domain') {
+                                } else {
+                                    if ($Groups[$Name] -notcontains 'Domain') {
                                         $host.ui.WriteVerboseLine(("{0}: Getting domain group members" -f $Name))
                                         $Groups[$Name] += , 'Domain'
                                         # Enumerate members of domain group.
@@ -365,15 +365,15 @@ Function Get-LocalGroupMembership {
                                 }
                             }
                         }
-                    } Catch {
+                    } catch {
                         $host.ui.WriteWarningLine(("GLGM{0}" -f $_.Exception.Message))
                     }
                 }
             }
 
-            Function Get-DomainGroupMember {
+            function Get-DomainGroupMember {
                 [cmdletbinding()]
-                Param (
+                param (
                     [parameter()]
                     $DomainGroup,
                     [parameter()]
@@ -381,18 +381,18 @@ Function Get-LocalGroupMembership {
                     [parameter()]
                     [string]$blnNT
                 )
-                Try {
-                    If ($blnNT -eq $True) {
+                try {
+                    if ($blnNT -eq $True) {
                         # Convert NetBIOS domain name of group to Distinguished Name.
                         $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (3, ("{0}{1}" -f $NetBIOSDomain.Trim(), $NTName)))
                         $DN = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 1)
                         $ADGroup = [ADSI]"LDAP://$DN"
-                    } Else {
+                    } else {
                         $DN = $DomainGroup.distinguishedName
                         $ADGroup = $DomainGroup
                     }
                     $Counter++
-                    ForEach ($MemberDN In $ADGroup.Member) {
+                    foreach ($MemberDN in $ADGroup.Member) {
                         $MemberGroup = [ADSI]("LDAP://{0}" -f ($MemberDN -replace '/', '\/'))
 
                         # Add Objectclass to match Get-LocalGroupMember output
@@ -413,9 +413,9 @@ Function Get-LocalGroupMembership {
                             Group = $Group
                         }
                         # Check if this member is a group.
-                        If ($MemberGroup.Class -eq "group") {
-                            If ($Counter -lt $Depth) {
-                                If ($Groups[$MemberGroup.name[0]] -notcontains 'Domain') {
+                        if ($MemberGroup.Class -eq "group") {
+                            if ($Counter -lt $Depth) {
+                                if ($Groups[$MemberGroup.name[0]] -notcontains 'Domain') {
                                     Write-Verbose ("{0}: Getting domain group members" -f $MemberGroup.name[0])
                                     $Groups[$MemberGroup.name[0]] += , 'Domain'
                                     # Enumerate members of domain group.
@@ -424,7 +424,7 @@ Function Get-LocalGroupMembership {
                             }
                         }
                     }
-                } Catch {
+                } catch {
                     $host.ui.WriteWarningLine(("GDGM{0}" -f $_.Exception.Message))
                 }
             }
@@ -440,7 +440,7 @@ Function Get-LocalGroupMembership {
         }
         # endregion ScriptBlock
         Write-Verbose ("Checking to see if connected to a domain")
-        Try {
+        try {
             $Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
             $Root = $Domain.GetDirectoryEntry()
             $Base = ($Root.distinguishedName)
@@ -455,7 +455,7 @@ Function Get-LocalGroupMembership {
             # Retrieve NetBIOS name of the current domain.
             $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
             [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)
-        } Catch {
+        } catch {
             Out-Null
         }
 
@@ -470,8 +470,8 @@ Function Get-LocalGroupMembership {
         # endregion Runspace Creation
     }
 
-    Process {
-        ForEach ($Computer in $Computername) {
+    process {
+        foreach ($Computer in $Computername) {
             # Create the powershell instance and supply the scriptblock with the other parameters
             $powershell = [powershell]::Create().AddScript($scriptBlock).AddArgument($computer).AddArgument($Group).AddArgument($Depth).AddArgument($NetBIOSDomain).AddArgument($ObjNT).AddArgument($Translate)
 
@@ -492,7 +492,7 @@ Function Get-LocalGroupMembership {
             Get-RunspaceData @runspacehash
         }
     }
-    End {
+    end {
         Write-Verbose ("Finish processing the remaining runspace jobs: {0}" -f (@(($runspaces | Where-Object { $_.Runspace -ne $Null }).Count)))
         $runspacehash.Wait = $true
         Get-RunspaceData @runspacehash
@@ -505,15 +505,19 @@ Function Get-LocalGroupMembership {
     }
 }
 
+
 function ConvertTo-HashToYN {
     <#
     .SYNOPSIS
         Used by As Built Report to convert array content true or false automatically to Yes or No.
     .DESCRIPTION
-
+        Used by As Built Report to convert array content true or false automatically to Yes or No.
+        Now also strips non-printable ASCII characters from string values while creating the array hash.
+		This is required for Word Document Output as PSCribo cannot create Word documents with non-ASCII characters
     .NOTES
-        Version:        0.1.0
+        Version:        0.1.1
         Author:         Jonathan Colon
+        Changes:        0.1.1 - Updated to include non-unicode character string cleaning. Graham Flynn - 30/07/2025
 
     .EXAMPLE
 
@@ -522,21 +526,93 @@ function ConvertTo-HashToYN {
     #>
     [CmdletBinding()]
     [OutputType([Hashtable])]
-    Param (
+    param (
         [Parameter (Position = 0, Mandatory)]
         [AllowEmptyString()]
         [Hashtable] $TEXT
     )
 
     $result = [ordered] @{}
+
     foreach ($i in $inObj.GetEnumerator()) {
         try {
-            $result.add($i.Key, (ConvertTo-TextYN $i.Value))
+            $valueToProcess = $i.Value
+
+            # Check if the value is a string before attempting to clean it
+            if ($valueToProcess -is [string]) {
+                $valueToProcess = $valueToProcess | Remove-NonPrintableAscii
+            }
+
+            $convertedValue = ConvertTo-TextYN $valueToProcess
+
+            $result.add($i.Key, $convertedValue)
         } catch {
-            $result.add($i.Key, ($i.Value))
+            # If ConvertTo-TextYN fails, still try to clean the original value if it's a string
+            $originalValue = $i.Value
+            if ($originalValue -is [string]) {
+                $originalValue = $originalValue | Remove-NonPrintableAscii
+            }
+            $result.add($i.Key, ($originalValue)) # Add the (potentially cleaned) original value
         }
     }
     if ($result) {
         return $result
-    } else { return $TEXT }
+    } else {
+        # If $TEXT was empty or processing failed to produce results, return the original (empty) $TEXT
+        # Note: If $inObj was the source, and $TEXT is not used, this 'else' block might need review
+        # based on how $TEXT is intended to be used when $inObj is empty.
+        return $TEXT
+    }
 } # end
+
+
+
+function Remove-NonPrintableAscii {
+    <#
+    .SYNOPSIS
+        Removes non-printable ASCII characters from a string.
+    .DESCRIPTION
+        This function takes a string as input and returns a new string
+        where all characters outside the printable ASCII range (ASCII 32-126)
+        have been removed. If the input is null or empty, it returns an empty string.
+    .PARAMETER InputString
+        The string from which to remove non-printable ASCII characters.
+    .EXAMPLE
+        Remove-NonPrintableAscii -InputString "Hello`nWorld`t!"
+        # Output: "HelloWorld!"
+
+    .EXAMPLE
+        "This string has a null character: `0" | Remove-NonPrintableAscii
+        # Output: "This string has a null character: "
+
+    .EXAMPLE
+        $null | Remove-NonPrintableAscii
+        # Output: "" (empty string)
+
+    .EXAMPLE
+        "" | Remove-NonPrintableAscii
+        # Output: "" (empty string)
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    [OutputType([String])]
+
+    param (
+        [Parameter(ValueFromPipeline = $true)]
+        [string]$InputString
+    )
+
+    process {
+        if ($PSCmdlet.ShouldProcess($InputString, "Remove non-printable ASCII characters")) {
+            # Check if the input string is null or empty.
+            # If it is, return an empty string immediately to avoid errors.
+            if ([string]::IsNullOrEmpty($InputString)) {
+                return ""
+            }
+
+            # Regular expression to match any character that is NOT a printable ASCII character.
+            # [^\x20-\x7E] matches any character that is not in the range of ASCII 32 (space) to 126 (tilde).
+            $cleanedString = $InputString -replace '[^\x20-\x7E]', ''
+            return $cleanedString
+        }
+    }
+}

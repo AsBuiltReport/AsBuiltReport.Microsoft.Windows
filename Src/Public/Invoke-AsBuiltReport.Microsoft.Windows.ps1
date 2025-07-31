@@ -5,7 +5,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     .DESCRIPTION
         Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
     .NOTES
-        Version:        0.5.6
+        Version:        0.5.7
         Author:         Andrew Ramsay
         Editor:         Jonathan Colon
         Twitter:        @asbuiltreport
@@ -17,29 +17,53 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     #>
 
     # Do not remove or add to these parameters
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope = "Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "", Scope = "Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "", Scope = "Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Scope = "Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Scope = "Function")]
+
+
     param (
         [String[]] $Target,
         [PSCredential] $Credential
     )
 
-    Write-PScriboMessage -Plugin "Module" -IsWarning "Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
-    Write-PScriboMessage -Plugin "Module" -IsWarning "Do not forget to update your report configuration file after each new release."
-    Write-PScriboMessage -Plugin "Module" -IsWarning "Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
-    Write-PScriboMessage -Plugin "Module" -IsWarning "Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
+    #Requires -Version 5.1
+    #Requires -PSEdition Desktop
+    #Requires -RunAsAdministrator
 
-    Try {
-        $InstalledVersion = Get-Module -ListAvailable -Name AsBuiltReport.Microsoft.Windows -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+    if ($psISE) {
+        Write-Error -Message "You cannot run this script inside the PowerShell ISE. Please execute it from the PowerShell Command Window."
+        break
+    }
 
-        if ($InstalledVersion) {
-            Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Microsoft.Windows $($InstalledVersion.ToString()) is currently installed."
-            $LatestVersion = Find-Module -Name AsBuiltReport.Microsoft.Windows -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
-            if ($LatestVersion -gt $InstalledVersion) {
-                Write-PScriboMessage -Plugin "Module" -IsWarning "AsBuiltReport.Microsoft.Windows $($LatestVersion.ToString()) is available."
-                Write-PScriboMessage -Plugin "Module" -IsWarning "Run 'Update-Module -Name AsBuiltReport.Microsoft.Windows -Force' to install the latest version."
+    Write-Host "- Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
+    Write-Host "- Do not forget to update your report configuration file after each new version release."
+    Write-Host "- Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
+    Write-Host "- Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
+    Write-Host "- This project is community maintained and has no sponsorship from Microsoft, its employees or any of its affiliates."
+
+
+    # Check the version of the dependency modules
+    $ModuleArray = @('AsBuiltReport.Microsoft.Windows', 'dbatools')
+
+    foreach ($Module in $ModuleArray) {
+        try {
+            $InstalledVersion = Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+
+            if ($InstalledVersion) {
+                Write-Host "- $Module module v$($InstalledVersion.ToString()) is currently installed."
+                $LatestVersion = Find-Module -Name $Module -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+                if ($InstalledVersion -lt $LatestVersion) {
+                    Write-Host "  - $Module module v$($LatestVersion.ToString()) is available." -ForegroundColor Red
+                    Write-Host "  - Run 'Update-Module -Name $Module -Force' to install the latest version." -ForegroundColor Red
+                }
             }
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
         }
-    } Catch {
-        Write-PScriboMessage -IsWarning $_.Exception.Message
     }
 
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -60,6 +84,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
 
     #region foreach loop
     foreach ($System in $Target) {
+
+        if (Select-String -InputObject $System -Pattern "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$") {
+            throw "Please use the Fully Qualified Domain Name (FQDN) instead of an IP address when connecting to the System: $System"
+        }
+
         Section -Style Heading1 $System {
             Paragraph "The following table details the Windows Host $System"
             BlankLine
@@ -236,7 +265,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinIISWebSite
                             }
                         } else {
-                            If ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
+                            if ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
                                 Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service "IIS"
                                 Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service "IIS"
                             } else {
