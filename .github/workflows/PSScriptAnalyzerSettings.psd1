@@ -3,7 +3,8 @@
         'PSUseToExportFieldsInManifest',
         'PSReviewUnusedParameter',
         'PSUseDeclaredVarsMoreThanAssignments',
-        'PSAvoidGlobalVars'
-        'PSUseSingularNouns'
+        'PSAvoidGlobalVars',
+        'PSUseSingularNouns',
+        'PSAvoidUsingWriteHost'
     )
 }

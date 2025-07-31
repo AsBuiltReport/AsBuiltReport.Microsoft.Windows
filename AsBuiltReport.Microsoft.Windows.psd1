@@ -58,7 +58,7 @@
         },
         @{
             ModuleName = 'dbatools';
-            ModuleVersion = '2.1.30'
+            ModuleVersion = '2.5.1'
         }
     )
 
