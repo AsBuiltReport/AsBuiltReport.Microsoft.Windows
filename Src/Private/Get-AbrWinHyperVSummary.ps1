@@ -36,13 +36,13 @@ function Get-AbrWinHyperVSummary {
                         'VM Default Path' = $VmHost.VirtualMachinePath
                         'VM Disk Default Path' = $VmHost.VirtualHardDiskPath
                         'Supported VM Versions' = $VmHost.SupportedVmVersions -Join ","
-                        'Numa Spannning Enabled' = $VmHost.NumaSpanningEnabled
+                        'Numa Spanning Enabled' = $VmHost.NumaSpanningEnabled
                         'Iov Support' = $VmHost.IovSupport
                         'VM Migrations Enabled' = $VmHost.VirtualMachineMigrationEnabled
                         'Allow any network for Migrations' = $VmHost.UseAnyNetworkForMigration
                         'VM Migration Authentication Type' = $VmHost.VirtualMachineMigrationAuthenticationType
                         'Max Concurrent Storage Migrations' = $VmHost.MaximumStorageMigrations
-                        'Max Concurrent VM Migrations' = $VmHost.MaximumStorageMigrations
+                        'Max Concurrent VM Migrations' = $VmHost.MaximumVirtualMachineMigrations
                     }
                     $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 

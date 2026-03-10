@@ -15,9 +15,9 @@ function Get-RequiredFeature {
         The version of the required windows feature
     #>
 
+    [CmdletBinding()]
     Param
     (
-        [CmdletBinding()]
         [Parameter(Mandatory = $true, ValueFromPipeline = $false)]
         [ValidateNotNullOrEmpty()]
         [String]
@@ -30,11 +30,11 @@ function Get-RequiredFeature {
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Switch]
-        $Feature = $False,
+        $Feature,
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [Switch]
-        $Status = $False,
+        $Status,
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false)]
         [ValidateNotNullOrEmpty()]
