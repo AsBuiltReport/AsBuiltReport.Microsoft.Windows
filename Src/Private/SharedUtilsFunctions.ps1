@@ -534,7 +534,7 @@ function ConvertTo-HashToYN {
 
     $result = [ordered] @{}
 
-    foreach ($i in $inObj.GetEnumerator()) {
+    foreach ($i in $TEXT.GetEnumerator()) {
         try {
             $valueToProcess = $i.Value
 
@@ -558,9 +558,6 @@ function ConvertTo-HashToYN {
     if ($result) {
         return $result
     } else {
-        # If $TEXT was empty or processing failed to produce results, return the original (empty) $TEXT
-        # Note: If $inObj was the source, and $TEXT is not used, this 'else' block might need review
-        # based on how $TEXT is intended to be used when $inObj is empty.
         return $TEXT
     }
 } # end

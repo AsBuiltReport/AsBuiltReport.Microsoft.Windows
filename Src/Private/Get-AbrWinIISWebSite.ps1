@@ -72,7 +72,7 @@ function Get-AbrWinIISWebSite {
                                                     'Name' = $IISWebSite.Name
                                                     'Auto Start' = $IISWebSite.serverAutoStart
                                                     'Enabled Protocols ' = $IISWebSite.enabledProtocols
-                                                    'URL' = Switch (($SiteURL.ResponseUri).count) {
+                                                    'URL' = Switch (($SiteURL.ResponseUri).Count) {
                                                         0 { "--" }
                                                         default { $SiteURL.ResponseUri }
                                                     }

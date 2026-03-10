@@ -36,7 +36,7 @@ function Get-AbrWinLocalUser {
                                     'User Name' = $LocalUser.Name
                                     'Description' = $LocalUser.Description
                                     'Account Enabled' = $LocalUser.Enabled
-                                    'Last Logon Date' = Switch (($LocalUser.LastLogon).count) {
+                                    'Last Logon Date' = Switch (($LocalUser.LastLogon).Count) {
                                         0 { "--" }
                                         default { $LocalUser.LastLogon.ToShortDateString() }
                                     }

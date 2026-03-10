@@ -35,7 +35,7 @@ function Get-AbrWinSMBNetworkInterface {
                         foreach ($SMBNIC in $SMBNICs) {
                             try {
                                 $inObj = [ordered] @{
-                                    'Name' = Switch (($SMBNIC.InterfaceIndex).count) {
+                                    'Name' = Switch (($SMBNIC.InterfaceIndex).Count) {
                                         0 { "Unknown" }
                                         default { Invoke-Command -Session $TempPssSession { (Get-NetAdapter -InterfaceIndex ($using:SMBNIC).InterfaceIndex).Name } }
                                     }

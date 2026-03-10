@@ -21,7 +21,7 @@ function Get-AbrWinOSConfig {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Oprating System Configuration information."
+        Write-PScriboMessage "Collecting Operating System Configuration information."
     }
 
     process {
@@ -36,7 +36,7 @@ function Get-AbrWinOSConfig {
                     'Windows Build Number' = $HostInfo.OsVersion
                     'Windows Install Type' = $HostInfo.WindowsInstallationType
                     'AD Domain' = $HostInfo.CsDomain
-                    'Windows Installation Date' = switch (($HostInfo.OsInstallDate).count) {
+                    'Windows Installation Date' = switch (($HostInfo.OsInstallDate).Count) {
                         0 { "--" }
                         default { $HostInfo.OsInstallDate.ToShortDateString() }
                     }

@@ -85,7 +85,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     #region foreach loop
     foreach ($System in $Target) {
 
-        if (Select-String -InputObject $System -Pattern "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$") {
+        if (Select-String -InputObject $System -Pattern "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$" -Quiet) {
             throw "Please use the Fully Qualified Domain Name (FQDN) instead of an IP address when connecting to the System: $System"
         }
 
