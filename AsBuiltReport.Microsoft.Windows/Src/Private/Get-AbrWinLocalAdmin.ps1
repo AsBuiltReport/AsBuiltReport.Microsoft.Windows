@@ -21,7 +21,7 @@ function Get-AbrWinLocalAdmin {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PScriboMessage "Collecting Local Administrator information."
+        Write-PScriboMessage 'Collecting Local Administrator information.'
     }
 
     process {
@@ -30,7 +30,7 @@ function Get-AbrWinLocalAdmin {
                 if ($LocalAdmins) {
                     Section -Style Heading3 'Local Administrators' {
                         $OutObj = @()
-                        ForEach ($LocalAdmin in $LocalAdmins) {
+                        foreach ($LocalAdmin in $LocalAdmins) {
                             try {
                                 $inObj = [ordered] @{
                                     'Account Name' = $LocalAdmin.Name
@@ -43,7 +43,7 @@ function Get-AbrWinLocalAdmin {
                             }
                         }
                         $TableParams = @{
-                            Name = "Local Administrators"
+                            Name = 'Local Administrators'
                             List = $false
                             ColumnWidths = 40, 30, 30
                         }

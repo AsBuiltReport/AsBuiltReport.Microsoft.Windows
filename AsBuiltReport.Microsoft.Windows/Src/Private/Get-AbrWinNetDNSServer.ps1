@@ -21,23 +21,23 @@ function Get-AbrWinNetDNSServer {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network DNS Server information."
+        Write-PScriboMessage 'Collecting Network DNS Server information.'
     }
 
     process {
         if ($InfoLevel.Networking -ge 1) {
             try {
-                $DnsServers = Invoke-Command -Session $TempPssSession { Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses -notlike $null -and $_.InterfaceAlias -notlike "*isatap*" } }
+                $DnsServers = Invoke-Command -Session $TempPssSession { Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses -notlike $null -and $_.InterfaceAlias -notlike '*isatap*' } }
                 if ($DnsServers) {
                     Section -Style Heading3 'DNS Servers' {
                         Paragraph 'The following table details the DNS Server Addresses Configured'
                         BlankLine
                         $OutObj = @()
-                        ForEach ($DnsServer in $DnsServers) {
+                        foreach ($DnsServer in $DnsServers) {
                             try {
                                 $inObj = [ordered] @{
                                     'Interface' = $DnsServer.InterfaceAlias
-                                    'Server Address' = $DnsServer.ServerAddresses -Join ","
+                                    'Server Address' = $DnsServer.ServerAddresses -join ','
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
@@ -45,7 +45,7 @@ function Get-AbrWinNetDNSServer {
                             }
                         }
                         $TableParams = @{
-                            Name = "DNS Servers"
+                            Name = 'DNS Servers'
                             List = $false
                             ColumnWidths = 40, 60
                         }

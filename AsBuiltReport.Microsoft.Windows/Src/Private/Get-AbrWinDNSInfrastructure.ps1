@@ -20,7 +20,7 @@ function Get-AbrWinDNSInfrastructure {
 
     begin {
         Write-PScriboMessage "DNS InfoLevel set at $($InfoLevel.DNS)."
-        Write-PScriboMessage "Collecting Host DNS Server information."
+        Write-PScriboMessage 'Collecting Host DNS Server information.'
     }
 
     process {
@@ -44,7 +44,7 @@ function Get-AbrWinDNSInfrastructure {
             }
 
             $TableParams = @{
-                Name = "DNS Servers Settings - $($System.toUpper().split(".")[0])"
+                Name = "DNS Servers Settings - $($System.toUpper().split('.')[0])"
                 List = $true
                 ColumnWidths = 40, 60
             }
@@ -59,8 +59,8 @@ function Get-AbrWinDNSInfrastructure {
                 try {
                     $DNSIPSetting = Get-NetAdapter -CimSession $TempCIMSession | Get-DnsClientServerAddress -CimSession $TempCIMSession -AddressFamily IPv4
                     if ($DNSIPSetting) {
-                        Section -Style Heading3 "DNS IP Configuration" {
-                            Paragraph "The following table details DNS Server IP Configuration Settings"
+                        Section -Style Heading3 'DNS IP Configuration' {
+                            Paragraph 'The following table details DNS Server IP Configuration Settings'
                             BlankLine
                             $OutObj = @()
                             try {
@@ -74,11 +74,11 @@ function Get-AbrWinDNSInfrastructure {
                                 $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
                                 if ($HealthCheck.DNS.DP) {
-                                    $OutObj | Where-Object { $_.'DNS IP 1' -eq "127.0.0.1" } | Set-Style -Style Warning -Property 'DNS IP 1'
+                                    $OutObj | Where-Object { $_.'DNS IP 1' -eq '127.0.0.1' } | Set-Style -Style Warning -Property 'DNS IP 1'
                                 }
 
                                 $TableParams = @{
-                                    Name = "IP Configuration - $($System.toUpper().split(".")[0])"
+                                    Name = "IP Configuration - $($System.toUpper().split('.')[0])"
                                     List = $false
                                     ColumnWidths = 20, 20, 20, 20, 20
                                 }
@@ -103,8 +103,8 @@ function Get-AbrWinDNSInfrastructure {
                 try {
                     $DNSSetting = Get-DnsServerScavenging -CimSession $TempCIMSession
                     if ($DNSSetting) {
-                        Section -Style Heading3 "Scavenging Options" {
-                            Paragraph "The following table details scavenging configuration settings"
+                        Section -Style Heading3 'Scavenging Options' {
+                            Paragraph 'The following table details scavenging configuration settings'
                             BlankLine
                             $OutObj = @()
                             try {
@@ -112,21 +112,21 @@ function Get-AbrWinDNSInfrastructure {
                                     'NoRefresh Interval' = $DNSSetting.NoRefreshInterval
                                     'Refresh Interval' = $DNSSetting.RefreshInterval
                                     'Scavenging Interval' = $DNSSetting.ScavengingInterval
-                                    'Last Scavenge Time' = Switch ([string]::IsNullOrEmpty($DNSSetting.LastScavengeTime)) {
-                                        $true { "--" }
-                                        $false { ($DNSSetting.LastScavengeTime.ToString("MM/dd/yyyy")) }
+                                    'Last Scavenge Time' = switch ([string]::IsNullOrEmpty($DNSSetting.LastScavengeTime)) {
+                                        $true { '--' }
+                                        $false { ($DNSSetting.LastScavengeTime.ToString('MM/dd/yyyy')) }
                                         default { 'Unknown' }
                                     }
-                                    'Scavenging State' = Switch ($DNSSetting.ScavengingState) {
-                                        "True" { "Enabled" }
-                                        "False" { "Disabled" }
+                                    'Scavenging State' = switch ($DNSSetting.ScavengingState) {
+                                        'True' { 'Enabled' }
+                                        'False' { 'Disabled' }
                                         default { $DNSSetting.ScavengingState }
                                     }
                                 }
 
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                 $TableParams = @{
-                                    Name = "Scavenging - $($System.toUpper().split(".")[0])"
+                                    Name = "Scavenging - $($System.toUpper().split('.')[0])"
                                     List = $false
                                     ColumnWidths = 20, 20, 20, 20, 20
                                 }
@@ -147,22 +147,22 @@ function Get-AbrWinDNSInfrastructure {
             #                                 DNS Forwarder Section                                       #
             #---------------------------------------------------------------------------------------------#
             try {
-                Section -Style Heading3 "Forwarder Options" {
-                    Paragraph "The following table details forwarder configuration settings"
+                Section -Style Heading3 'Forwarder Options' {
+                    Paragraph 'The following table details forwarder configuration settings'
                     BlankLine
                     $OutObj = @()
                     try {
                         $DNSSetting = Get-DnsServerForwarder -CimSession $TempCIMSession
                         $Recursion = Get-DnsServerRecursion -CimSession $TempCIMSession
                         $inObj = [ordered] @{
-                            'IP Address' = $DNSSetting.IPAddress -join ","
+                            'IP Address' = $DNSSetting.IPAddress -join ','
                             'Timeout' = ("$($DNSSetting.Timeout)/s")
                             'Use Root Hint' = ($DNSSetting.UseRootHint)
                             'Use Recursion' = ($Recursion.Enable)
                         }
                         $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                         $TableParams = @{
-                            Name = "Forwarders - $($System.toUpper().split(".")[0])"
+                            Name = "Forwarders - $($System.toUpper().split('.')[0])"
                             List = $false
                             ColumnWidths = 25, 25, 25, 25
                         }

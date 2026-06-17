@@ -21,7 +21,7 @@ function Get-AbrWinHostHWSummary {
 
     begin {
         Write-PScriboMessage "Hardware InfoLevel set at $($InfoLevel.Hardware)."
-        Write-PScriboMessage "Collecting Host Inventory information."
+        Write-PScriboMessage 'Collecting Host Inventory information.'
     }
 
     process {
@@ -46,7 +46,7 @@ function Get-AbrWinHostHWSummary {
                     $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     $TableParams = @{
-                        Name = "Host Hardware Specifications"
+                        Name = 'Host Hardware Specifications'
                         List = $true
                         ColumnWidths = 50, 50
                     }

@@ -20,15 +20,15 @@ function Get-AbrWinDNSZone {
 
     begin {
         Write-PScriboMessage "DNS InfoLevel set at $($InfoLevel.DNS)."
-        Write-PScriboMessage "Collecting Host DNS Server information."
+        Write-PScriboMessage 'Collecting Host DNS Server information.'
     }
 
     process {
         try {
-            $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like "False" -and $_.ZoneType -notlike "Forwarder" }
+            $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like 'False' -and $_.ZoneType -notlike 'Forwarder' }
             if ($DNSSetting) {
-                Section -Style Heading3 "DNS Zone Configuration" {
-                    Paragraph "The following table details zones configuration settings"
+                Section -Style Heading3 'DNS Zone Configuration' {
+                    Paragraph 'The following table details zones configuration settings'
                     BlankLine
                     $OutObj = @()
                     foreach ($Zones in $DNSSetting) {
@@ -50,7 +50,7 @@ function Get-AbrWinDNSZone {
                     }
 
                     $TableParams = @{
-                        Name = "Zones - $($System.toUpper().split(".")[0])"
+                        Name = "Zones - $($System.toUpper().split('.')[0])"
                         List = $false
                         ColumnWidths = 25, 15, 12, 12, 12, 12, 12
                     }
@@ -61,23 +61,23 @@ function Get-AbrWinDNSZone {
 
                     if ($InfoLevel.DNS -ge 2) {
                         try {
-                            $DNSSetting = Invoke-Command -Session $TempPssSession { Get-ChildItem -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DNS Server\Zones\*" | Get-ItemProperty | Where-Object { $_ -match 'SecondaryServers' } }
+                            $DNSSetting = Invoke-Command -Session $TempPssSession { Get-ChildItem -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DNS Server\Zones\*' | Get-ItemProperty | Where-Object { $_ -match 'SecondaryServers' } }
                             if ($DNSSetting) {
-                                Section -Style Heading4 "Zone Transfers" {
-                                    Paragraph "The following table details zone transfer configuration settings"
+                                Section -Style Heading4 'Zone Transfers' {
+                                    Paragraph 'The following table details zone transfer configuration settings'
                                     BlankLine
                                     $OutObj = @()
                                     foreach ($Zone in $DNSSetting) {
                                         try {
                                             $inObj = [ordered] @{
                                                 'Zone Name' = $Zone.PSChildName
-                                                'Secondary Servers' = ($Zone.SecondaryServers -join ", ")
+                                                'Secondary Servers' = ($Zone.SecondaryServers -join ', ')
                                                 'Notify Servers' = $Zone.NotifyServers
-                                                'Secure Secondaries' = Switch ($Zone.SecureSecondaries) {
-                                                    "0" { "Send zone transfers to all secondary servers that request them." }
-                                                    "1" { "Send zone transfers only to name servers that are authoritative for the zone." }
-                                                    "2" { "Send zone transfers only to servers you specify in Secondary Servers." }
-                                                    "3" { "Do not send zone transfers." }
+                                                'Secure Secondaries' = switch ($Zone.SecureSecondaries) {
+                                                    '0' { 'Send zone transfers to all secondary servers that request them.' }
+                                                    '1' { 'Send zone transfers only to name servers that are authoritative for the zone.' }
+                                                    '2' { 'Send zone transfers only to servers you specify in Secondary Servers.' }
+                                                    '3' { 'Do not send zone transfers.' }
                                                     default { $Zone.SecureSecondaries }
                                                 }
                                             }
@@ -103,10 +103,10 @@ function Get-AbrWinDNSZone {
                         }
                     }
                     try {
-                        $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like "True" }
+                        $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like 'True' }
                         if ($DNSSetting) {
-                            Section -Style Heading4 "Reverse Lookup Zone Configuration" {
-                                Paragraph "The following table details reverse looup zone configuration settings"
+                            Section -Style Heading4 'Reverse Lookup Zone Configuration' {
+                                Paragraph 'The following table details reverse looup zone configuration settings'
                                 BlankLine
                                 $OutObj = @()
                                 foreach ($Zones in $DNSSetting) {
@@ -128,7 +128,7 @@ function Get-AbrWinDNSZone {
                                 }
 
                                 $TableParams = @{
-                                    Name = "Zones - $($System.toUpper().split(".")[0])"
+                                    Name = "Zones - $($System.toUpper().split('.')[0])"
                                     List = $false
                                     ColumnWidths = 25, 15, 12, 12, 12, 12, 12
                                 }
@@ -142,10 +142,10 @@ function Get-AbrWinDNSZone {
                         Write-PScriboMessage -IsWarning "$($_.Exception.Message) (Reverse Lookup Zone Configuration Table)"
                     }
                     try {
-                        $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like "False" -and $_.ZoneType -like "Forwarder" }
+                        $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like 'False' -and $_.ZoneType -like 'Forwarder' }
                         if ($DNSSetting) {
-                            Section -Style Heading4 "Conditional Forwarder" {
-                                Paragraph "The following table details conditional forwarder configuration settings"
+                            Section -Style Heading4 'Conditional Forwarder' {
+                                Paragraph 'The following table details conditional forwarder configuration settings'
                                 BlankLine
                                 $OutObj = @()
                                 foreach ($Zones in $DNSSetting) {
@@ -165,7 +165,7 @@ function Get-AbrWinDNSZone {
                                 }
 
                                 $TableParams = @{
-                                    Name = "Conditional Forwarders - $($System.toUpper().split(".")[0])"
+                                    Name = "Conditional Forwarders - $($System.toUpper().split('.')[0])"
                                     List = $false
                                     ColumnWidths = 25, 20, 20, 20, 15
                                 }
@@ -180,11 +180,11 @@ function Get-AbrWinDNSZone {
                     }
                     if ($InfoLevel.DNS -ge 2) {
                         try {
-                            $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like "False" -and $_.ZoneType -eq "Primary" } | Select-Object -ExpandProperty ZoneName
+                            $DNSSetting = Get-DnsServerZone -CimSession $TempCIMSession | Where-Object { $_.IsReverseLookupZone -like 'False' -and $_.ZoneType -eq 'Primary' } | Select-Object -ExpandProperty ZoneName
                             $Zones = Get-DnsServerZoneAging -CimSession $TempCIMSession -Name $DNSSetting
                             if ($Zones) {
-                                Section -Style Heading4 "Zone Scope Aging Properties" {
-                                    Paragraph "The following table details zone configuration aging settings"
+                                Section -Style Heading4 'Zone Scope Aging Properties' {
+                                    Paragraph 'The following table details zone configuration aging settings'
                                     BlankLine
                                     $OutObj = @()
                                     foreach ($Settings in $Zones) {
@@ -195,9 +195,9 @@ function Get-AbrWinDNSZone {
                                                 'Aging Enabled' = ($Settings.AgingEnabled)
                                                 'Refresh Interval' = $Settings.RefreshInterval
                                                 'NoRefresh Interval' = $Settings.NoRefreshInterval
-                                                'Available For Scavenge' = Switch ([string]::IsNullOrEmpty($Settings.AvailForScavengeTime)) {
-                                                    $true { "--" }
-                                                    $false { (($Settings.AvailForScavengeTime).ToUniversalTime().toString("r")) }
+                                                'Available For Scavenge' = switch ([string]::IsNullOrEmpty($Settings.AvailForScavengeTime)) {
+                                                    $true { '--' }
+                                                    $false { (($Settings.AvailForScavengeTime).ToUniversalTime().toString('r')) }
                                                     default { 'Unknown' }
                                                 }
                                             }
@@ -212,7 +212,7 @@ function Get-AbrWinDNSZone {
                                     }
 
                                     $TableParams = @{
-                                        Name = "Zone Aging Properties - $($System.toUpper().split(".")[0])"
+                                        Name = "Zone Aging Properties - $($System.toUpper().split('.')[0])"
                                         List = $false
                                         ColumnWidths = 25, 10, 15, 15, 35
                                     }

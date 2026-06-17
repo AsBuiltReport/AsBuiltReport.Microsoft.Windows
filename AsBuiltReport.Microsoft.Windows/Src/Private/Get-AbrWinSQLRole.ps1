@@ -24,10 +24,10 @@ function Get-AbrWinSQLRole {
 
     process {
         try {
-            Write-PScriboMessage "Collecting SQL Server roles information."
+            Write-PScriboMessage 'Collecting SQL Server roles information.'
             $SQLRoles = Get-DbaServerRole -SqlInstance $SQLServer | Sort-Object -Property Role
             if ($SQLRoles) {
-                Write-PScriboMessage "Collecting SQL Server roles information."
+                Write-PScriboMessage 'Collecting SQL Server roles information.'
                 Section -Style Heading4 'Roles' {
                     $ItemInfo = @()
                     foreach ($Item in $SQLRoles) {
@@ -35,7 +35,7 @@ function Get-AbrWinSQLRole {
                             $InObj = [Ordered]@{
                                 'Name' = $Item.Role
                                 'Owner' = $Item.Owner
-                                'Login' = Switch ([string]::IsNullOrEmpty($Item.Login)) {
+                                'Login' = switch ([string]::IsNullOrEmpty($Item.Login)) {
                                     $true { '--' }
                                     $false { $Item.Login }
                                     default { 'Unknown' }
@@ -50,7 +50,7 @@ function Get-AbrWinSQLRole {
                     }
 
                     if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the security roles."
+                        Paragraph 'The following sections detail the configuration of the security roles.'
                         foreach ($Item in $ItemInfo) {
                             Section -Style NOTOCHeading5 -ExcludeFromTOC "$($Item.Name)" {
                                 $TableParams = @{
@@ -65,10 +65,10 @@ function Get-AbrWinSQLRole {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the security role."
+                        Paragraph 'The following table summarises the configuration of the security role.'
                         BlankLine
                         $TableParams = @{
-                            Name = "Roles"
+                            Name = 'Roles'
                             List = $false
                             Columns = 'Name', 'Owner', 'Login'
                             ColumnWidths = 25, 25, 50

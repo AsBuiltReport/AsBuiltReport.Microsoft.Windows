@@ -21,29 +21,29 @@ function Get-AbrWinNetIPAddress {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network IP Address information."
+        Write-PScriboMessage 'Collecting Network IP Address information.'
     }
 
     process {
         if ($InfoLevel.Networking -ge 1) {
             try {
-                $NetIPs = Invoke-Command -Session $TempPssSession { Get-NetIPConfiguration | Where-Object -FilterScript { ($_.NetAdapter.Status -Eq "Up") } }
+                $NetIPs = Invoke-Command -Session $TempPssSession { Get-NetIPConfiguration | Where-Object -FilterScript { ($_.NetAdapter.Status -eq 'Up') } }
                 if ($NetIPs) {
                     Section -Style Heading3 'IP Addresses' {
                         Paragraph 'The following table details IP Addresses assigned to hosts'
                         BlankLine
                         $OutObj = @()
-                        ForEach ($NetIp in $NetIps) {
+                        foreach ($NetIp in $NetIps) {
                             try {
                                 $inObj = [ordered] @{
                                     'Interface Name' = $NetIp.InterfaceAlias
                                     'Interface Description' = $NetIp.InterfaceDescription
-                                    'IPv4 Addresses' = $NetIp.IPv4Address.IPAddress -Join ","
+                                    'IPv4 Addresses' = $NetIp.IPv4Address.IPAddress -join ','
                                     'Subnet Mask' = $NetIp.IPv4Address[0].PrefixLength
-                                    'IPv4 Gateway' = Switch ([string]::IsNullOrEmpty($NetIp.IPv4DefaultGateway.NextHop)) {
-                                        $true { "--" }
+                                    'IPv4 Gateway' = switch ([string]::IsNullOrEmpty($NetIp.IPv4DefaultGateway.NextHop)) {
+                                        $true { '--' }
                                         $false { $NetIp.IPv4DefaultGateway.NextHop }
-                                        default { "Unknown" }
+                                        default { 'Unknown' }
                                     }
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
@@ -52,7 +52,7 @@ function Get-AbrWinNetIPAddress {
                             }
                         }
                         $TableParams = @{
-                            Name = "Net IP Addresse"
+                            Name = 'Net IP Addresse'
                             List = $false
                             ColumnWidths = 25, 25, 20, 10, 20
                         }

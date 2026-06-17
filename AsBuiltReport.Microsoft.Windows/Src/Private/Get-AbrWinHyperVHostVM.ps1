@@ -21,7 +21,7 @@ function Get-AbrWinHyperVHostVM {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PScriboMessage "Collecting Hyper-V VM information."
+        Write-PScriboMessage 'Collecting Hyper-V VM information.'
     }
 
     process {
@@ -46,7 +46,7 @@ function Get-AbrWinHyperVHostVM {
                             }
                         }
                         $TableParams = @{
-                            Name = "Virtual Machines"
+                            Name = 'Virtual Machines'
                             List = $false
                             ColumnWidths = 50, 50
                         }
@@ -84,7 +84,7 @@ function Get-AbrWinHyperVHostVM {
                                             }
                                             $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                             $TableParams = @{
-                                                Name = "Virtual Machines"
+                                                Name = 'Virtual Machines'
                                                 List = $true
                                                 ColumnWidths = 40, 60
                                             }
@@ -100,7 +100,7 @@ function Get-AbrWinHyperVHostVM {
                                         Section -ExcludeFromTOC -Style NOTOCHeading5 'Virtual Machine Guest Integration Service' {
                                             $OutObj = @()
                                             $VMIntegrationService = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-VMIntegrationService -VMName ($using:Vm).Name }
-                                            Foreach ($Service in $VMIntegrationService) {
+                                            foreach ($Service in $VMIntegrationService) {
                                                 try {
                                                     $inObj = [ordered] @{
                                                         'Service Name' = $Service.Name
@@ -113,7 +113,7 @@ function Get-AbrWinHyperVHostVM {
                                                 }
                                             }
                                             $TableParams = @{
-                                                Name = "Integration Service"
+                                                Name = 'Integration Service'
                                                 List = $false
                                                 ColumnWidths = 40, 30, 30
                                             }
@@ -131,7 +131,7 @@ function Get-AbrWinHyperVHostVM {
                                         if ($VmNetworkAdapters) {
                                             Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapters' {
                                                 $OutObj = @()
-                                                ForEach ($Adapter in $VmNetworkAdapters) {
+                                                foreach ($Adapter in $VmNetworkAdapters) {
                                                     try {
                                                         $inObj = [ordered] @{
                                                             'Name' = $Adapter.Name
@@ -146,7 +146,7 @@ function Get-AbrWinHyperVHostVM {
                                                 }
 
                                                 $TableParams = @{
-                                                    Name = "VM Network Adapters"
+                                                    Name = 'VM Network Adapters'
                                                     List = $false
                                                     ColumnWidths = 25, 25, 25, 25
                                                 }
@@ -165,13 +165,13 @@ function Get-AbrWinHyperVHostVM {
                                         if ($VmAdapterVlan) {
                                             Section -ExcludeFromTOC -Style NOTOCHeading5 'VM Network Adapter VLANs' {
                                                 $OutObj = @()
-                                                ForEach ($Adapter in $VmAdapterVlan) {
+                                                foreach ($Adapter in $VmAdapterVlan) {
                                                     try {
                                                         $inObj = [ordered] @{
                                                             'Adapter Name' = $Adapter.ParentAdapter.Name
                                                             'Operation Mode' = $Adapter.OperationMode
                                                             'Vlan ID' = $Adapter.AccessVlanId
-                                                            'Trunk Vlans' = $Adapter.AllowedVlanIdList -Join ","
+                                                            'Trunk Vlans' = $Adapter.AllowedVlanIdList -join ','
                                                         }
                                                         $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                                                     } catch {
@@ -180,7 +180,7 @@ function Get-AbrWinHyperVHostVM {
                                                 }
 
                                                 $TableParams = @{
-                                                    Name = "VM Network Adapter Vlans"
+                                                    Name = 'VM Network Adapter Vlans'
                                                     List = $false
                                                     ColumnWidths = 25, 25, 25, 25
                                                 }
@@ -219,7 +219,7 @@ function Get-AbrWinHyperVHostVM {
                                                 }
 
                                                 $TableParams = @{
-                                                    Name = "VM Hard disks"
+                                                    Name = 'VM Hard disks'
                                                     List = $false
                                                     ColumnWidths = 30, 10, 10, 10, 10, 10, 10, 10
                                                 }

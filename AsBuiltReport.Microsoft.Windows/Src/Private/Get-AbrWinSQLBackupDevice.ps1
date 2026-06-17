@@ -24,10 +24,10 @@ function Get-AbrWinSQLBackupDevice {
 
     process {
         try {
-            Write-PScriboMessage "Collecting SQL Server Backup Device information."
+            Write-PScriboMessage 'Collecting SQL Server Backup Device information.'
             $SQLBackUpDevices = Get-DbaBackupDevice -SqlInstance $SQLServer | Sort-Object -Property Name
             if ($SQLBackUpDevices) {
-                Write-PScriboMessage "Collecting SQL Server Backup Device information."
+                Write-PScriboMessage 'Collecting SQL Server Backup Device information.'
                 Section -Style Heading4 'Backup Device' {
                     $ItemInfo = @()
                     foreach ($Item in $SQLBackUpDevices) {
@@ -45,7 +45,7 @@ function Get-AbrWinSQLBackupDevice {
                     }
 
                     if ($InfoLevel.SQLServer -ge 2) {
-                        Paragraph "The following sections detail the configuration of the backup device."
+                        Paragraph 'The following sections detail the configuration of the backup device.'
                         foreach ($Item in $ItemInfo) {
                             Section -Style NOTOCHeading5 -ExcludeFromTOC "$($Item.Name)" {
                                 $TableParams = @{
@@ -60,10 +60,10 @@ function Get-AbrWinSQLBackupDevice {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarises the configuration of the backup device."
+                        Paragraph 'The following table summarises the configuration of the backup device.'
                         BlankLine
                         $TableParams = @{
-                            Name = "Backup Devices"
+                            Name = 'Backup Devices'
                             List = $false
                             Columns = 'Name', 'Backup Device Type', 'Physical Location'
                             ColumnWidths = 25, 25, 50

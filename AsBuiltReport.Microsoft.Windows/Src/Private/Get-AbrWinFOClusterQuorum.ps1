@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterQuorum {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Quorum information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Quorum information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterQuorum | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Quorum" {
+                Section -Style Heading3 'Quorum' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

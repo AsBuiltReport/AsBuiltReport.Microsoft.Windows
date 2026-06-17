@@ -20,15 +20,16 @@ function ConvertTo-TextYN {
             Position = 0,
             Mandatory)]
         [AllowEmptyString()]
+        [AllowNull()]
         [string] $TEXT
     )
 
     switch ($TEXT) {
-        "" { "--"; break }
-        " " { "--"; break }
-        $Null { "--"; break }
-        "True" { "Yes"; break }
-        "False" { "No"; break }
+        '' { '--'; break }
+        ' ' { '--'; break }
+        $Null { '--'; break }
+        'True' { 'Yes'; break }
+        'False' { 'No'; break }
         default { $TEXT }
     }
 } # end
@@ -62,7 +63,7 @@ function ConvertTo-FileSizeString {
         { $Size -gt 1Mb } { 'MB' ; break }
         Default { 'KB' }
     }
-    return "$([math]::Round(($Size / $("1" + $Unit)), 0)) $Unit"
+    return "$([math]::Round(($Size / $('1' + $Unit)), 0)) $Unit"
 } # end
 
 function ConvertTo-EmptyToFiller {
@@ -84,11 +85,12 @@ function ConvertTo-EmptyToFiller {
             Position = 0,
             Mandatory)]
         [AllowEmptyString()]
+        [AllowNull()]
         [string]$TEXT
     )
 
     switch ([string]::IsNullOrEmpty($TEXT)) {
-        $true { "--"; break }
+        $true { '--'; break }
         default { $TEXT }
     }
 }
@@ -243,11 +245,11 @@ function Get-LocalGroupMembership {
         [Alias('CN', '__Server', 'Computer', 'IPAddress')]
         [string[]]$Computername = $env:COMPUTERNAME,
         [parameter()]
-        [string]$Group = "Administrators",
+        [string]$Group = 'Administrators',
         [parameter()]
         [int]$Depth = ([int]::MaxValue),
         [parameter()]
-        [Alias("MaxJobs")]
+        [Alias('MaxJobs')]
         [int]$Throttle = 10
     )
     begin {
@@ -255,7 +257,7 @@ function Get-LocalGroupMembership {
             Write-Verbose $_
         }
         # region Extra Configurations
-        Write-Verbose ("Depth: {0}" -f $Depth)
+        Write-Verbose ('Depth: {0}' -f $Depth)
         # endregion Extra Configurations
         # Define hash table for Get-RunspaceData function
         $runspacehash = @{}
@@ -285,7 +287,7 @@ function Get-LocalGroupMembership {
                 $temphash | Where-Object {
                     $_.runspace -eq $Null
                 } | ForEach-Object {
-                    Write-Verbose ("Removing {0}" -f $_.computer)
+                    Write-Verbose ('Removing {0}' -f $_.computer)
                     $Runspaces.remove($_)
                 }
             } while ($more -and $PSBoundParameters['Wait'])
@@ -305,16 +307,16 @@ function Get-LocalGroupMembership {
                     [System.DirectoryServices.DirectoryEntry]$LocalGroup
                 )
                 # Invoke the Members method and convert to an array of member objects.
-                $Members = @($LocalGroup.psbase.Invoke("Members")) | ForEach-Object { ([System.DirectoryServices.DirectoryEntry]$_) }
+                $Members = @($LocalGroup.psbase.Invoke('Members')) | ForEach-Object { ([System.DirectoryServices.DirectoryEntry]$_) }
                 $Counter++
                 foreach ($Member in $Members) {
                     try {
 
-                        $Name = $Member.InvokeGet("Name")
-                        $Path = $Member.InvokeGet("AdsPath")
+                        $Name = $Member.InvokeGet('Name')
+                        $Path = $Member.InvokeGet('AdsPath')
 
                         # Check if this member is a group.
-                        $isGroup = ($Member.InvokeGet("Class") -eq "group")
+                        $isGroup = ($Member.InvokeGet('Class') -eq 'group')
 
                         # Remove the domain from the computername to fix the type comparison when supplied with FQDN
                         if ($Computer.Contains('.')) {
@@ -350,14 +352,14 @@ function Get-LocalGroupMembership {
                             if ($Counter -lt $Depth) {
                                 if ($Type -eq 'Local') {
                                     if ($Groups[$Name] -notcontains 'Local') {
-                                        $host.ui.WriteVerboseLine(("{0}: Getting local group members" -f $Name))
+                                        $host.ui.WriteVerboseLine(('{0}: Getting local group members' -f $Name))
                                         $Groups[$Name] += , 'Local'
                                         # Enumerate members of local group.
                                         Get-LocalGroupMemberObj $Member
                                     }
                                 } else {
                                     if ($Groups[$Name] -notcontains 'Domain') {
-                                        $host.ui.WriteVerboseLine(("{0}: Getting domain group members" -f $Name))
+                                        $host.ui.WriteVerboseLine(('{0}: Getting domain group members' -f $Name))
                                         $Groups[$Name] += , 'Domain'
                                         # Enumerate members of domain group.
                                         Get-DomainGroupMember $Member $Name $True
@@ -366,7 +368,7 @@ function Get-LocalGroupMembership {
                             }
                         }
                     } catch {
-                        $host.ui.WriteWarningLine(("GLGM{0}" -f $_.Exception.Message))
+                        $host.ui.WriteWarningLine(('GLGM{0}' -f $_.Exception.Message))
                     }
                 }
             }
@@ -384,8 +386,8 @@ function Get-LocalGroupMembership {
                 try {
                     if ($blnNT -eq $True) {
                         # Convert NetBIOS domain name of group to Distinguished Name.
-                        $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (3, ("{0}{1}" -f $NetBIOSDomain.Trim(), $NTName)))
-                        $DN = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 1)
+                        $objNT.InvokeMember('Set', 'InvokeMethod', $Null, $Translate, (3, ('{0}{1}' -f $NetBIOSDomain.Trim(), $NTName)))
+                        $DN = $objNT.InvokeMember('Get', 'InvokeMethod', $Null, $Translate, 1)
                         $ADGroup = [ADSI]"LDAP://$DN"
                     } else {
                         $DN = $DomainGroup.distinguishedName
@@ -393,10 +395,10 @@ function Get-LocalGroupMembership {
                     }
                     $Counter++
                     foreach ($MemberDN in $ADGroup.Member) {
-                        $MemberGroup = [ADSI]("LDAP://{0}" -f ($MemberDN -replace '/', '\/'))
+                        $MemberGroup = [ADSI]('LDAP://{0}' -f ($MemberDN -replace '/', '\/'))
 
                         # Add Objectclass to match Get-LocalGroupMember output
-                        if ($MemberGroup.Class -eq "group") {
+                        if ($MemberGroup.Class -eq 'group') {
                             $ObjectClass = 'Group'
                         } else {
                             $ObjectClass = 'User'
@@ -407,16 +409,16 @@ function Get-LocalGroupMembership {
                             Name = $MemberGroup.name[0]
                             PrincipalSource = 'Domain'
                             ParentGroup = $NTName
-                            isGroup = ($MemberGroup.Class -eq "group")
+                            isGroup = ($MemberGroup.Class -eq 'group')
                             ObjectClass = $ObjectClass
                             Depth = $Counter
                             Group = $Group
                         }
                         # Check if this member is a group.
-                        if ($MemberGroup.Class -eq "group") {
+                        if ($MemberGroup.Class -eq 'group') {
                             if ($Counter -lt $Depth) {
                                 if ($Groups[$MemberGroup.name[0]] -notcontains 'Domain') {
-                                    Write-Verbose ("{0}: Getting domain group members" -f $MemberGroup.name[0])
+                                    Write-Verbose ('{0}: Getting domain group members' -f $MemberGroup.name[0])
                                     $Groups[$MemberGroup.name[0]] += , 'Domain'
                                     # Enumerate members of domain group.
                                     Get-DomainGroupMember $MemberGroup $MemberGroup.Name[0] $False
@@ -425,7 +427,7 @@ function Get-LocalGroupMembership {
                         }
                     }
                 } catch {
-                    $host.ui.WriteWarningLine(("GDGM{0}" -f $_.Exception.Message))
+                    $host.ui.WriteWarningLine(('GDGM{0}' -f $_.Exception.Message))
                 }
             }
             # region Get Local Group Members
@@ -433,39 +435,39 @@ function Get-LocalGroupMembership {
             $Script:Counter = 0
             # Bind to the group object with the WinNT provider.
             $ADSIGroup = [ADSI]"WinNT://$Computer/$Group,group"
-            Write-Verbose ("Checking {0} membership for {1}" -f $Group, $Computer)
+            Write-Verbose ('Checking {0} membership for {1}' -f $Group, $Computer)
             $Groups[$Group] += , 'Local'
             Get-LocalGroupMemberObj -LocalGroup $ADSIGroup
             # endregion Get Local Group Members
         }
         # endregion ScriptBlock
-        Write-Verbose ("Checking to see if connected to a domain")
+        Write-Verbose ('Checking to see if connected to a domain')
         try {
             $Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
             $Root = $Domain.GetDirectoryEntry()
             $Base = ($Root.distinguishedName)
 
             # Use the NameTranslate object.
-            $Script:Translate = New-Object -ComObject "NameTranslate"
+            $Script:Translate = New-Object -ComObject 'NameTranslate'
             $Script:objNT = $Translate.GetType()
 
             # Initialize NameTranslate by locating the Global Catalog.
-            $objNT.InvokeMember("Init", "InvokeMethod", $Null, $Translate, (3, $Null))
+            $objNT.InvokeMember('Init', 'InvokeMethod', $Null, $Translate, (3, $Null))
 
             # Retrieve NetBIOS name of the current domain.
-            $objNT.InvokeMember("Set", "InvokeMethod", $Null, $Translate, (1, "$Base"))
-            [string]$Script:NetBIOSDomain = $objNT.InvokeMember("Get", "InvokeMethod", $Null, $Translate, 3)
+            $objNT.InvokeMember('Set', 'InvokeMethod', $Null, $Translate, (1, "$Base"))
+            [string]$Script:NetBIOSDomain = $objNT.InvokeMember('Get', 'InvokeMethod', $Null, $Translate, 3)
         } catch {
             Out-Null
         }
 
         # region Runspace Creation
-        Write-Verbose ("Creating runspace pool and session states")
+        Write-Verbose ('Creating runspace pool and session states')
         $sessionstate = [system.management.automation.runspaces.initialsessionstate]::CreateDefault()
         $runspacepool = [runspacefactory]::CreateRunspacePool(1, $Throttle, $sessionstate, $Host)
         $runspacepool.Open()
 
-        Write-Verbose ("Creating empty collection to hold runspace jobs")
+        Write-Verbose ('Creating empty collection to hold runspace jobs')
         $Script:runspaces = New-Object System.Collections.ArrayList
         # endregion Runspace Creation
     }
@@ -479,26 +481,26 @@ function Get-LocalGroupMembership {
             $powershell.RunspacePool = $runspacepool
 
             # Create a temporary collection for each runspace
-            $temp = "" | Select-Object PowerShell, Runspace, Computer
+            $temp = '' | Select-Object PowerShell, Runspace, Computer
             $Temp.Computer = $Computer
             $temp.PowerShell = $powershell
 
             # Save the handle output when calling BeginInvoke() that will be used later to end the runspace
             $temp.Runspace = $powershell.BeginInvoke()
-            Write-Verbose ("Adding {0} collection" -f $temp.Computer)
+            Write-Verbose ('Adding {0} collection' -f $temp.Computer)
             $runspaces.Add($temp) | Out-Null
 
-            Write-Verbose ("Checking status of runspace jobs")
+            Write-Verbose ('Checking status of runspace jobs')
             Get-RunspaceData @runspacehash
         }
     }
     end {
-        Write-Verbose ("Finish processing the remaining runspace jobs: {0}" -f (@(($runspaces | Where-Object { $_.Runspace -ne $Null }).Count)))
+        Write-Verbose ('Finish processing the remaining runspace jobs: {0}' -f (@(($runspaces | Where-Object { $_.Runspace -ne $Null }).Count)))
         $runspacehash.Wait = $true
         Get-RunspaceData @runspacehash
 
         # region Cleanup Runspace
-        Write-Verbose ("Closing the runspace pool")
+        Write-Verbose ('Closing the runspace pool')
         $runspacepool.close()
         $runspacepool.Dispose()
         # endregion Cleanup Runspace
@@ -599,11 +601,11 @@ function Remove-NonPrintableAscii {
     )
 
     process {
-        if ($PSCmdlet.ShouldProcess($InputString, "Remove non-printable ASCII characters")) {
+        if ($PSCmdlet.ShouldProcess($InputString, 'Remove non-printable ASCII characters')) {
             # Check if the input string is null or empty.
             # If it is, return an empty string immediately to avoid errors.
             if ([string]::IsNullOrEmpty($InputString)) {
-                return ""
+                return ''
             }
 
             # Regular expression to match any character that is NOT a printable ASCII character.

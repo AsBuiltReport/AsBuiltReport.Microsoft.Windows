@@ -21,7 +21,7 @@ function Get-AbrWinNetTeamInterface {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network Team Interfaces information."
+        Write-PScriboMessage 'Collecting Network Team Interfaces information.'
     }
 
     process {
@@ -34,13 +34,13 @@ function Get-AbrWinNetTeamInterface {
                         BlankLine
                         $NetTeams = Invoke-Command -Session $TempPssSession { Get-NetLbfoTeam }
                         $OutObj = @()
-                        ForEach ($NetTeam in $NetTeams) {
+                        foreach ($NetTeam in $NetTeams) {
                             try {
                                 $inObj = [ordered] @{
                                     'Team Name' = $NetTeam.Name
                                     'Team Mode' = $NetTeam.tm
                                     'Load Balancing' = $NetTeam.lba
-                                    'Network Adapters' = $NetTeam.Members -Join ","
+                                    'Network Adapters' = $NetTeam.Members -join ','
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
                             } catch {
@@ -48,7 +48,7 @@ function Get-AbrWinNetTeamInterface {
                             }
                         }
                         $TableParams = @{
-                            Name = "Network Team Interfaces"
+                            Name = 'Network Team Interfaces'
                             List = $false
                             ColumnWidths = 20, 20, 20, 20
                         }

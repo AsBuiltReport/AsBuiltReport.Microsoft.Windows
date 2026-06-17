@@ -21,7 +21,7 @@ function Get-AbrWinLocalUser {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PScriboMessage "Collecting Local Users information."
+        Write-PScriboMessage 'Collecting Local Users information.'
     }
 
     process {
@@ -30,14 +30,14 @@ function Get-AbrWinLocalUser {
                 if ($LocalUsers) {
                     Section -Style Heading3 'Local Users' {
                         $OutObj = @()
-                        ForEach ($LocalUser in $LocalUsers) {
+                        foreach ($LocalUser in $LocalUsers) {
                             try {
                                 $inObj = [ordered] @{
                                     'User Name' = $LocalUser.Name
                                     'Description' = $LocalUser.Description
                                     'Account Enabled' = $LocalUser.Enabled
-                                    'Last Logon Date' = Switch (($LocalUser.LastLogon).Count) {
-                                        0 { "--" }
+                                    'Last Logon Date' = switch (($LocalUser.LastLogon).Count) {
+                                        0 { '--' }
                                         default { $LocalUser.LastLogon.ToShortDateString() }
                                     }
                                 }
@@ -47,7 +47,7 @@ function Get-AbrWinLocalUser {
                             }
                         }
                         $TableParams = @{
-                            Name = "Local Users"
+                            Name = 'Local Users'
                             List = $false
                             ColumnWidths = 20, 40, 10, 30
                         }

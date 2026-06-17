@@ -21,20 +21,20 @@ function Get-AbrWinOSService {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Operating System Service information."
+        Write-PScriboMessage 'Collecting Operating System Service information.'
     }
 
     process {
         if ($InfoLevel.OperatingSystem -ge 1) {
             try {
-                $Available = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service "W32Time" | Select-Object DisplayName, Name, Status }
+                $Available = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'W32Time' | Select-Object DisplayName, Name, Status }
                 if ($Available) {
                     Section -Style Heading3 'Services' {
                         Paragraph 'The following table details status of important services'
                         BlankLine
                         $Services = @('DNS', 'DFS Replication', 'Intersite Messaging', 'Kerberos Key Distribution Center', 'Active Directory Domain Services', 'W32Time', 'ADWS', 'DHCPServer', 'Dnscache', 'gpsvc', 'HvHost', 'vmcompute', 'vmms', 'iphlpsvc', 'MSiSCSI', 'Netlogon', 'RasMan', 'SessionEnv', 'TermService', 'RpcSs', 'RpcEptMapper', 'SamSs', 'LanmanServer', 'Schedule', 'lmhosts', 'UsoSvc', 'mpssvc', 'W3SVC', 'MSSQLSERVER', 'ClusSvc')
                         $OutObj = @()
-                        Foreach ($Service in $Services) {
+                        foreach ($Service in $Services) {
                             try {
                                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service $using:Service -ErrorAction SilentlyContinue | Select-Object DisplayName, Name, Status }
                                 if ($Status) {
@@ -55,7 +55,7 @@ function Get-AbrWinOSService {
                         }
 
                         $TableParams = @{
-                            Name = "Services Status"
+                            Name = 'Services Status'
                             List = $false
                             ColumnWidths = 50, 25, 25
                         }

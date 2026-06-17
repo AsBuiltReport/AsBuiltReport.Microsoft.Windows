@@ -21,7 +21,7 @@ function Get-AbrWinOSDriver {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Operating System Drivers information."
+        Write-PScriboMessage 'Collecting Operating System Drivers information.'
     }
 
     process {
@@ -32,7 +32,7 @@ function Get-AbrWinOSDriver {
                     Section -Style Heading3 'Drivers' {
                         Invoke-Command -Session $TempPssSession { Import-Module DISM }
                         $OutObj = @()
-                        ForEach ($HostDriver in $HostDriversList) {
+                        foreach ($HostDriver in $HostDriversList) {
                             try {
                                 $inObj = [ordered] @{
                                     'Class Description' = $HostDriver.ClassDescription
@@ -46,7 +46,7 @@ function Get-AbrWinOSDriver {
                             }
                         }
                         $TableParams = @{
-                            Name = "Hardware Drivers"
+                            Name = 'Hardware Drivers'
                             List = $false
                             ColumnWidths = 30, 30, 20, 20
                         }

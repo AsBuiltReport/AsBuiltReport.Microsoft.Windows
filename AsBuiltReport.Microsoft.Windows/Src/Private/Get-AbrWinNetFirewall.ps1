@@ -21,7 +21,7 @@ function Get-AbrWinNetFirewall {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PscriboMessage "Collecting Host Firewall information."
+        Write-PScriboMessage 'Collecting Host Firewall information.'
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetFirewall {
                 if ($NetFirewallProfile) {
                     Section -Style Heading2 'Windows Firewall' {
                         $OutObj = @()
-                        Foreach ($FirewallProfile in $NetFireWallProfile) {
+                        foreach ($FirewallProfile in $NetFireWallProfile) {
                             try {
                                 $inObj = [ordered] @{
                                     'Profile' = $FirewallProfile.Name
@@ -40,18 +40,17 @@ function Get-AbrWinNetFirewall {
                                     'Outbound Action' = $FirewallProfile.DefaultOutboundAction
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
-                            }
-                            catch {
-                                Write-PscriboMessage -IsWarning $_.Exception.Message
+                            } catch {
+                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
                         }
 
                         if ($HealthCheck.Networking.Firewall) {
-                            $OutObj | Where-Object { $_.'Profile Enabled' -notlike 'Yes'} | Set-Style -Style Warning -Property 'Profile Enabled'
+                            $OutObj | Where-Object { $_.'Profile Enabled' -notlike 'Yes' } | Set-Style -Style Warning -Property 'Profile Enabled'
                         }
 
                         $TableParams = @{
-                            Name = "Windows Firewall Profiles"
+                            Name = 'Windows Firewall Profiles'
                             List = $false
                             ColumnWidths = 25, 25, 25, 25
                         }
@@ -61,9 +60,8 @@ function Get-AbrWinNetFirewall {
                         $OutObj | Sort-Object -Property 'Profile' | Table @TableParams
                     }
                 }
-            }
-            catch {
-                Write-PscriboMessage -IsWarning $_.Exception.Message
+            } catch {
+                Write-PScriboMessage -IsWarning $_.Exception.Message
             }
         }
     }

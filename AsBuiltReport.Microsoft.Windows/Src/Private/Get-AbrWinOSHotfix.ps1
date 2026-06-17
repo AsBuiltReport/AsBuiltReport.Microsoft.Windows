@@ -21,7 +21,7 @@ function Get-AbrWinOSHotfix {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Operating System HotFix information."
+        Write-PScriboMessage 'Collecting Operating System HotFix information.'
     }
 
     process {
@@ -31,12 +31,12 @@ function Get-AbrWinOSHotfix {
                 if ($HotFixes) {
                     Section -Style Heading3 'Installed Hotfixes' {
                         $OutObj = @()
-                        Foreach ($HotFix in $HotFixes) {
+                        foreach ($HotFix in $HotFixes) {
                             try {
                                 $inObj = [ordered] @{
                                     'Hotfix ID' = $HotFix.HotFixID
                                     'Description' = $HotFix.Description
-                                    'Installation Date' = Switch ([string]::IsNullOrEmpty($HotFix.InstalledOn)) {
+                                    'Installation Date' = switch ([string]::IsNullOrEmpty($HotFix.InstalledOn)) {
                                         $true { '--' }
                                         $false { $HotFix.InstalledOn.ToShortDateString() }
                                         default { 'Unknown' }
@@ -48,7 +48,7 @@ function Get-AbrWinOSHotfix {
                             }
                         }
                         $TableParams = @{
-                            Name = "Installed Hotfixes"
+                            Name = 'Installed Hotfixes'
                             List = $false
                             ColumnWidths = 34, 33, 33
                         }
@@ -63,7 +63,7 @@ function Get-AbrWinOSHotfix {
             }
             try {
                 $UpdObj = @()
-                $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock { (New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search("IsHidden=0 and IsInstalled=0").Updates | Select-Object Title, KBArticleIDs }
+                $Updates = Invoke-Command -Session $TempPssSession -ScriptBlock { (New-Object -ComObject Microsoft.Update.Session).CreateupdateSearcher().Search('IsHidden=0 and IsInstalled=0').Updates | Select-Object Title, KBArticleIDs }
                 $UpdObj += if ($Updates) {
                     $OutObj = @()
                     foreach ($Update in $Updates) {
@@ -82,7 +82,7 @@ function Get-AbrWinOSHotfix {
                         }
                     }
                     $TableParams = @{
-                        Name = "Missing Windows Updates"
+                        Name = 'Missing Windows Updates'
                         List = $false
                         ColumnWidths = 40, 60
                     }
@@ -93,7 +93,7 @@ function Get-AbrWinOSHotfix {
                 }
                 if ($UpdObj) {
                     Section -Style Heading3 'Missing Windows Updates' {
-                        Paragraph "The following section provides a summary of pending/missing windows updates."
+                        Paragraph 'The following section provides a summary of pending/missing windows updates.'
                         BlankLine
                         $UpdObj
                     }

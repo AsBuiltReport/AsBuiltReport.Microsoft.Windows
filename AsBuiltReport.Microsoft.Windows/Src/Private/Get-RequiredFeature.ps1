@@ -16,7 +16,7 @@ function Get-RequiredFeature {
     #>
 
     [CmdletBinding()]
-    Param
+    param
     (
         [Parameter(Mandatory = $true, ValueFromPipeline = $false)]
         [ValidateNotNullOrEmpty()]
@@ -48,28 +48,28 @@ function Get-RequiredFeature {
             if ($Feature) {
                 $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsOptionalFeature -FeatureName $Using:Name -Online }
                 if ($Status) {
-                    if ($RequiredFeature.State -eq "Enabled") {
+                    if ($RequiredFeature.State -eq 'Enabled') {
                         return $true
                     } else {
                         return $false
                     }
                 }
-                if (-Not $Status) {
-                    if ($RequiredFeature.State -ne "Enabled") {
+                if (-not $Status) {
+                    if ($RequiredFeature.State -ne 'Enabled') {
                         Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Enable-WindowsOptionalFeature -Online -FeatureName '$($Name)'' to install the required modules."
                     }
                 }
             } else {
                 $RequiredFeature = Invoke-Command -Session $TempPssSession { Get-WindowsCapability -Online -Name $Using:Name }
                 if ($Status) {
-                    if ($RequiredFeature.State -eq "Installed") {
+                    if ($RequiredFeature.State -eq 'Installed') {
                         return $true
                     } else {
                         return $false
                     }
                 }
-                if (-Not $Status) {
-                    if ($RequiredFeature.State -ne "Installed") {
+                if (-not $Status) {
+                    if ($RequiredFeature.State -ne 'Installed') {
                         Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Add-WindowsCapability -online -Name '$($Name)'' to install the required modules."
                     }
                 }
@@ -83,7 +83,7 @@ function Get-RequiredFeature {
                     return $false
                 }
             }
-            if (-Not $Status) {
+            if (-not $Status) {
                 if ($RequiredFeature.InstallState -ne 'Installed') {
                     Write-PScriboMessage -IsWarning "$Name module is required to be installed on $System to be able to document $Service service. Run 'Install-WindowsFeature -Name '$($Name)'' to install the required modules."
                 }

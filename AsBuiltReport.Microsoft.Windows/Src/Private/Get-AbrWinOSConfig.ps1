@@ -21,7 +21,7 @@ function Get-AbrWinOSConfig {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Operating System Configuration information."
+        Write-PScriboMessage 'Collecting Operating System Configuration information.'
     }
 
     process {
@@ -37,25 +37,25 @@ function Get-AbrWinOSConfig {
                     'Windows Install Type' = $HostInfo.WindowsInstallationType
                     'AD Domain' = $HostInfo.CsDomain
                     'Windows Installation Date' = switch (($HostInfo.OsInstallDate).Count) {
-                        0 { "--" }
+                        0 { '--' }
                         default { $HostInfo.OsInstallDate.ToShortDateString() }
                     }
                     'Time Zone' = $HostInfo.TimeZone
-                    'License Type' = Switch ([string]::IsNullOrEmpty($HostLicense.ProductKeyChannel)) {
-                        $true { "--" }
+                    'License Type' = switch ([string]::IsNullOrEmpty($HostLicense.ProductKeyChannel)) {
+                        $true { '--' }
                         $false { $HostLicense.ProductKeyChannel }
-                        default { "Unknown" }
+                        default { 'Unknown' }
                     }
-                    'Partial Product Key' = Switch ([string]::IsNullOrEmpty($HostLicense.PartialProductKey)) {
-                        $true { "--" }
+                    'Partial Product Key' = switch ([string]::IsNullOrEmpty($HostLicense.PartialProductKey)) {
+                        $true { '--' }
                         $false { $HostLicense.PartialProductKey }
-                        default { "Unknown" }
+                        default { 'Unknown' }
                     }
                 }
                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                 $TableParams = @{
-                    Name = "OS Settings"
+                    Name = 'OS Settings'
                     List = $true
                     ColumnWidths = 50, 50
                 }

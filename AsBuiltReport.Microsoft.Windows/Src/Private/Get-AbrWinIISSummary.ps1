@@ -20,7 +20,7 @@ function Get-AbrWinIISSummary {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PScriboMessage "Collecting IIS Summary information."
+        Write-PScriboMessage 'Collecting IIS Summary information.'
     }
 
     process {
@@ -40,7 +40,7 @@ function Get-AbrWinIISSummary {
                         $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                         $TableParams = @{
-                            Name = "IIS Host Settings"
+                            Name = 'IIS Host Settings'
                             List = $false
                             ColumnWidths = 25, 25, 25, 25
                         }

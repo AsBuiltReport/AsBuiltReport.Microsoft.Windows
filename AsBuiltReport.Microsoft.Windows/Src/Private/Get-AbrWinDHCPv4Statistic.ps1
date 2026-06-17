@@ -20,7 +20,7 @@ function Get-AbrWinDHCPv4Statistic {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PScriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage 'Collecting Host DHCP Server information.'
     }
 
     process {
@@ -47,7 +47,7 @@ function Get-AbrWinDHCPv4Statistic {
                     }
 
                     $TableParams = @{
-                        Name = "DHCP Server Statistics - $($System.toUpper().split(".")[0])"
+                        Name = "DHCP Server Statistics - $($System.toUpper().split('.')[0])"
                         List = $false
                         ColumnWidths = 17, 17, 17, 17 , 16, 16
                     }

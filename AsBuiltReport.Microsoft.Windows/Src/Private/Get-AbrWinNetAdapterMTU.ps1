@@ -21,7 +21,7 @@ function Get-AbrWinNetAdapterMTU {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network Adapter Interfaces MTU information."
+        Write-PScriboMessage 'Collecting Network Adapter Interfaces MTU information.'
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetAdapterMTU {
                 if ($NetMtus) {
                     Section -Style Heading3 'Network Adapter MTU' {
                         $OutObj = @()
-                        ForEach ($NetMtu in $NetMtus) {
+                        foreach ($NetMtu in $NetMtus) {
                             try {
                                 $inObj = [ordered] @{
                                     'Adapter Name' = $NetMtu.Name
@@ -43,7 +43,7 @@ function Get-AbrWinNetAdapterMTU {
                             }
                         }
                         $TableParams = @{
-                            Name = "Network Adapter MTU"
+                            Name = 'Network Adapter MTU'
                             List = $false
                             ColumnWidths = 50, 50
                         }

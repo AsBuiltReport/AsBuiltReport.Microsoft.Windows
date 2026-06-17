@@ -21,7 +21,7 @@ function Get-AbrWinHyperVSummary {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PScriboMessage "Collecting Hyper-V Summary information."
+        Write-PScriboMessage 'Collecting Hyper-V Summary information.'
     }
 
     process {
@@ -35,7 +35,7 @@ function Get-AbrWinHyperVSummary {
                         'Memory Capacity' = "$([Math]::Round($VmHost.MemoryCapacity / 1gb)) GB"
                         'VM Default Path' = $VmHost.VirtualMachinePath
                         'VM Disk Default Path' = $VmHost.VirtualHardDiskPath
-                        'Supported VM Versions' = $VmHost.SupportedVmVersions -Join ","
+                        'Supported VM Versions' = $VmHost.SupportedVmVersions -join ','
                         'Numa Spanning Enabled' = $VmHost.NumaSpanningEnabled
                         'Iov Support' = $VmHost.IovSupport
                         'VM Migrations Enabled' = $VmHost.VirtualMachineMigrationEnabled
@@ -47,7 +47,7 @@ function Get-AbrWinHyperVSummary {
                     $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                     $TableParams = @{
-                        Name = "Hyper-V Host Settings"
+                        Name = 'Hyper-V Host Settings'
                         List = $true
                         ColumnWidths = 50, 50
                     }

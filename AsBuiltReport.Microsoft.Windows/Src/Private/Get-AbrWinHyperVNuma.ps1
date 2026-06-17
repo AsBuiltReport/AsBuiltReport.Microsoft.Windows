@@ -21,7 +21,7 @@ function Get-AbrWinHyperVNuma {
 
     begin {
         Write-PScriboMessage "Hyper-V InfoLevel set at $($InfoLevel.HyperV)."
-        Write-PScriboMessage "Collecting Hyper-V Numa information."
+        Write-PScriboMessage 'Collecting Hyper-V Numa information.'
     }
 
     process {
@@ -29,7 +29,7 @@ function Get-AbrWinHyperVNuma {
             try {
                 $VmHostNumaNodes = Invoke-Command -Session $TempPssSession { Get-VMHostNumaNode }
                 if ($VmHostNumaNodes) {
-                    Section -Style Heading3 "Hyper-V NUMA Boundaries" {
+                    Section -Style Heading3 'Hyper-V NUMA Boundaries' {
                         $OutObj = @()
                         foreach ($Node in $VmHostNumaNodes) {
                             try {
@@ -44,7 +44,7 @@ function Get-AbrWinHyperVNuma {
                             }
                         }
                         $TableParams = @{
-                            Name = "Host NUMA Nodes"
+                            Name = 'Host NUMA Nodes'
                             List = $false
                             ColumnWidths = 34, 33, 33
                         }

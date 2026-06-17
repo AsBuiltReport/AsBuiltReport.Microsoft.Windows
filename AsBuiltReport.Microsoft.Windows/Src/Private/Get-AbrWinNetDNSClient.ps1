@@ -21,7 +21,7 @@ function Get-AbrWinNetDNSClient {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network DNS Client information."
+        Write-PScriboMessage 'Collecting Network DNS Client information.'
     }
 
     process {
@@ -34,7 +34,7 @@ function Get-AbrWinNetDNSClient {
                         BlankLine
                         $OutObj = @()
                         $inObj = [ordered] @{
-                            'DNS Suffix' = $DnsClient.SuffixSearchList -Join ","
+                            'DNS Suffix' = $DnsClient.SuffixSearchList -join ','
                             'Use Suffix Search List' = $DnsClient.UseSuffixSearchList
                             'Use Devolution' = $DnsClient.UseDevolution
                             'Devolution Level' = $DnsClient.DevolutionLevel
@@ -43,7 +43,7 @@ function Get-AbrWinNetDNSClient {
                         $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
                         $TableParams = @{
-                            Name = "DNS Search Domain"
+                            Name = 'DNS Search Domain'
                             List = $false
                             ColumnWidths = 40, 20, 20, 20
                         }

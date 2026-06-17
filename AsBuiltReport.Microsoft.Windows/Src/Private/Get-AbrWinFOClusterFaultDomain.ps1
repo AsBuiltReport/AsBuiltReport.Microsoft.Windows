@@ -21,27 +21,27 @@ function Get-AbrWinFOClusterFaultDomain {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Fault Domain information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Fault Domain information.'
     }
 
     process {
         try {
             $Settings = Get-ClusterFaultDomain -CimSession $TempCimSession | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Fault Domain" {
+                Section -Style Heading3 'Fault Domain' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
                                 'Type' = $Setting.Type
-                                'Parent Name' = Switch ([string]::IsNullOrEmpty($Setting.ParentName)) {
-                                    $true { "--" }
+                                'Parent Name' = switch ([string]::IsNullOrEmpty($Setting.ParentName)) {
+                                    $true { '--' }
                                     $false { $Setting.ParentName }
                                     default { 'Unknown' }
                                 }
-                                'Children Names' = Switch ([string]::IsNullOrEmpty($Setting.ChildrenNames)) {
-                                    $true { "--" }
+                                'Children Names' = switch ([string]::IsNullOrEmpty($Setting.ChildrenNames)) {
+                                    $true { '--' }
                                     $false { $Setting.ChildrenNames }
                                     default { 'Unknown' }
                                 }

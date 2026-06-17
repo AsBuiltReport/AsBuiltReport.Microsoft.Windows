@@ -21,7 +21,7 @@ function Get-AbrWinApplication {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Application Inventory information."
+        Write-PScriboMessage 'Collecting Application Inventory information.'
     }
 
     process {
@@ -35,18 +35,18 @@ function Get-AbrWinApplication {
                         Paragraph 'The following settings details applications listed in Add/Remove Programs'
                         BlankLine
                         $OutObj = @()
-                        ForEach ($App in $AddRemove) {
+                        foreach ($App in $AddRemove) {
                             try {
                                 $inObj = [ordered] @{
                                     'Application Name' = $App.DisplayName
                                     'Publisher' = $App.Publisher
-                                    'Version' = Switch ([string]::IsNullOrEmpty($App.DisplayVersion)) {
-                                        $true { "--" }
+                                    'Version' = switch ([string]::IsNullOrEmpty($App.DisplayVersion)) {
+                                        $true { '--' }
                                         $false { $App.DisplayVersion }
-                                        default { "Unknown" }
+                                        default { 'Unknown' }
                                     }
-                                    'Install Date' = Switch ([string]::IsNullOrEmpty($App.InstallDate)) {
-                                        $true { "--" }
+                                    'Install Date' = switch ([string]::IsNullOrEmpty($App.InstallDate)) {
+                                        $true { '--' }
                                         $false { $App.InstallDate }
                                         default { 'Unknown' }
                                     }
@@ -57,7 +57,7 @@ function Get-AbrWinApplication {
                             }
                         }
                         $TableParams = @{
-                            Name = "Installed Applications"
+                            Name = 'Installed Applications'
                             List = $false
                             ColumnWidths = 30, 30, 20, 20
                         }

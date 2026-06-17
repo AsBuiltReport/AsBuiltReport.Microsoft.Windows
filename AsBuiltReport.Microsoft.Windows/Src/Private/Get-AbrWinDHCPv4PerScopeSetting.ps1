@@ -20,22 +20,22 @@ function Get-AbrWinDHCPv4PerScopeSetting {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PScriboMessage "Collecting Host DHCP Server Scope information."
+        Write-PScriboMessage 'Collecting Host DHCP Server Scope information.'
     }
 
     process {
         try {
             $DHCPScopes = Get-DhcpServerv4Scope -CimSession $TempCimSession | Select-Object -ExpandProperty ScopeId
             if ($DHCPScopes) {
-                Section -Style Heading3 "Per Scope Options" {
-                    Paragraph "The following section provides a summary of the DHCP servers Scope Server Options information."
+                Section -Style Heading3 'Per Scope Options' {
+                    Paragraph 'The following section provides a summary of the DHCP servers Scope Server Options information.'
                     BlankLine
                     foreach ($Scope in $DHCPScopes) {
                         try {
                             $DHCPScopeOptions = Get-DhcpServerv4OptionValue -CimSession $TempCIMSession -ScopeId $Scope
                             if ($DHCPScopeOptions) {
                                 Section -Style Heading4 "$Scope" {
-                                    Paragraph "The following table details Scope Server Options Settings."
+                                    Paragraph 'The following table details Scope Server Options Settings.'
                                     BlankLine
                                     $OutObj = @()
                                     foreach ($Option in $DHCPScopeOptions) {

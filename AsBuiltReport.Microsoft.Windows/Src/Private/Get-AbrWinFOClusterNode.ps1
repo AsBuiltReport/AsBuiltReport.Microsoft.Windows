@@ -26,7 +26,7 @@ function Get-AbrWinFOClusterNode {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNode } | Sort-Object -Property Identity
             if ($Settings) {
-                Write-PScriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
+                Write-PScriboMessage 'Collecting Host FailOver Cluster Permissions Settings information.'
                 Section -Style Heading3 'Nodes' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
@@ -49,7 +49,7 @@ function Get-AbrWinFOClusterNode {
                     }
 
                     if ($InfoLevel.FailOverCluster -ge 2) {
-                        Paragraph "The following sections detail the configuration of the Failover Cluster Nodes."
+                        Paragraph 'The following sections detail the configuration of the Failover Cluster Nodes.'
                         foreach ($Setting in $OutObj) {
                             Section -ExcludeFromTOC -Style NOTOCHeading4 "$($Setting.Name)" {
                                 $TableParams = @{
@@ -64,7 +64,7 @@ function Get-AbrWinFOClusterNode {
                             }
                         }
                     } else {
-                        Paragraph "The following table summarizes the configuration of the Failover Cluster Nodes."
+                        Paragraph 'The following table summarizes the configuration of the Failover Cluster Nodes.'
                         BlankLine
                         $TableParams = @{
                             Name = "Nodes - $($Cluster)"

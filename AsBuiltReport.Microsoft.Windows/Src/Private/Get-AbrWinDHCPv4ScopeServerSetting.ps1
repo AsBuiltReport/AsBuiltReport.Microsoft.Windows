@@ -20,14 +20,14 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PScriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage 'Collecting Host DHCP Server information.'
     }
 
     process {
         $DHCPScopeOptions = Get-DhcpServerv4OptionValue -CimSession $TempCIMSession
         if ($DHCPScopeOptions) {
-            Section -Style Heading3 "Scope Server Options" {
-                Paragraph "The following section provides a summary of the DHCP servers Scope Server Options information."
+            Section -Style Heading3 'Scope Server Options' {
+                Paragraph 'The following section provides a summary of the DHCP servers Scope Server Options information.'
                 BlankLine
                 $OutObj = @()
                 Write-PScriboMessage "Discovered '$(($DHCPScopeOptions | Measure-Object).Count)' DHCP scopes server opions."
@@ -46,7 +46,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                     }
                 }
                 $TableParams = @{
-                    Name = "Scopes Server Options - $($System.split(".", 2).ToUpper()[0])"
+                    Name = "Scopes Server Options - $($System.split('.', 2).ToUpper()[0])"
                     List = $false
                     ColumnWidths = 40, 15, 20, 25
                 }
@@ -57,13 +57,13 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                 try {
                     $DHCPScopeOptions = Get-DhcpServerv4DnsSetting -CimSession $TempCIMSession
                     if ($DHCPScopeOptions) {
-                        Section -Style Heading4 "Scope DNS Setting" {
-                            Paragraph "The following section provides a summary of the DHCP servers Scope DNS Setting information."
+                        Section -Style Heading4 'Scope DNS Setting' {
+                            Paragraph 'The following section provides a summary of the DHCP servers Scope DNS Setting information.'
                             BlankLine
                             $OutObj = @()
                             foreach ($Option in $DHCPScopeOptions) {
                                 try {
-                                    Write-PScriboMessage "Collecting DHCP Server Scope DNS Setting."
+                                    Write-PScriboMessage 'Collecting DHCP Server Scope DNS Setting.'
                                     $inObj = [ordered] @{
                                         'Dynamic Updates' = $Option.DynamicUpdates
                                         'Dns Suffix' = $Option.DnsSuffix
@@ -79,7 +79,7 @@ function Get-AbrWinDHCPv4ScopeServerSetting {
                             }
 
                             $TableParams = @{
-                                Name = "Scopes DNS Setting - $($System.toUpper().split(".", 2)[0])"
+                                Name = "Scopes DNS Setting - $($System.toUpper().split('.', 2)[0])"
                                 List = $true
                                 ColumnWidths = 40, 60
                             }

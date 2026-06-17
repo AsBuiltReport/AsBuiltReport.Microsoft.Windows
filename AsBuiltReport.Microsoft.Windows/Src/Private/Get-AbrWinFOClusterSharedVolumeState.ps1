@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterSharedVolumeState {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Shared Volume State information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Shared Volume State information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolumeState | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading4 "Cluster Shared Volume State" {
+                Section -Style Heading4 'Cluster Shared Volume State' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

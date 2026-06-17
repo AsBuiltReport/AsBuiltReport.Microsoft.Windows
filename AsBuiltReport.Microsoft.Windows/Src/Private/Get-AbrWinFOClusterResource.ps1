@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterResource {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Resource information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Resource information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterResource | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Resource" {
+                Section -Style Heading3 'Resource' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

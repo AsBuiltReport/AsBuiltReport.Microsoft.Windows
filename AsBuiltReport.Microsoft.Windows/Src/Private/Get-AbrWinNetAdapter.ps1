@@ -21,7 +21,7 @@ function Get-AbrWinNetAdapter {
 
     begin {
         Write-PScriboMessage "Networking InfoLevel set at $($InfoLevel.Networking)."
-        Write-PScriboMessage "Collecting Network Adapter information."
+        Write-PScriboMessage 'Collecting Network Adapter information.'
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinNetAdapter {
                 if ($HostAdapters) {
                     Section -Style Heading3 'Network Adapters' {
                         $OutObj = @()
-                        ForEach ($HostAdapter in $HostAdapters) {
+                        foreach ($HostAdapter in $HostAdapters) {
                             try {
                                 $inObj = [ordered] @{
                                     'Adapter Name' = $HostAdapter.Name
@@ -45,7 +45,7 @@ function Get-AbrWinNetAdapter {
                             }
                         }
                         $TableParams = @{
-                            Name = "Network Adapters"
+                            Name = 'Network Adapters'
                             List = $false
                             ColumnWidths = 30, 35, 20, 15
                         }

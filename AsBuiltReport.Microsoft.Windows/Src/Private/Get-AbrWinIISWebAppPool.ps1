@@ -20,7 +20,7 @@ function Get-AbrWinIISWebAppPool {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PScriboMessage "Collecting IIS Sites information."
+        Write-PScriboMessage 'Collecting IIS Sites information.'
     }
 
     process {
@@ -48,7 +48,7 @@ function Get-AbrWinIISWebAppPool {
                         }
 
                         $TableParams = @{
-                            Name = "Application Pools"
+                            Name = 'Application Pools'
                             List = $false
                             ColumnWidths = 30, 15, 15, 20, 20
                         }

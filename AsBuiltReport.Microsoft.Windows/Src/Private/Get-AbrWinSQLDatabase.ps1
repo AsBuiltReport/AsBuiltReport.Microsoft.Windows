@@ -37,7 +37,6 @@ function Get-AbrWinSQLDatabase {
                 'Version140' = 'SQL Server 2017'
                 'Version150' = 'SQL Server 2019'
                 'Version160' = 'SQL Server 2022'
-
             }
             try {
                 Write-PScriboMessage "Collecting SQL Server databases information."

@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterAvailableDisk {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Available Disk information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Available Disk information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAvailableDisk } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Available Disk" {
+                Section -Style Heading3 'Available Disk' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

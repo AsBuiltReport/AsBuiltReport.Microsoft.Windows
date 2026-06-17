@@ -21,7 +21,7 @@ function Get-AbrWinSQLBuild {
 
     begin {
         Write-PScriboMessage "SQL Server InfoLevel set at $($InfoLevel.SQLServer)."
-        Write-PScriboMessage "Collecting SQL Server Properties information."
+        Write-PScriboMessage 'Collecting SQL Server Properties information.'
     }
 
     process {
@@ -65,7 +65,7 @@ function Get-AbrWinSQLBuild {
                         $SQLServerObjt += $TempSQLServerObjt
 
                         $TableParams = @{
-                            Name = "General Information"
+                            Name = 'General Information'
                             List = $True
                             ColumnWidths = 40, 60
                         }

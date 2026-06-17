@@ -21,7 +21,7 @@ function Get-AbrWinDHCPInfrastructure {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PScriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage 'Collecting Host DHCP Server information.'
     }
 
     process {
@@ -41,12 +41,12 @@ function Get-AbrWinDHCPInfrastructure {
                         'Database Path' = $Database.FileName
                         'Database Backup Path' = $Database.BackupPath
                         'Database Backup Interval' = switch ([string]::IsNullOrEmpty($Database.BackupInterval)) {
-                            $true { "--" }
+                            $true { '--' }
                             $false { "$($Database.BackupInterval) min" }
                             default { 'Unknown' }
                         }
-                        'Database Logging Enabled' = Switch ([string]::IsNullOrEmpty($Database.LoggingEnabled)) {
-                            $true { "--" }
+                        'Database Logging Enabled' = switch ([string]::IsNullOrEmpty($Database.LoggingEnabled)) {
+                            $true { '--' }
                             $false { $Database.LoggingEnabled }
                             default { 'Unknown' }
                         }
@@ -61,12 +61,12 @@ function Get-AbrWinDHCPInfrastructure {
                 if ($HealthCheck.DHCP.BP) {
                     $OutObj | Where-Object { $_.'Conflict Detection Attempts' -eq 0 } | Set-Style -Style Warning -Property 'Conflict Detection Attempts'
                     $OutObj | Where-Object { $_.'Authorized' -like 'No' } | Set-Style -Style Warning -Property 'Authorized'
-                    $OutObj | Where-Object { $_.'User Name' -like "--" } | Set-Style -Style Warning -Property 'User Name', 'Domain Name'
+                    $OutObj | Where-Object { $_.'User Name' -like '--' } | Set-Style -Style Warning -Property 'User Name', 'Domain Name'
 
                 }
 
                 $TableParams = @{
-                    Name = "DHCP Servers Settings - $($System.toUpper().split(".")[0])"
+                    Name = "DHCP Servers Settings - $($System.toUpper().split('.')[0])"
                     List = $true
                     ColumnWidths = 40, 60
                 }

@@ -20,7 +20,7 @@ function Get-AbrWinIISWebSite {
 
     begin {
         Write-PScriboMessage "IIS InfoLevel set at $($InfoLevel.IIS)."
-        Write-PScriboMessage "Collecting IIS Sites information."
+        Write-PScriboMessage 'Collecting IIS Sites information.'
     }
 
     process {
@@ -47,7 +47,7 @@ function Get-AbrWinIISWebSite {
                         }
 
                         $TableParams = @{
-                            Name = "IIS Web Sites"
+                            Name = 'IIS Web Sites'
                             List = $false
                             ColumnWidths = 25, 25, 25, 25
                         }
@@ -72,8 +72,8 @@ function Get-AbrWinIISWebSite {
                                                     'Name' = $IISWebSite.Name
                                                     'Auto Start' = $IISWebSite.serverAutoStart
                                                     'Enabled Protocols ' = $IISWebSite.enabledProtocols
-                                                    'URL' = Switch (($SiteURL.ResponseUri).Count) {
-                                                        0 { "--" }
+                                                    'URL' = switch (($SiteURL.ResponseUri).Count) {
+                                                        0 { '--' }
                                                         default { $SiteURL.ResponseUri }
                                                     }
                                                     'Path ' = $IISWebSite.physicalPath
@@ -94,7 +94,7 @@ function Get-AbrWinIISWebSite {
                                                 try {
                                                     $IISWebApps = Invoke-Command -Session $TempPssSession { Get-WebApplication -Site $(($using:IISWebSite).Name) }
                                                     if ($IISWebApps) {
-                                                        Section -Style Heading5 "Web Applications" {
+                                                        Section -Style Heading5 'Web Applications' {
                                                             Paragraph "The following table details $($IISWebSite.Name) Web Application"
                                                             BlankLine
                                                             $OutObj = @()

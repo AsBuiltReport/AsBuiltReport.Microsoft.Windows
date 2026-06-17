@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterNetwork {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Networks information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Networks information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetwork } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Networks" {
+                Section -Style Heading3 'Networks' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

@@ -20,7 +20,7 @@ function Get-AbrWinSMBSummary {
 
     begin {
         Write-PScriboMessage "SMB InfoLevel set at $($InfoLevel.SMB)."
-        Write-PScriboMessage "Collecting File Server Summary information."
+        Write-PScriboMessage 'Collecting File Server Summary information.'
     }
 
     process {
@@ -46,7 +46,7 @@ function Get-AbrWinSMBSummary {
                     }
 
                     $TableParams = @{
-                        Name = "SMB Server Settings"
+                        Name = 'SMB Server Settings'
                         List = $true
                         ColumnWidths = 40, 60
                     }

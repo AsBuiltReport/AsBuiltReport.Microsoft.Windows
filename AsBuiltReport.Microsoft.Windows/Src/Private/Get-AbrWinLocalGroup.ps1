@@ -21,7 +21,7 @@ function Get-AbrWinLocalGroup {
 
     begin {
         Write-PScriboMessage "Account InfoLevel set at $($InfoLevel.Account)."
-        Write-PScriboMessage "Collecting Local Groups information."
+        Write-PScriboMessage 'Collecting Local Groups information.'
     }
 
     process {
@@ -30,19 +30,19 @@ function Get-AbrWinLocalGroup {
                 if ($LocalGroups) {
                     Section -Style Heading3 'Local Groups' {
                         $OutObj = @()
-                        ForEach ($LocalGroup in $LocalGroups) {
+                        foreach ($LocalGroup in $LocalGroups) {
                             try {
                                 $inObj = [ordered] @{
                                     'Group Name' = $LocalGroup.GroupName
-                                    'Description' = Switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
-                                        $true { "--" }
+                                    'Description' = switch ([string]::IsNullOrEmpty($LocalGroup.Description)) {
+                                        $true { '--' }
                                         $false { $LocalGroup.Description }
-                                        default { "Unknown" }
+                                        default { 'Unknown' }
                                     }
-                                    'Members' = Switch ([string]::IsNullOrEmpty($LocalGroup.Members)) {
-                                        $true { "--" }
+                                    'Members' = switch ([string]::IsNullOrEmpty($LocalGroup.Members)) {
+                                        $true { '--' }
                                         $false { $LocalGroup.Members }
-                                        default { "Unknown" }
+                                        default { 'Unknown' }
                                     }
                                 }
                                 $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
@@ -51,7 +51,7 @@ function Get-AbrWinLocalGroup {
                             }
                         }
                         $TableParams = @{
-                            Name = "Local Group Summary"
+                            Name = 'Local Group Summary'
                             List = $false
                             ColumnWidths = 30, 40, 30
                         }

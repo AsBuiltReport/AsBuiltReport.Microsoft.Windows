@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterPermission {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Permissions Settings information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Permissions Settings information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterAccess } | Sort-Object -Property Identity
             if ($Settings) {
-                Section -Style Heading3 "Access Permissions" {
+                Section -Style Heading3 'Access Permissions' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

@@ -21,14 +21,14 @@ function Get-AbrWinFOClusterNetworkInterface {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Network Interface information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Network Interface information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterNetworkInterface } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Interfaces" {
+                Section -Style Heading3 'Interfaces' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {

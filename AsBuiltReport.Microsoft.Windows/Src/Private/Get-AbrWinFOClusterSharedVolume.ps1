@@ -21,24 +21,24 @@ function Get-AbrWinFOClusterSharedVolume {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Shared Volume information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Shared Volume information.'
     }
 
     process {
         try {
             $Settings = Invoke-Command -Session $TempPssSession { Get-ClusterSharedVolume | Select-Object -Property * } | Sort-Object -Property Name
             if ($Settings) {
-                Section -Style Heading3 "Cluster Shared Volume" {
+                Section -Style Heading3 'Cluster Shared Volume' {
                     $OutObj = @()
                     foreach ($Setting in $Settings) {
                         try {
                             $inObj = [ordered] @{
                                 'Name' = $Setting.Name
                                 'Owner Node' = $Setting.OwnerNode
-                                'Shared Volume' = Switch ([string]::IsNullOrEmpty($Setting.SharedVolumeInfo.FriendlyVolumeName)) {
-                                    $true { "Unknown" }
+                                'Shared Volume' = switch ([string]::IsNullOrEmpty($Setting.SharedVolumeInfo.FriendlyVolumeName)) {
+                                    $true { 'Unknown' }
                                     $false { $Setting.SharedVolumeInfo.FriendlyVolumeName }
-                                    default { "--" }
+                                    default { '--' }
                                 }
                                 'State' = $Setting.State
                             }

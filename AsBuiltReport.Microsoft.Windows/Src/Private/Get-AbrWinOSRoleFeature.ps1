@@ -21,7 +21,7 @@ function Get-AbrWinOSRoleFeature {
 
     begin {
         Write-PScriboMessage "Operating System InfoLevel set at $($InfoLevel.OperatingSystem)."
-        Write-PScriboMessage "Collecting Role & Features information."
+        Write-PScriboMessage 'Collecting Role & Features information.'
     }
 
     process {
@@ -31,7 +31,7 @@ function Get-AbrWinOSRoleFeature {
                 if ($HostRolesAndFeatures) {
                     Section -Style Heading3 'Roles' {
                         $OutObj = @()
-                        ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
+                        foreach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                             if ( $HostRoleAndFeature.FeatureType -eq 'Role') {
                                 try {
                                     $inObj = [ordered] @{
@@ -46,7 +46,7 @@ function Get-AbrWinOSRoleFeature {
                             }
                         }
                         $TableParams = @{
-                            Name = "Roles"
+                            Name = 'Roles'
                             List = $false
                             ColumnWidths = 20, 10, 70
                         }
@@ -59,7 +59,7 @@ function Get-AbrWinOSRoleFeature {
                                 if ($HostRolesAndFeatures) {
                                     Section -Style Heading3 'Features and Role Services' {
                                         $OutObj = @()
-                                        ForEach ($HostRoleAndFeature in $HostRolesAndFeatures) {
+                                        foreach ($HostRoleAndFeature in $HostRolesAndFeatures) {
                                             if ( $HostRoleAndFeature.FeatureType -eq 'Role Service' -or $HostRoleAndFeature.FeatureType -eq 'Feature') {
                                                 try {
                                                     $inObj = [ordered] @{
@@ -74,7 +74,7 @@ function Get-AbrWinOSRoleFeature {
                                             }
                                         }
                                         $TableParams = @{
-                                            Name = "Feature & Role Services"
+                                            Name = 'Feature & Role Services'
                                             List = $false
                                             ColumnWidths = 20, 10, 70
                                         }

@@ -20,16 +20,16 @@ function Get-AbrWinDHCPv4Scope {
 
     begin {
         Write-PScriboMessage "DHCP InfoLevel set at $($InfoLevel.DHCP)."
-        Write-PScriboMessage "Collecting Host DHCP Server information."
+        Write-PScriboMessage 'Collecting Host DHCP Server information.'
     }
 
     process {
         try {
             $DHCPScopes = Get-DhcpServerv4Scope -CimSession $TempCIMSession
-            Write-PScriboMessage "Discovered '$(($DHCPScopes | Measure-Object).Count)' DHCP SCopes in $($System.split(".")[0])."
+            Write-PScriboMessage "Discovered '$(($DHCPScopes | Measure-Object).Count)' DHCP SCopes in $($System.split('.')[0])."
             if ($DHCPScopes) {
-                Section -Style Heading3 "Scopes" {
-                    Paragraph "The following section provides detailed information of the Scope configuration."
+                Section -Style Heading3 'Scopes' {
+                    Paragraph 'The following section provides detailed information of the Scope configuration.'
                     BlankLine
                     $OutObj = @()
                     foreach ($Scope in $DHCPScopes) {
@@ -40,8 +40,8 @@ function Get-AbrWinDHCPv4Scope {
                                 'Scope Id' = "$($Scope.ScopeId)/$($SubnetMask)"
                                 'Scope Name' = $Scope.Name
                                 'Scope Range' = "$($Scope.StartRange) - $($Scope.EndRange)"
-                                'Lease Duration' = Switch ($Scope.LeaseDuration) {
-                                    "10675199.02:48:05.4775807" { "Unlimited" }
+                                'Lease Duration' = switch ($Scope.LeaseDuration) {
+                                    '10675199.02:48:05.4775807' { 'Unlimited' }
                                     default { $Scope.LeaseDuration }
                                 }
                                 'State' = $Scope.State
@@ -53,7 +53,7 @@ function Get-AbrWinDHCPv4Scope {
                     }
 
                     $TableParams = @{
-                        Name = "Scopes - $($System.toUpper().split(".")[0])"
+                        Name = "Scopes - $($System.toUpper().split('.')[0])"
                         List = $false
                         ColumnWidths = 20, 20, 35, 15, 10
                     }
@@ -64,7 +64,7 @@ function Get-AbrWinDHCPv4Scope {
                     try {
                         $DHCPStatistics = Get-DhcpServerv4ScopeStatistics -CimSession $TempCIMSession
                         if ($DHCPStatistics) {
-                            Section -Style Heading4 "Scope Statistics" {
+                            Section -Style Heading4 'Scope Statistics' {
                                 $OutObj = @()
                                 foreach ($DHCPStatistic in $DHCPStatistics) {
                                     try {
@@ -87,7 +87,7 @@ function Get-AbrWinDHCPv4Scope {
                                 }
 
                                 $TableParams = @{
-                                    Name = "Scope Statistics - $($System.toUpper().split(".")[0])"
+                                    Name = "Scope Statistics - $($System.toUpper().split('.')[0])"
                                     List = $false
                                     ColumnWidths = 20, 20, 20, 20, 20
                                 }
@@ -103,7 +103,7 @@ function Get-AbrWinDHCPv4Scope {
                     try {
                         $DHCPv4Failovers = Get-DhcpServerv4Failover -CimSession $TempCIMSession
                         if ($DHCPv4Failovers) {
-                            Section -Style Heading4 "Scope Failover" {
+                            Section -Style Heading4 'Scope Failover' {
                                 $OutObj = @()
                                 foreach ($DHCPv4Failover in $DHCPv4Failovers) {
                                     try {
@@ -131,7 +131,7 @@ function Get-AbrWinDHCPv4Scope {
                                     }
 
                                     $TableParams = @{
-                                        Name = "Scope Failover Cofiguration - $($System.split(".", 2).ToUpper()[0])"
+                                        Name = "Scope Failover Cofiguration - $($System.split('.', 2).ToUpper()[0])"
                                         List = $true
                                         ColumnWidths = 40, 60
                                     }
@@ -148,7 +148,7 @@ function Get-AbrWinDHCPv4Scope {
                     try {
                         $DHCPv4Bindings = Get-DhcpServerv4Binding -CimSession $TempCIMSession
                         if ($DHCPv4Bindings) {
-                            Section -Style Heading4 "Network Interface Binding" {
+                            Section -Style Heading4 'Network Interface Binding' {
                                 $OutObj = @()
                                 foreach ($DHCPv4Binding in $DHCPv4Bindings) {
                                     try {
@@ -157,11 +157,11 @@ function Get-AbrWinDHCPv4Scope {
                                             'Interface Alias' = $DHCPv4Binding.InterfaceAlias
                                             'IP Address' = $DHCPv4Binding.IPAddress
                                             'Subnet Mask' = $DHCPv4Binding.SubnetMask
-                                            'State' = Switch ($DHCPv4Binding.BindingState) {
-                                                "" { "--"; break }
-                                                $Null { "--"; break }
-                                                "True" { "Enabled" }
-                                                "False" { "Disabled" }
+                                            'State' = switch ($DHCPv4Binding.BindingState) {
+                                                '' { '--'; break }
+                                                $Null { '--'; break }
+                                                'True' { 'Enabled' }
+                                                'False' { 'Disabled' }
                                                 default { $DHCPv4Binding.BindingState }
                                             }
                                         }
@@ -171,7 +171,7 @@ function Get-AbrWinDHCPv4Scope {
                                     }
                                 }
                                 $TableParams = @{
-                                    Name = "Network Interface binding - $($System.split(".", 2).ToUpper()[0])"
+                                    Name = "Network Interface binding - $($System.split('.', 2).ToUpper()[0])"
                                     List = $false
                                     ColumnWidths = 25, 25, 25, 25
                                 }

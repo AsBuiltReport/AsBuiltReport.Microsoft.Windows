@@ -21,7 +21,7 @@ function Get-AbrWinFOCluster {
 
     begin {
         Write-PScriboMessage "FailOverCluster InfoLevel set at $($InfoLevel.FailOverCluster)."
-        Write-PScriboMessage "Collecting Host FailOver Cluster Server information."
+        Write-PScriboMessage 'Collecting Host FailOver Cluster Server information.'
     }
 
     process {
@@ -43,7 +43,7 @@ function Get-AbrWinFOCluster {
                 }
 
                 $TableParams = @{
-                    Name = "FailOver Cluster Servers Settings - $($System.split(".")[0])"
+                    Name = "FailOver Cluster Servers Settings - $($System.split('.')[0])"
                     List = $true
                     ColumnWidths = 40, 60
                 }
