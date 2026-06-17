@@ -12,7 +12,7 @@
     RootModule = 'AsBuiltReport.Microsoft.Windows.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.5.7'
+    ModuleVersion = '0.6.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@
     # CompanyName = 'Unknown'
 
     # Copyright statement for this module
-    Copyright = '(c) 2024 Andrew Ramsay. All rights reserved.'
+    Copyright = '(c) 2026 Andrew Ramsay. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description = 'A PowerShell module to generate an as built report on the configuration of Microsoft Windows.'
@@ -54,11 +54,19 @@
     RequiredModules = @(
         @{
             ModuleName = 'AsBuiltReport.Core';
-            ModuleVersion = '1.4.3'
+            ModuleVersion = '1.6.4'
+        },
+        @{
+            ModuleName = 'AsBuiltReport.Chart';
+            ModuleVersion = '0.3.3'
+        },
+        @{
+            ModuleName = 'AsBuiltReport.Diagram';
+            ModuleVersion = '1.0.8'
         },
         @{
             ModuleName = 'dbatools';
-            ModuleVersion = '2.5.1'
+            ModuleVersion = '2.8.2'
         }
     )
 

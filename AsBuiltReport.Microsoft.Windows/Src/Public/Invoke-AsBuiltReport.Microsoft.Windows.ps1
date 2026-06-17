@@ -18,11 +18,11 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
 
     # Do not remove or add to these parameters
 
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "", Scope = "Function")]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingUserNameAndPassWordParams", "", Scope = "Function")]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "", Scope = "Function")]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Scope = "Function")]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Scope = "Function")]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUserNameAndPassWordParams', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Scope = 'Function')]
 
 
     param (
@@ -35,30 +35,31 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     #Requires -RunAsAdministrator
 
     if ($psISE) {
-        Write-Error -Message "You cannot run this script inside the PowerShell ISE. Please execute it from the PowerShell Command Window."
+        Write-Error -Message 'You cannot run this script inside the PowerShell ISE. Please execute it from the PowerShell Command Window.'
         break
     }
 
-    Write-Host "- Please refer to the AsBuiltReport.Microsoft.Windows github website for more detailed information about this project."
-    Write-Host "- Do not forget to update your report configuration file after each new version release."
-    Write-Host "- Documentation: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows"
-    Write-Host "- Issues or bug reporting: https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows/issues"
-    Write-Host "- This project is community maintained and has no sponsorship from Microsoft, its employees or any of its affiliates."
-
 
     # Check the version of the dependency modules
-    $ModuleArray = @('AsBuiltReport.Microsoft.Windows', 'dbatools')
+    Write-ReportModuleInfo -ModuleName 'Microsoft.Windows'
+
+    Write-Host '  To sponsor this project, please visit:' -NoNewline
+    Write-Host ' https://ko-fi.com/F1F8DEV80' -ForegroundColor Cyan
+
+    Write-Host '  - Getting dependency information:'
+    # Check the version of the dependency modules
+    $ModuleArray = @('AsBuiltReport.Core', 'AsBuiltReport.Chart', 'AsBuiltReport.Diagram', 'dbatools')
 
     foreach ($Module in $ModuleArray) {
         try {
             $InstalledVersion = Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
 
             if ($InstalledVersion) {
-                Write-Host "- $Module module v$($InstalledVersion.ToString()) is currently installed."
+                Write-Host ('    - {0} module v{1} is currently installed.' -f $Module, $InstalledVersion.ToString())
                 $LatestVersion = Find-Module -Name $Module -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
                 if ($InstalledVersion -lt $LatestVersion) {
-                    Write-Host "  - $Module module v$($LatestVersion.ToString()) is available." -ForegroundColor Red
-                    Write-Host "  - Run 'Update-Module -Name $Module -Force' to install the latest version." -ForegroundColor Red
+                    Write-Host ('    - {0} module v{1} is available.)' -f $Module, $LatestVersion.ToString()) -ForegroundColor Red
+                    Write-Host ("    - Run 'Update-Module -Name {0} -Force' to install the latest version." -f $Module) -ForegroundColor Red
                 }
             }
         } catch {
@@ -71,7 +72,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
 
     if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
-        throw "The requested operation requires elevation: Run PowerShell console as administrator"
+        throw 'The requested operation requires elevation: Run PowerShell console as administrator'
     }
 
     # Import Report Configuration
@@ -85,7 +86,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
     #region foreach loop
     foreach ($System in $Target) {
 
-        if (Select-String -InputObject $System -Pattern "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$" -Quiet) {
+        if (Select-String -InputObject $System -Pattern '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$' -Quiet) {
             throw "Please use the Fully Qualified Domain Name (FQDN) instead of an IP address when connecting to the System: $System"
         }
 
@@ -96,7 +97,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
                 $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
             } catch {
-                Write-PScriboMessage -IsWarning  "Unable to connect to $($System)"
+                Write-PScriboMessage -IsWarning "Unable to connect to $($System)"
                 throw
             }
 
@@ -137,14 +138,14 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
             if ($InfoLevel.Account -ge 1) {
                 try {
                     # Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
-                    $AsBuiltWinModuleFolder = (Get-Module -ListAvailable -Name "AsBuiltReport.Microsoft.Windows" | Sort-Object Version -Descending | Select-Object -First 1).Path | Split-Path
-                    $SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath "Src\Private\SharedUtilsFunctions.ps1"
+                    $AsBuiltWinModuleFolder = (Get-Module -ListAvailable -Name 'AsBuiltReport.Microsoft.Windows' | Sort-Object Version -Descending | Select-Object -First 1).Path | Split-Path
+                    $SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath 'Src\Private\SharedUtilsFunctions.ps1'
                     # Dot-source the script from the latest version
                     . $SharedFunctionPath
                     # Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
                     $SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
                     # Get Local Users
-                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } }
+                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne 'ActiveDirectory' } }
 
                     # Get Local Groups and their members
                     $LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
@@ -153,7 +154,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                         # Create and dot-source the script block so the remote computer can use our shared functions
                         . ([scriptblock]::Create($ScriptContent))
 
-                        $Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne "ActiveDirectory" } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } }
+                        $Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne 'ActiveDirectory' } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } }
                         Write-Output $Result
                     } -ArgumentList $SharedFunctions
 
@@ -227,7 +228,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 if ($Status) {
                     try {
                         if (Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Status) {
-                            Section -Style Heading2 "Hyper-V Configuration" {
+                            Section -Style Heading2 'Hyper-V Configuration' {
                                 Paragraph 'The following table details the Hyper-V server settings'
                                 BlankLine
                                 # Hyper-V Configuration
@@ -240,13 +241,13 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinHyperVHostVM
                             }
                         } else {
-                            Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service "Hyper-V"
+                            Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service 'Hyper-V'
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No HyperV service detected. Disabling HyperV server section"
+                    Write-PScriboMessage 'No HyperV service detected. Disabling HyperV server section'
                 }
             }
             if ($InfoLevel.IIS -ge 1) {
@@ -254,7 +255,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 if ($Status) {
                     try {
                         if (((Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Status)) -or ((Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Status))) {
-                            Section -Style Heading2 "IIS Configuration" {
+                            Section -Style Heading2 'IIS Configuration' {
                                 Paragraph 'The following table details the IIS server settings'
                                 BlankLine
                                 # IIS Configuration
@@ -266,26 +267,26 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             }
                         } else {
                             if ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
-                                Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service "IIS"
-                                Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service "IIS"
+                                Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service 'IIS'
                             } else {
-                                Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Service "IIS"
-                                Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Service "IIS"
-                                Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service "IIS"
+                                Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service 'IIS'
                             }
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No W3SVC service detected. Disabling IIS server section"
+                    Write-PScriboMessage 'No W3SVC service detected. Disabling IIS server section'
                 }
             }
             if ($InfoLevel.SMB -ge 1) {
                 try {
                     $script:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object { $_.Special -like 'False' } }
                     if ($SMBShares) {
-                        Section -Style Heading2 "File Server Configuration" {
+                        Section -Style Heading2 'File Server Configuration' {
                             Paragraph 'The following table details the File Server settings'
                             BlankLine
                             # SMB Server Configuration
@@ -305,7 +306,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 if ($Status) {
                     try {
                         if (Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Status) {
-                            Section -Style Heading2 "DHCP Server Configuration" {
+                            Section -Style Heading2 'DHCP Server Configuration' {
                                 Paragraph 'The following table details the DHCP server configurations'
                                 BlankLine
                                 # DHCP Server Configuration
@@ -320,13 +321,13 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinDHCPv4PerScopeSetting
                             }
                         } else {
-                            Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service "DHCP Server"
+                            Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service 'DHCP Server'
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No DHCPServer service detected. Disabling Dhcp server section"
+                    Write-PScriboMessage 'No DHCPServer service detected. Disabling Dhcp server section'
                 }
             }
             if ($InfoLevel.DNS -ge 1 -and $OSType.Value -ne 'WorkStation') {
@@ -334,7 +335,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                 if ($Status) {
                     try {
                         if (Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Status) {
-                            Section -Style Heading2 "DNS Server Configuration" {
+                            Section -Style Heading2 'DNS Server Configuration' {
                                 Paragraph 'The following table details the DNS server settings'
                                 BlankLine
                                 # DNS Server Configuration
@@ -343,23 +344,23 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 Get-AbrWinDNSZone
                             }
                         } else {
-                            Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service "DNS Server"
+                            Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service 'DNS Server'
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No DNS Server service detected. Disabling DNS server section"
+                    Write-PScriboMessage 'No DNS Server service detected. Disabling DNS server section'
                 }
             }
 
             if ($InfoLevel.FailOverCluster -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
-                if ($Status.Status -eq "Running") {
+                if ($Status.Status -eq 'Running') {
                     try {
                         $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Cluster }
                         if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status ) -and $Cluster) {
-                            Section -Style Heading2 "Failover Cluster Configuration" {
+                            Section -Style Heading2 'Failover Cluster Configuration' {
                                 Paragraph 'The following table details the Failover Cluster Settings'
                                 BlankLine
                                 # Failover Cluster Server Configuration
@@ -383,19 +384,19 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
 
                             }
                         } else {
-                            Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service "FailOver Cluster"
+                            Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service 'FailOver Cluster'
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No FailOver Cluster service detected. Disabling FailOver Cluster section"
+                    Write-PScriboMessage 'No FailOver Cluster service detected. Disabling FailOver Cluster section'
                 }
             }
 
             if ($InfoLevel.SQLServer -ge 1 -and $OSType.Value -ne 'WorkStation') {
                 $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQL*' -ErrorAction SilentlyContinue }
-                if ($Status.Status -eq "Running") {
+                if ($Status.Status -eq 'Running') {
                     try {
                         if ($Options.SQLLogin) {
                             $SQLCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Options.SQLUserName, (ConvertTo-SecureString -Force $Options.SQLSecurePassword)
@@ -404,13 +405,13 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                             $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
                         }
                         if ($SQLServer) {
-                            Section -Style Heading2 "SQL Server Configuration" {
+                            Section -Style Heading2 'SQL Server Configuration' {
                                 Paragraph "The following table details the SQL Server configuration from $($SQLServer.Name)."
                                 BlankLine
                                 # SQL Server Build Information
                                 Get-AbrWinSQLBuild
                                 # SQL Server Security Information
-                                Section -Style Heading3 "Security" {
+                                Section -Style Heading3 'Security' {
                                     Paragraph 'The following table details the SQL Server security settings'
                                     BlankLine
                                     # SQL Server Roles Information
@@ -423,7 +424,7 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 # SQL Server Server Objects Information
                                 $BackupDevices = Get-AbrWinSQLBackupDevice
                                 if ($BackupDevices) {
-                                    Section -Style Heading3 "Server Objects" {
+                                    Section -Style Heading3 'Server Objects' {
                                         Paragraph 'The following table details the SQL Server server objects settings'
                                         BlankLine
                                         # SQL Server Backup Devices Information
@@ -432,16 +433,16 @@ function Invoke-AsBuiltReport.Microsoft.Windows {
                                 }
                             }
                             # Disconnect SQL Instance
-                            Write-PScriboMessage "Disconnecting SQL Instance"
+                            Write-PScriboMessage 'Disconnecting SQL Instance'
                             $SQLServer | Disconnect-DbaInstance | Out-Null
                         } else {
-                            Write-PScriboMessage -IsWarning "Unable to connect to SQL Instance"
+                            Write-PScriboMessage -IsWarning 'Unable to connect to SQL Instance'
                         }
                     } catch {
                         Write-PScriboMessage -IsWarning $_.Exception.Message
                     }
                 } else {
-                    Write-PScriboMessage "No SQL Server service detected. Disabling SQL Server section"
+                    Write-PScriboMessage 'No SQL Server service detected. Disabling SQL Server section'
                 }
             }
 
