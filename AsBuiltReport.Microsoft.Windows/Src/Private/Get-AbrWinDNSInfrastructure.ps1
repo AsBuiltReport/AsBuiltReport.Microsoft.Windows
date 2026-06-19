@@ -57,38 +57,41 @@ function Get-AbrWinDNSInfrastructure {
             #---------------------------------------------------------------------------------------------#
             if ($InfoLevel.DNS -ge 2) {
                 try {
-                    $DNSIPSetting = Get-NetAdapter -CimSession $TempCIMSession | Get-DnsClientServerAddress -CimSession $TempCIMSession -AddressFamily IPv4
-                    if ($DNSIPSetting) {
+                    $DNSIPSettings = Get-NetAdapter -CimSession $TempCIMSession | Get-DnsClientServerAddress -CimSession $TempCIMSession -AddressFamily IPv4
+                    if ($DNSIPSettings) {
                         Section -Style Heading3 'DNS IP Configuration' {
                             Paragraph 'The following table details DNS Server IP Configuration Settings'
                             BlankLine
                             $OutObj = @()
-                            try {
-                                $inObj = [ordered] @{
-                                    'Interface' = $DNSIPSetting.InterfaceAlias
-                                    'DNS IP 1' = $DNSIPSetting.ServerAddresses[0]
-                                    'DNS IP 2' = $DNSIPSetting.ServerAddresses[1]
-                                    'DNS IP 3' = $DNSIPSetting.ServerAddresses[2]
-                                    'DNS IP 4' = $DNSIPSetting.ServerAddresses[3]
-                                }
-                                $OutObj = [pscustomobject](ConvertTo-HashToYN $inObj)
 
-                                if ($HealthCheck.DNS.DP) {
-                                    $OutObj | Where-Object { $_.'DNS IP 1' -eq '127.0.0.1' } | Set-Style -Style Warning -Property 'DNS IP 1'
-                                }
+                            foreach ($DNSIPSetting in $DNSIPSettings) {
+                                try {
+                                    $inObj = [ordered] @{
+                                        'Interface' = $DNSIPSetting.InterfaceAlias
+                                        'DNS IP 1' = $DNSIPSetting.ServerAddresses[0]
+                                        'DNS IP 2' = $DNSIPSetting.ServerAddresses[1]
+                                        'DNS IP 3' = $DNSIPSetting.ServerAddresses[2]
+                                        'DNS IP 4' = $DNSIPSetting.ServerAddresses[3]
+                                    }
+                                    $OutObj += [pscustomobject](ConvertTo-HashToYN $inObj)
 
-                                $TableParams = @{
-                                    Name = "IP Configuration - $($System.toUpper().split('.')[0])"
-                                    List = $false
-                                    ColumnWidths = 20, 20, 20, 20, 20
+                                } catch {
+                                    Write-PScriboMessage -IsWarning $_.Exception.Message
                                 }
-                                if ($Report.ShowTableCaptions) {
-                                    $TableParams['Caption'] = "- $($TableParams.Name)"
-                                }
-                                $OutObj | Table @TableParams
-                            } catch {
-                                Write-PScriboMessage -IsWarning $_.Exception.Message
                             }
+                            if ($HealthCheck.DNS.DP) {
+                                $OutObj | Where-Object { $_.'DNS IP 1' -eq '127.0.0.1' } | Set-Style -Style Warning -Property 'DNS IP 1'
+                            }
+
+                            $TableParams = @{
+                                Name = "IP Configuration - $($System.toUpper().split('.')[0])"
+                                List = $false
+                                ColumnWidths = 20, 20, 20, 20, 20
+                            }
+                            if ($Report.ShowTableCaptions) {
+                                $TableParams['Caption'] = "- $($TableParams.Name)"
+                            }
+                            $OutObj | Sort-Object -Property 'Interface' | Table @TableParams
                         }
                     }
                 } catch {
@@ -155,7 +158,7 @@ function Get-AbrWinDNSInfrastructure {
                         $DNSSetting = Get-DnsServerForwarder -CimSession $TempCIMSession
                         $Recursion = Get-DnsServerRecursion -CimSession $TempCIMSession
                         $inObj = [ordered] @{
-                            'IP Address' = $DNSSetting.IPAddress -join ','
+                            'IP Address' = $DNSSetting.IPAddress
                             'Timeout' = ("$($DNSSetting.Timeout)/s")
                             'Use Root Hint' = ($DNSSetting.UseRootHint)
                             'Use Recursion' = ($Recursion.Enable)

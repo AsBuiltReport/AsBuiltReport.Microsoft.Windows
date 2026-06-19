@@ -527,11 +527,11 @@ function ConvertTo-HashToYN {
 
     #>
     [CmdletBinding()]
-    [OutputType([Hashtable])]
+    [OutputType([System.Collections.Specialized.OrderedDictionary])]
     param (
         [Parameter (Position = 0, Mandatory)]
         [AllowEmptyString()]
-        [Hashtable] $TEXT
+        [System.Collections.Specialized.OrderedDictionary] $TEXT
     )
 
     $result = [ordered] @{}
@@ -563,7 +563,6 @@ function ConvertTo-HashToYN {
         return $TEXT
     }
 } # end
-
 
 
 function Remove-NonPrintableAscii {
