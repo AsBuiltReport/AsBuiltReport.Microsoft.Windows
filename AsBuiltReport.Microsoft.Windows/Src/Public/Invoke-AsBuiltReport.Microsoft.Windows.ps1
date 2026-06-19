@@ -1,0 +1,454 @@
+function Invoke-AsBuiltReport.Microsoft.Windows {
+    <#
+    .SYNOPSIS
+        PowerShell script to document the configuration of Microsoft Windows Server in Word/HTML/Text formats
+    .DESCRIPTION
+        Documents the configuration of Microsoft Windows Server in Word/HTML/Text formats using PScribo.
+    .NOTES
+        Version:        0.5.7
+        Author:         Andrew Ramsay
+        Editor:         Jonathan Colon
+        Twitter:        @asbuiltreport
+        Github:         AsBuiltReport
+        Credits:        Iain Brighton (@iainbrighton) - PScribo module
+
+    .LINK
+        https://github.com/AsBuiltReport/AsBuiltReport.Microsoft.Windows
+    #>
+
+    # Do not remove or add to these parameters
+
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingUserNameAndPassWordParams', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Scope = 'Function')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Scope = 'Function')]
+
+
+    param (
+        [String[]] $Target,
+        [PSCredential] $Credential
+    )
+
+    #Requires -Version 5.1
+    #Requires -PSEdition Desktop
+    #Requires -RunAsAdministrator
+
+    if ($psISE) {
+        Write-Error -Message 'You cannot run this script inside the PowerShell ISE. Please execute it from the PowerShell Command Window.'
+        break
+    }
+
+
+    # Check the version of the dependency modules
+    Write-ReportModuleInfo -ModuleName 'Microsoft.Windows'
+
+    Write-Host '  To sponsor this project, please visit:' -NoNewline
+    Write-Host ' https://ko-fi.com/F1F8DEV80' -ForegroundColor Cyan
+
+    Write-Host '  - Getting dependency information:'
+    # Check the version of the dependency modules
+    $ModuleArray = @('AsBuiltReport.Core', 'AsBuiltReport.Chart', 'AsBuiltReport.Diagram', 'dbatools')
+
+    foreach ($Module in $ModuleArray) {
+        try {
+            $InstalledVersion = Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue | Sort-Object -Property Version -Descending | Select-Object -First 1 -ExpandProperty Version
+
+            if ($InstalledVersion) {
+                Write-Host ('    - {0} module v{1} is currently installed.' -f $Module, $InstalledVersion.ToString())
+                $LatestVersion = Find-Module -Name $Module -Repository PSGallery -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Version
+                if ($InstalledVersion -lt $LatestVersion) {
+                    Write-Host ('    - {0} module v{1} is available.)' -f $Module, $LatestVersion.ToString()) -ForegroundColor Red
+                    Write-Host ("    - Run 'Update-Module -Name {0} -Force' to install the latest version." -f $Module) -ForegroundColor Red
+                }
+            }
+        } catch {
+            Write-PScriboMessage -IsWarning $_.Exception.Message
+        }
+    }
+
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+
+
+    if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+
+        throw 'The requested operation requires elevation: Run PowerShell console as administrator'
+    }
+
+    # Import Report Configuration
+    $script:Report = $ReportConfig.Report
+    $script:InfoLevel = $ReportConfig.InfoLevel
+    $script:Options = $ReportConfig.Options
+
+    # Used to set values to TitleCase where required
+    $script:TextInfo = (Get-Culture).TextInfo
+
+    #region foreach loop
+    foreach ($System in $Target) {
+
+        if (Select-String -InputObject $System -Pattern '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$' -Quiet) {
+            throw "Please use the Fully Qualified Domain Name (FQDN) instead of an IP address when connecting to the System: $System"
+        }
+
+        Section -Style Heading1 $System {
+            Paragraph "The following table details the Windows Host $System"
+            BlankLine
+            try {
+                $script:TempPssSession = New-PSSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
+                $script:TempCimSession = New-CimSession $System -Credential $Credential -Authentication Negotiate -ErrorAction stop
+            } catch {
+                Write-PScriboMessage -IsWarning "Unable to connect to $($System)"
+                throw
+            }
+
+            $script:HostInfo = Invoke-Command -Session $TempPssSession { Get-ComputerInfo }
+
+            #Validate Required Modules and Features
+            $script:OSType = Invoke-Command -Session $TempPssSession { (Get-ComputerInfo).OsProductType }
+            $script:HostCPU = Get-CimInstance -Class Win32_Processor -CimSession $TempCimSession
+            $script:HostComputer = Get-CimInstance -Class Win32_ComputerSystem -CimSession $TempCimSession
+            $script:HostBIOS = Get-CimInstance -Class Win32_Bios -CimSession $TempCimSession
+            $script:HostLicense = Get-CimInstance -Query 'Select * from SoftwareLicensingProduct' -CimSession $TempCimSession | Where-Object { $_.LicenseStatus -eq 1 }
+            #Host Hardware
+            Get-AbrWinHostHWSummary
+            #Host OS
+            if ($InfoLevel.OperatingSystem -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Operating System' {
+                        Paragraph 'The following settings details host OS Settings'
+                        BlankLine
+                        #Host OS Configuration
+                        Get-AbrWinOSConfig
+                        #Host Hotfixes
+                        Get-AbrWinOSHotfix
+                        #Host Drivers
+                        Get-AbrWinOSDriver
+                        #Host Roles and Features
+                        Get-AbrWinOSRoleFeature
+                        #Host 3rd Party Applications
+                        Get-AbrWinApplication
+                        # Host Service Status
+                        Get-AbrWinOSService
+                    }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            #Local Users and Groups
+            if ($InfoLevel.Account -ge 1) {
+                try {
+                    # Get the AsBuiltReport.Microsoft.Windows Shared Util Functions path and file
+                    $AsBuiltWinModuleFolder = (Get-Module -ListAvailable -Name 'AsBuiltReport.Microsoft.Windows' | Sort-Object Version -Descending | Select-Object -First 1).Path | Split-Path
+                    $SharedFunctionPath = Join-Path -Path $AsBuiltWinModuleFolder -ChildPath 'Src\Private\SharedUtilsFunctions.ps1'
+                    # Dot-source the script from the latest version
+                    . $SharedFunctionPath
+                    # Read the Shared Util Function into a variable to pass through to a script block so that remote computers have this script available locally
+                    $SharedFunctions = [System.IO.File]::ReadAllText($SharedFunctionPath)
+                    # Get Local Users
+                    $LocalUsers = Invoke-Command -Session $TempPssSession { Get-LocalUser | Where-Object { $_.PrincipalSource -ne 'ActiveDirectory' } }
+
+                    # Get Local Groups and their members
+                    $LocalGroups = Invoke-Command -Session $TempPssSession -ScriptBlock {
+                        param ($ScriptContent)
+
+                        # Create and dot-source the script block so the remote computer can use our shared functions
+                        . ([scriptblock]::Create($ScriptContent))
+
+                        $Result = Get-LocalGroup | Where-Object { $_.PrincipalSource -ne 'ActiveDirectory' } | ForEach-Object { [PSCustomObject]@{ GroupName = $_.Name; Description = $_.Description; Members = (Get-LocalGroupMembership -Group $_.Name -Depth 1).Name } }
+                        Write-Output $Result
+                    } -ArgumentList $SharedFunctions
+
+                    # Get Local Administrators members
+                    $LocalAdmins = Get-LocalGroupMembership -Group 'Administrators' -Computer $System -Depth 1 -ErrorAction Continue
+                    # Remove empty or null elements
+                    $LocalAdmins = $LocalAdmins | Where-Object { $_ }
+
+                    if ($LocalUsers -or $LocalGroups -or $LocalAdmins) {
+                        Section -Style Heading2 'Local Users and Groups' {
+                            Paragraph 'The following section details local configured users and groups'
+                            BlankLine
+                            #Local Users
+                            Get-AbrWinLocalUser
+                            #Local Groups
+                            Get-AbrWinLocalGroup
+                            #Local Administrators
+                            Get-AbrWinLocalAdmin
+                        }
+                    }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            #Host Firewall
+            Get-AbrWinNetFirewall
+            #Host Networking
+            if ($InfoLevel.Networking -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Networking' {
+                        Paragraph 'The following section details Host Network Configuration'
+                        BlankLine
+                        #Host Network Adapter
+                        Get-AbrWinNetAdapter
+                        #Host Network IP Address
+                        Get-AbrWinNetIPAddress
+                        #Host DNS Client Setting
+                        Get-AbrWinNetDNSClient
+                        #Host DNS Server Setting
+                        Get-AbrWinNetDNSServer
+                        #Host Network Teaming
+                        Get-AbrWinNetTeamInterface
+                        #Host Network Adapter MTU
+                        Get-AbrWinNetAdapterMTU
+                    }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            #Host Storage
+            if ($InfoLevel.Storage -ge 1) {
+                try {
+                    Section -Style Heading2 'Host Storage' {
+                        Paragraph 'The following section details the storage configuration of the host'
+                        #Local Disks
+                        Get-AbrWinHostStorage
+                        #Local Volumes
+                        Get-AbrWinHostStorageVolume
+                        #iSCSI Settings
+                        Get-AbrWinHostStorageISCSI
+                        #MPIO Setting
+                        Get-AbrWinHostStorageMPIO
+                    }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            #HyperV Configuration
+            if ($InfoLevel.HyperV -ge 1) {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'vmms' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 'Hyper-V Configuration' {
+                                Paragraph 'The following table details the Hyper-V server settings'
+                                BlankLine
+                                # Hyper-V Configuration
+                                Get-AbrWinHyperVSummary
+                                # Hyper-V Numa Information
+                                Get-AbrWinHyperVNuma
+                                # Hyper-V Networking
+                                Get-AbrWinHyperVNetworking
+                                # Hyper-V VM Information
+                                Get-AbrWinHyperVHostVM
+                            }
+                        } else {
+                            Get-RequiredFeature -Name Hyper-V-PowerShell -OSType $OSType.Value -Service 'Hyper-V'
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No HyperV service detected. Disabling HyperV server section'
+                }
+            }
+            if ($InfoLevel.IIS -ge 1) {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'W3SVC' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (((Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Status)) -or ((Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Status) -and (Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Status))) {
+                            Section -Style Heading2 'IIS Configuration' {
+                                Paragraph 'The following table details the IIS server settings'
+                                BlankLine
+                                # IIS Configuration
+                                Get-AbrWinIISSummary
+                                # IIS Web Application Pools
+                                Get-AbrWinIISWebAppPool
+                                # IIS Web Site
+                                Get-AbrWinIISWebSite
+                            }
+                        } else {
+                            if ($OSType -eq 'Server' -or $OSType -eq 'DomainController') {
+                                Get-RequiredFeature -Name web-mgmt-console -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name Web-Scripting-Tools -OSType $OSType.Value -Service 'IIS'
+                            } else {
+                                Get-RequiredFeature -Name IIS-WebServerRole -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name WebServerManagementTools -OSType $OSType.Value -Service 'IIS'
+                                Get-RequiredFeature -Name IIS-ManagementScriptingTools -OSType $OSType.Value -Service 'IIS'
+                            }
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No W3SVC service detected. Disabling IIS server section'
+                }
+            }
+            if ($InfoLevel.SMB -ge 1) {
+                try {
+                    $script:SMBShares = Invoke-Command -Session $TempPssSession { Get-SmbShare | Where-Object { $_.Special -like 'False' } }
+                    if ($SMBShares) {
+                        Section -Style Heading2 'File Server Configuration' {
+                            Paragraph 'The following table details the File Server settings'
+                            BlankLine
+                            # SMB Server Configuration
+                            Get-AbrWinSMBSummary
+                            # SMB Server Network Interface
+                            Get-AbrWinSMBNetworkInterface
+                            # SMB Shares
+                            Get-AbrWinSMBShare
+                        }
+                    }
+                } catch {
+                    Write-PScriboMessage -IsWarning $_.Exception.Message
+                }
+            }
+            if ($InfoLevel.DHCP -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DHCPServer' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 'DHCP Server Configuration' {
+                                Paragraph 'The following table details the DHCP server configurations'
+                                BlankLine
+                                # DHCP Server Configuration
+                                Get-AbrWinDHCPInfrastructure
+                                # DHCP Server Stats
+                                Get-AbrWinDHCPv4Statistic
+                                # DHCP Server Scope Info
+                                Get-AbrWinDHCPv4Scope
+                                # DHCP Server Scope Settings
+                                Get-AbrWinDHCPv4ScopeServerSetting
+                                # DHCP Server Per Scope Info
+                                Get-AbrWinDHCPv4PerScopeSetting
+                            }
+                        } else {
+                            Get-RequiredFeature -Name RSAT-DHCP -OSType $OSType.Value -Service 'DHCP Server'
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No DHCPServer service detected. Disabling Dhcp server section'
+                }
+            }
+            if ($InfoLevel.DNS -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'DNS' -ErrorAction SilentlyContinue }
+                if ($Status) {
+                    try {
+                        if (Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Status) {
+                            Section -Style Heading2 'DNS Server Configuration' {
+                                Paragraph 'The following table details the DNS server settings'
+                                BlankLine
+                                # DNS Server Configuration
+                                Get-AbrWinDNSInfrastructure
+                                # DNS Zones Configuration
+                                Get-AbrWinDNSZone
+                            }
+                        } else {
+                            Get-RequiredFeature -Name RSAT-DNS-Server -OSType $OSType.Value -Service 'DNS Server'
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No DNS Server service detected. Disabling DNS server section'
+                }
+            }
+
+            if ($InfoLevel.FailOverCluster -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'ClusSvc' -ErrorAction SilentlyContinue }
+                if ($Status.Status -eq 'Running') {
+                    try {
+                        $script:Cluster = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Cluster }
+                        if ((Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Status ) -and $Cluster) {
+                            Section -Style Heading2 'Failover Cluster Configuration' {
+                                Paragraph 'The following table details the Failover Cluster Settings'
+                                BlankLine
+                                # Failover Cluster Server Configuration
+                                Get-AbrWinFOCluster
+                                # Cluster Access Permission
+                                Get-AbrWinFOClusterPermission
+                                # Cluster Nodes
+                                Get-AbrWinFOClusterNode
+                                # Cluster Available Disks
+                                Get-AbrWinFOClusterAvailableDisk
+                                # Cluster Fault Domain
+                                Get-AbrWinFOClusterFaultDomain
+                                # Cluster Networks
+                                Get-AbrWinFOClusterNetwork
+                                # Cluser Quorum
+                                Get-AbrWinFOClusterQuorum
+                                #Cluster Resources
+                                Get-AbrWinFOClusterResource
+                                #Cluster Shared Volume
+                                Get-AbrWinFOClusterSharedVolume
+
+                            }
+                        } else {
+                            Get-RequiredFeature -Name RSAT-Clustering-PowerShell -OSType $OSType.Value -Service 'FailOver Cluster'
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No FailOver Cluster service detected. Disabling FailOver Cluster section'
+                }
+            }
+
+            if ($InfoLevel.SQLServer -ge 1 -and $OSType.Value -ne 'WorkStation') {
+                $Status = Invoke-Command -Session $TempPssSession -ScriptBlock { Get-Service 'MSSQL*' -ErrorAction SilentlyContinue }
+                if ($Status.Status -eq 'Running') {
+                    try {
+                        if ($Options.SQLLogin) {
+                            $SQLCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Options.SQLUserName, (ConvertTo-SecureString -Force $Options.SQLSecurePassword)
+                            $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $SQLCredential
+                        } else {
+                            $script:SQLServer = Connect-DbaInstance -SqlInstance $System -TrustServerCertificate -SqlCredential $Credential
+                        }
+                        if ($SQLServer) {
+                            Section -Style Heading2 'SQL Server Configuration' {
+                                Paragraph "The following table details the SQL Server configuration from $($SQLServer.Name)."
+                                BlankLine
+                                # SQL Server Build Information
+                                Get-AbrWinSQLBuild
+                                # SQL Server Security Information
+                                Section -Style Heading3 'Security' {
+                                    Paragraph 'The following table details the SQL Server security settings'
+                                    BlankLine
+                                    # SQL Server Roles Information
+                                    Get-AbrWinSQLRole
+                                    # SQL Server Logins Information
+                                    Get-AbrWinSQLLogin
+                                }
+                                # SQL Server Database Information
+                                Get-AbrWinSQLDatabase
+                                # SQL Server Server Objects Information
+                                $BackupDevices = Get-AbrWinSQLBackupDevice
+                                if ($BackupDevices) {
+                                    Section -Style Heading3 'Server Objects' {
+                                        Paragraph 'The following table details the SQL Server server objects settings'
+                                        BlankLine
+                                        # SQL Server Backup Devices Information
+                                        $BackupDevices
+                                    }
+                                }
+                            }
+                            # Disconnect SQL Instance
+                            Write-PScriboMessage 'Disconnecting SQL Instance'
+                            $SQLServer | Disconnect-DbaInstance | Out-Null
+                        } else {
+                            Write-PScriboMessage -IsWarning 'Unable to connect to SQL Instance'
+                        }
+                    } catch {
+                        Write-PScriboMessage -IsWarning $_.Exception.Message
+                    }
+                } else {
+                    Write-PScriboMessage 'No SQL Server service detected. Disabling SQL Server section'
+                }
+            }
+
+        }
+        Remove-PSSession $TempPssSession
+        Remove-CimSession $TempCimSession
+    }
+    #endregion foreach loop
+}
